@@ -1,0 +1,14 @@
+TODO (LEVELS OF FUNCTIONALITY):
+
+  # class room capacity is not considered (handle that 
+    by dividing people into groups and assigning physical 
+    classroom's on the user's end).
+
+  LEVEL - I:
+    1. Take groups list
+    2. Take instructor list 
+    1. Take classes:
+      a. duration
+      b. attending groups
+      c. instructors assigned for a class
+
