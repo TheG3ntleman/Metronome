@@ -1,1 +1,3 @@
-# timetable-maker
+# Metronome
+
+![alt text](imgs/logo1.svg)
