@@ -1,3 +1,8 @@
+### Interface
+1. Make a language interpreter to accept specifications for a time table and then proceed to make it.
+
+### Core functionality related to actually making a time table.
+
 TODO (LEVELS OF FUNCTIONALITY):
 
   # class room capacity is not considered (handle that 
