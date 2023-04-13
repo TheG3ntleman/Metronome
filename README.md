@@ -1,5 +1,6 @@
-# Metronome
+<p align="center">
+  <img width="460" height="300" src="imgs/logo2.svg">
+</p>
 
-<a align=center>
-![alt text](imgs/logo1.svg)
-</a>
+# Metronome
+Metronome is a fast genetic based time tabling software. It is currently under development.
