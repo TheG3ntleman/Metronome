@@ -1,3 +1,8 @@
+### Currently working on
+  1. Basic argument parser (bare bones, functionally null).
+  1.5 Add a script parser that will accept timetable specifications from files. (FROM INTERFACE, 1)
+  2. Actual timetabling stuff. 
+
 ### Interface
 1. Make a language interpreter to accept specifications for a time table and then proceed to make it.
 
@@ -33,4 +38,7 @@ TODO (LEVELS OF FUNCTIONALITY):
           b. List of classes
           c. List of instructors
           d. List of student groups
+
+# COMPLETED
+  1. Basic project structure and setup
 
