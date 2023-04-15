@@ -42,11 +42,26 @@ int main(int argc, char **argv) {
           return 0;
         }
 
-        char c;
-        while ((c = fgetc(specifcationFile)) != EOF) {
-          printf("%c ", c);
-        }
+        fseek(specifcationFile, 0L, SEEK_END);
+        unsigned long fsize = ftell(specifcationFile);
+        rewind(specifcationFile);
         
+        // Handle case where you fail to allocate memory.
+        char *buffer = (char *)malloc(fsize + 1);
+
+        if (1 != fread(buffer, fsize, 1, specifcationFile)) {
+          fprintf(stderr, "Failed to read entire shader file: %s\n", argv[i] + wordStart);
+          fclose(specifcationFile);
+          free(buffer);
+          exit(1);
+        }
+
+        fclose(specifcationFile);
+
+        // You can use the buffer contents here.
+
+        free(buffer);
+         
         break;
       case CHARACTER_ARGUMENT:
         break;
