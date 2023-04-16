@@ -1,1 +1,3 @@
-paper/
+# Executables and object files
+metronome
+*.o

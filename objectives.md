@@ -1,6 +1,9 @@
 ### Currently working on
-  1. Basic argument parser (bare bones, functionally null).
+  - Probably migrate argument parsing code to it's own file.
   1.5 Add a script parser that will accept timetable specifications from files. (FROM INTERFACE, 1)
+    Make lexer
+    Make timetabling structures to fill
+    Make parser
   2. Actual timetabling stuff. 
 
 ### Interface
@@ -41,4 +44,5 @@ TODO (LEVELS OF FUNCTIONALITY):
 
 # COMPLETED
   1. Basic project structure and setup
+  2. Basic argument parser (bare bones, functionally null).
 

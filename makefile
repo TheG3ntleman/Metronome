@@ -1,8 +1,14 @@
 # Project files
 
-SOURCE_FILES = src/main.c
-HEADER_FILES = 
-OBJECT_FILES = src/main.o
+SOURCE_FILES = src/main.c \
+							 src/parser.c \
+							
+HEADER_FILES = common.h \
+							 parser.h \
+							 timetable.h
+
+OBJECT_FILES = src/main.o \
+							 src/parser.o
 EXE_NAME = metronome
 
 # Compiler settings

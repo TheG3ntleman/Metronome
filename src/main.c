@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "common.h"
+#include "parser.h"
 
 typedef enum  {
   
@@ -59,6 +60,7 @@ int main(int argc, char **argv) {
         fclose(specifcationFile);
 
         // You can use the buffer contents here.
+        makeTimeTableSpecification(buffer, fsize);  
 
         free(buffer);
          
