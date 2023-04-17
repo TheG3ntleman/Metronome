@@ -1,18 +1,18 @@
-PARTIES
+PARTIES 6
 
-Dr.A
-Dr.B
-Class.A
-Class.B
-Class.C
-Class.D
+Dr.A;
+Dr.B;
+Class.A;
+Class.B;
+Class.C;
+Class.D;
 
-JOBS
+JOBS 6
 
-Physics-II
-English
-Optimization
-Cryptography
-Numerical_Methods
-Functional_Analysis
+Physics-II; 
+English;
+Optimization;
+Cryptography;
+Numerical_Methods;
+Functional_Analysis;
 
