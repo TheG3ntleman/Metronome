@@ -1,6 +1,7 @@
 # Project files
 
 SOURCE_FILES = src/main.c \
+							 src/common.c \
 							 src/parser.c \
 							
 HEADER_FILES = common.h \
@@ -8,6 +9,7 @@ HEADER_FILES = common.h \
 							 timetable.h
 
 OBJECT_FILES = src/main.o \
+							 src/common.o \
 							 src/parser.o
 EXE_NAME = metronome
 

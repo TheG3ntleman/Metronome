@@ -1,5 +1,5 @@
 #include "parser.h"
-#include <ctype.h>
+#include "common.h"
 
 #define MAX_PARSE_WORD_LENGTH 100
 
@@ -18,26 +18,6 @@ typedef struct  {
   uint wlen;
 } Token;
 
-char isnumber(char *str) {
-  for (uint i = 0; str[i] != '\0'; i++) {
-    if (!isdigit(str[i]))
-      return 0;
-  }
-  return 1;
-}
-
-char strcomp(char *str_a, char *str_b) {
-  uint i;
-  for (i = 0; str_a[i] != '\0'; i++) {
-    if (str_a[i] != str_b[i])
-      return 0;
-  }
-
-  if (str_b[i] != '\0')
-    return 0;
-
-  return 1;
-}
 
 uint lexer(char *buffer, uint startpoint, uint size, Token *token) {
   
@@ -52,11 +32,11 @@ uint lexer(char *buffer, uint startpoint, uint size, Token *token) {
         if (buffer[i] == ';') {
           jump = 0;
         }
-        if (strcomp(token->str, "PARTIES")) 
+        if (stringCompare(token->str, "PARTIES")) 
           token->type = TOKEN_PARTIES;
-        else if (strcomp(token->str, "JOBS"))
+        else if (stringCompare(token->str, "JOBS"))
           token->type = TOKEN_JOBS;
-        else if (isnumber(token->str)){
+        else if (isNumber(token->str)){
           token->type = TOKEN_NUMBER;
         } else {
           token->type = IDENTIFIER;
@@ -88,9 +68,12 @@ void makeTimeTableSpecification(char *buffer, uint size) {
   }
 #endif
 
+  // state stuff
   char mode = 0; // 0 for none
   // 1 for parties
   // 2 for jobs
+  char mode_1_1 = 0;
+  uint mode_1_1_num = 0;
 
 
   TimeTableSpecification *tts = malloc(sizeof(TimeTableSpecification));
@@ -99,9 +82,8 @@ void makeTimeTableSpecification(char *buffer, uint size) {
   tts->num_parties = 0;
   tts->num_jobs = 0;
   tts->party_names = malloc(sizeof(char*) * 100); // can store a maximum of 100 parties
-  for (uint i = 0; i < 100; i++) {
-    tts->party_names[i] = malloc(sizeof(char) * MAX_PARSE_WORD_LENGTH);
-  }
+
+  StrList *party_names = makeStringList();  
 
   for (uint i = 0; i < size -1;) {
     i = lexer(buffer, i, size, &token);
@@ -117,15 +99,26 @@ void makeTimeTableSpecification(char *buffer, uint size) {
         break;
     };
 
-    //  
-    if (mode == 1 && token.type == IDENTIFIER) {
-      tts->party_names[tts->num_parties++] = token.str;
+    if (mode == 1 && token.type == TOKEN_NUMBER && !mode_1_1) {
+      mode_1_1 = 1;
+      tts->num_parties = atoi(token.str);
+      tts->party_names = malloc(sizeof(char *) * tts->num_parties);
+    }
+    if (mode == 1 && token.type == IDENTIFIER && mode_1_1) {
+      addStringToList(party_names, token.str);
+      tts->party_names[mode_1_1_num++] = stringDuplicate(token.str);
+    }
+
+    if (mode_1_1_num > tts->num_parties) {
+      mode = 0;
     }
   }
 
     printf("PRINTING STORED PARTY NAMES\n");
-    for (uint i = 0; i < tts->num_parties; i++) 
-      printf("%s\n", tts->party_names[i]);
+    printStringList(party_names); 
+
+  for (uint i = 0; i < tts->num_parties; i++) 
+    printf("%u. %s\n", i, tts->party_names[i]);     
 
 }
 
