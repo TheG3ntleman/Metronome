@@ -12,4 +12,8 @@
 
 typedef unsigned int uint;
 
+// Need to add string manipulation stuff
+// Need to add linked list stuff;
+// Need to add hashmap stuff
+
 #endif
