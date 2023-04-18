@@ -88,6 +88,45 @@ void makeTimeTableSpecification(char *buffer, uint size) {
   }
 #endif
 
+  char mode = 0; // 0 for none
+  // 1 for parties
+  // 2 for jobs
+
+
+  TimeTableSpecification *tts = malloc(sizeof(TimeTableSpecification));
+
+  // initializing tts
+  tts->num_parties = 0;
+  tts->num_jobs = 0;
+  tts->party_names = malloc(sizeof(char*) * 100); // can store a maximum of 100 parties
+  for (uint i = 0; i < 100; i++) {
+    tts->party_names[i] = malloc(sizeof(char) * MAX_PARSE_WORD_LENGTH);
+  }
+
+  for (uint i = 0; i < size -1;) {
+    i = lexer(buffer, i, size, &token);
+
+
+    // Token.type handling mode
+    switch (token.type) {
+      case TOKEN_PARTIES:
+        mode = 1;
+        break;
+      case TOKEN_JOBS:
+        mode = 2;
+        break;
+    };
+
+    //  
+    if (mode == 1 && token.type == IDENTIFIER) {
+      tts->party_names[tts->num_parties++] = token.str;
+    }
+  }
+
+    printf("PRINTING STORED PARTY NAMES\n");
+    for (uint i = 0; i < tts->num_parties; i++) 
+      printf("%s\n", tts->party_names[i]);
+
 }
 
 void deleteTimeTableSpecification(TimeTableSpecification *time_table_specification) {

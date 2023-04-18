@@ -15,8 +15,8 @@ typedef struct {
   uint num_jobs;
   char **job_names;
   uint **job_parties_needed;
-  uint job_time_duration; //minutes
-  uint job_occurances; // number of job reps a week.
+  uint *job_time_duration; //minutes
+  uint *job_occurances; // number of job reps a week.
 } TimeTableSpecification;
 
 #endif
