@@ -73,7 +73,7 @@ void deleteStringList(StrList *list) {
 uint getLengthList(StrList *list) {
   StrList *curr_node = list;
   uint i = 0;
-  for (; curr_node->next != NULL; i++)
+  for (; curr_node->next != NULL; i++, curr_node = curr_node->next)
     ;
   return i;
 }
@@ -95,3 +95,11 @@ void printStringList(StrList *list){
   }
   printf("%u: %p. str:%s next:%p\n", i, curr_node, curr_node->str, curr_node->next);
 }
+
+string getElementList(StrList *list, uint n) {
+  StrList *curr_node = list;
+  // Didn't handle the error here possible overflow.
+  for (uint i = 0; i < n; i++, curr_node = curr_node->next);
+  return curr_node->str;
+}
+

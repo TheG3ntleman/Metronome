@@ -39,9 +39,11 @@ typedef struct StrList {
 StrList* makeStringList();
 void deleteStringList(StrList *list);
 uint getLengthList(StrList *list);
+string getElementList(StrList *list, uint n);
 void addStringToList(StrList *list, string str);
 
 void printStringList(StrList *list);
+
 
 // Need to add hashmap stuff
 // 2 linked list implementations will be made here

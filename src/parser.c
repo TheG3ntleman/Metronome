@@ -58,6 +58,15 @@ uint lexer(char *buffer, uint startpoint, uint size, Token *token) {
   return size;
 }
 
+int getStringIndex(char **strList, uint listLength, char *str) {
+  for (uint i = 0; i < listLength; i++) {
+    if (stringCompare(strList[i], str)) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 void makeTimeTableSpecification(char *buffer, uint size) {
   Token token;
   
@@ -75,6 +84,9 @@ void makeTimeTableSpecification(char *buffer, uint size) {
   char mode_1_1 = 0;
   uint mode_1_1_num = 0;
 
+  char mode_2_1 = 0;
+  uint mode_2_1_num = 0;
+
 
   TimeTableSpecification *tts = malloc(sizeof(TimeTableSpecification));
 
@@ -84,10 +96,11 @@ void makeTimeTableSpecification(char *buffer, uint size) {
   tts->party_names = malloc(sizeof(char*) * 100); // can store a maximum of 100 parties
 
   StrList *party_names = makeStringList();  
+  StrList *job_names = makeStringList();
 
   for (uint i = 0; i < size -1;) {
     i = lexer(buffer, i, size, &token);
-
+    printf("%u: %u\n", i, size);
 
     // Token.type handling mode
     switch (token.type) {
@@ -96,6 +109,9 @@ void makeTimeTableSpecification(char *buffer, uint size) {
         break;
       case TOKEN_JOBS:
         mode = 2;
+        tts->job_parties_needed = malloc(sizeof(uint *) * tts->num_jobs);
+        tts->job_time_duration = malloc(sizeof(uint) * tts->num_jobs);
+        tts->job_occurances = malloc(sizeof(uint) * tts->num_jobs);
         break;
     };
 
@@ -112,13 +128,63 @@ void makeTimeTableSpecification(char *buffer, uint size) {
     if (mode_1_1_num > tts->num_parties) {
       mode = 0;
     }
+
+    if (mode == 2 && token.type == TOKEN_NUMBER && !mode_2_1) {
+      mode_2_1 = 1;
+      tts->num_jobs = atoi(token.str);
+      tts->job_names = malloc(sizeof(char *) * tts->num_parties);
+    }
+
+    if (mode == 2 && token.type == IDENTIFIER && mode_2_1 == 1) {
+      // need some uint linked list stuff here.
+      tts->job_names[mode_2_1_num++] = stringDuplicate(token.str);
+      mode_2_1 = 2;
+    }
+
+    if (mode == 2 && token.type == IDENTIFIER && mode_2_1 == 2) {
+      addStringToList(job_names, token.str);
+    }
+ 
+    if (mode == 2 && token.type == TOKEN_NUMBER && mode_2_1 == 3) {
+      tts->job_occurances[mode_2_1_num - 1] = atoi(token.str);
+      mode_2_1 = 1;
+    }  
+
+    if (mode == 2 && token.type == TOKEN_NUMBER && mode_2_1 == 2) {
+      printf("lengthSD: %u, mode_num: %u\n", getLengthList(job_names), mode_2_1_num);
+      tts->job_parties_needed[mode_2_1_num - 1] = malloc(sizeof(uint*) * getLengthList(job_names) + 1);
+      for (uint j = 0; j < getLengthList(job_names); j++) {
+        tts->job_parties_needed[mode_2_1_num - 1][j] = 2 + getStringIndex(tts->party_names, tts->num_parties, getElementList(job_names, j));
+      }
+      tts->job_parties_needed[mode_2_1_num - 1][getLengthList(job_names)] = 0; 
+      tts->job_time_duration[mode_2_1_num - 1] = atoi(token.str); 
+      mode_2_1 = 3;
+      printf("SAME\n");
+    }
+
+
+    if (mode_2_1_num > tts->num_jobs) {
+      mode = 0;
+    }
+    
   }
 
-    printf("PRINTING STORED PARTY NAMES\n");
-    printStringList(party_names); 
+  printf("PRINTING STORED PARTY NAMES\n");
+  printStringList(party_names); 
 
   for (uint i = 0; i < tts->num_parties; i++) 
     printf("%u. %s\n", i, tts->party_names[i]);     
+
+
+  printf("PRINTING JOB NAMES AND DETAILS\n");
+  for (uint i = 0; i <tts->num_jobs; i++) {
+    printf("%s\n", tts->job_names[i]);
+    printf("PARTY NEEDED, thing: %u:\n", tts->job_parties_needed[i][0]);
+    for (uint j = 0; tts->job_parties_needed[i][j] != 0; j++) {
+      printf("%s\n", tts->party_names[tts->job_parties_needed[i][j] - 2]);
+    }
+  }
+   
 
 }
 

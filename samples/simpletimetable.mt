@@ -1,6 +1,6 @@
 PARTIES 6
 
-Dr.ABC;
+Dr.A;
 Dr.B;
 Class.A;
 Class.B;
