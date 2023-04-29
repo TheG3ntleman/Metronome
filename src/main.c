@@ -1,4 +1,6 @@
 #include "common/file.h"
+#include "common/string.h"
+#include "timetable.h"
 
 int main(int argc, char **argv) {
 
@@ -9,5 +11,14 @@ int main(int argc, char **argv) {
     fileClose(file);
   }
   
+  // Testing tts
+  TimeTableSpecification *tts = ttsMake();
+  ttsAddParty(tts, "PHYSICS-II");
+  ttsAddParty(tts, "ENGLISH");
+  ttsAddParty(tts, "MECHANICS");
+  ttsAddParty(tts, "REAL_ANALYSIS");
+  ttsPrintSpecifications(tts);
+  ttsDelete(tts);
+
   return 0;
 }
