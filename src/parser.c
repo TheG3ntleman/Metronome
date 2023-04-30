@@ -15,7 +15,6 @@ char isNumber(char *str) {
 }
 
 uint tokenLex(char * buffer, Token *tok, uint point) {
-  //tokenClean(tok);
   
   tok->type = TOKEN_IDENTIFIER;
   uint i = point;
@@ -132,6 +131,7 @@ TimeTableSpecification * ttsFromBuffer(char *buffer, uint size) {
           } else if (job_mode == 2) {
             job_mode = 3;
             ttsAddJobRepititions(tts, job_name, atoi(tok->str));
+            stringDelete(job_name);
           }
         } else if (tok->type == TOKEN_ENDLINE) {
           job_mode = 0;
@@ -144,6 +144,5 @@ TimeTableSpecification * ttsFromBuffer(char *buffer, uint size) {
   }
 
   tokenDelete(tok);
-
   return tts;
 }
