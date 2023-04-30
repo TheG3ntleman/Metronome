@@ -13,10 +13,14 @@ int main(int argc, char **argv) {
   
   // Testing tts
   TimeTableSpecification *tts = ttsMake();
-  ttsAddParty(tts, "PHYSICS-II");
-  ttsAddParty(tts, "ENGLISH");
-  ttsAddParty(tts, "MECHANICS");
-  ttsAddParty(tts, "REAL_ANALYSIS");
+  ttsAddParty(tts, "CLASS_A");
+  ttsAddParty(tts, "CLASS_B");
+  ttsAddParty(tts, "CLASS_C");
+  ttsAddParty(tts, "CLASS_D");
+  ttsAddJob(tts, "Physics-II");
+  ttsAddJobRequirement(tts, "Physics-II", "CLASS_C");
+  ttsAddJobRepititions(tts, "Physics-II", 5);
+  ttsAddJobDuration(tts, "Physics-II", 30);
   ttsPrintSpecifications(tts);
   ttsDelete(tts);
 
