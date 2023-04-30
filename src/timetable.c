@@ -96,7 +96,7 @@ void ttsAddJob(TimeTableSpecification *tts, char *job) {
 
   // Making new job array and copying old 
   // contents as well as putting in the new name 
-  char ** job_names = malloc(sizeof(char *) * (tts->num_parties + 1));
+  char ** job_names = malloc(sizeof(char *) * (tts->num_jobs + 1));
 
   uint i = 0;
   for (; i < tts->num_jobs; i++)
