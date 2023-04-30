@@ -1,1 +1,9 @@
-hello this is a test.
+PARTIES 
+classA
+classB
+classC
+classD
+
+JOBS
+Physics classA classB classC classD
+Chemistry classA classB

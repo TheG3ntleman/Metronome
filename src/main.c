@@ -1,6 +1,7 @@
 #include "common/file.h"
 #include "common/string.h"
 #include "timetable.h"
+#include "parser.h"
 
 int main(int argc, char **argv) {
 
@@ -8,6 +9,10 @@ int main(int argc, char **argv) {
   if (argc > 1) {
     File *file = fileOpen(argv[1]);
     printf("file contents: %s\n", file->str);
+
+    // Testing parsing
+    ttsFromBuffer(file->str, file->size); 
+
     fileClose(file);
   }
   

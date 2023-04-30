@@ -8,6 +8,16 @@ uint stringLength(char *str) {
   return i + 1; // Adding one to count '\0'
 }
 
+void stringCopy(char *to, char *from) {
+  // Assumes that sufficient memory has 
+  // been allocated already.
+  uint i;
+  for (i = 0; from[i] != '\0'; i++) {
+    to[i] = from[i];
+}
+  to[i] = from[i];
+}
+
 char *stringDuplicate(char *str) {
   uint string_length = stringLength(str);
   char *to = malloc(sizeof(char) * string_length);
