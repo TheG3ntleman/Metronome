@@ -1,15 +1,16 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-// Compiling settings
-
-// Debug settings
-#define DEBUG
-#define MAX_DEBUG_STRING_FORMATTING_LENGTH 20
-
+// STD INCLUDES
 #include <stdio.h>
 #include <stdlib.h>
 
+// MISC INCLUDES
+#include "string.h"
+
+
 typedef unsigned int uint;
+typedef unsigned long ulong;
+typedef char* string;
 
 #endif

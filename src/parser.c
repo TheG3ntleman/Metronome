@@ -1,97 +1,149 @@
 #include "parser.h"
-#include <ctype.h>
+#include "common/string.h"
+#include "timetable.h"
 
-#define MAX_PARSE_WORD_LENGTH 100
+char isNumber(char *str) {
+  // If each character is a digit then the str is a number.
+  // floating point numbers are not numbers in .mt
 
-typedef enum {
-  IDENTIFIER,
-  TOKEN_PARTIES,
-  TOKEN_JOBS,
-  TOKEN_NUMBER,
-  TOKEN_END,
-  TOKEN_EOF
-} TokenType;
-
-typedef struct  {
-  char str[MAX_PARSE_WORD_LENGTH]; 
-  TokenType type;
-  uint wlen;
-} Token;
-
-char isnumber(char *str) {
   for (uint i = 0; str[i] != '\0'; i++) {
     if (!isdigit(str[i]))
       return 0;
   }
-  return 1;
-}
-
-char strcomp(char *str_a, char *str_b) {
-  uint i;
-  for (i = 0; str_a[i] != '\0'; i++) {
-    if (str_a[i] != str_b[i])
-      return 0;
-  }
-
-  if (str_b[i] != '\0')
-    return 0;
-
-  return 1;
-}
-
-uint lexer(char *buffer, uint startpoint, uint size, Token *token) {
   
-  token->wlen = 0;
-  uint i = startpoint;
+  return 1;
+}
 
-  for (; i < size + 1; i++) {
-    if (buffer[i] == ' ' || buffer[i] == '\n' || buffer[i] == '\t' || buffer[i] == EOF || buffer[i] == ';') {
-      if (token->wlen > 0) {
-        token->str[token->wlen] = '\0';
-        uint jump =  1;
-        if (buffer[i] == ';') {
-          jump = 0;
-        }
-        if (strcomp(token->str, "PARTIES")) 
-          token->type = TOKEN_PARTIES;
-        else if (strcomp(token->str, "JOBS"))
-          token->type = TOKEN_JOBS;
-        else if (isnumber(token->str)){
-          token->type = TOKEN_NUMBER;
-        } else {
-          token->type = IDENTIFIER;
-        }
-        return i + jump;
-      }
-      if (token->wlen == 0 && buffer[i] == ';') {
-        token->str[token->wlen++] = ';';
-        token->str[token->wlen] = '\0';
-        token->type = TOKEN_END;
-        return i + 1;
-      }
-    } else {
-      token->str[token->wlen++] = buffer[i];
+uint tokenLex(char * buffer, Token *tok, uint point) {
+  //tokenClean(tok);
+  
+  tok->type = TOKEN_IDENTIFIER;
+  uint i = point;
+  uint wlen = 0;
+
+  for (; buffer[i] != EOF; i++) {
+    if (buffer[i] == ' ' || buffer[i] == '\n' || buffer[i] == '\t') {
+      if (wlen == 0 && buffer[i] == '\n') {
+        tok->type = TOKEN_ENDLINE;
+        stringCopy(tok->str, "<NEWLINE>");
+      } else 
+        tok->str[wlen] = '\0';
+      break;
     }
+    tok->str[wlen++] = buffer[i];
   }
 
-  token->type = TOKEN_EOF;
-  return size;
-}
-
-void makeTimeTableSpecification(char *buffer, uint size) {
-  Token token;
-  
-#ifdef DEBUG
-  for (uint i = 0; i < size - 1;) {
-    i = lexer(buffer, i, size, &token);
-    printf("token_string: %20s, token_length: %u, token_type: %d, point: %u\n", token.str, token.wlen, token.type, i);
+  if (wlen == 0) { 
+    if (buffer[i] == EOF)
+      tok->type = TOKEN_EOF;
+    else if (buffer[i] == '\n')
+      tok->type = TOKEN_ENDLINE;
+  } else if (stringCompare(tok->str, "PARTIES")) {
+    tok->type = TOKEN_PARTIES;
+  } else if (stringCompare(tok->str, "JOBS")) {
+    tok->type = TOKEN_JOBS; 
+  } else if (isNumber(tok->str)) {
+    tok->type = TOKEN_NUMBERS;
+  } else {
+    tok->type = TOKEN_IDENTIFIER;
   }
-#endif
+
+  printf("at point: %4u found \"%10s\" of type %d\n", point, tok->str, (int)tok->type);
+
+  if (buffer[i] == '\n') {
+    if (wlen == 0)
+      return i + 1;
+    else 
+      return i;
+  } else 
+    return i + 1;
 
 }
 
-void deleteTimeTableSpecification(TimeTableSpecification *time_table_specification) {
-
+Token *tokenMake() {
+  Token *tok = malloc(sizeof(Token));
+  tok->str = malloc(sizeof(char) * MAXIMUM_PARSE_WORD_LENGTH);
+  tok->type = 0;
+  return tok;
 }
 
+void tokenClean(Token *tok) {
+  free(tok->str);
+  tok->str = NULL;
+  tok->type = 0;
+}
 
+void tokenDelete(Token *tok) {
+  // Deleting token
+  free(tok->str);
+  free(tok);
+}
+
+TimeTableSpecification * ttsFromBuffer(char *buffer, uint size) {
+  uint i = 0; 
+  Token *tok = tokenMake();
+
+  TimeTableSpecification *tts = ttsMake();
+
+  // 0 stands for searching for a
+  // command mode.
+  // 1 stands for scanning for 
+  // PARTY names 
+  char mode = 0;
+
+  char job_mode = 0;
+  char *job_name;
+
+  while (i < size) {
+    i = tokenLex(buffer, tok, i);
+
+    if (tok->type == TOKEN_PARTIES) {
+      mode = 1;
+    } else if (tok->type == TOKEN_JOBS) {
+      mode = 2;
+      job_mode = 0;
+    } else {
+      if (mode == 0) {
+        printf("Found identifier \"%s\" without receiving a scanning mode command.\n", tok->str);
+        exit(0);
+      } else if (mode == 1){
+        if (tok->type == TOKEN_IDENTIFIER) {
+          ttsAddParty(tts, tok->str);
+        } else if (tok->type == TOKEN_NUMBERS) {
+          printf("Found number during parties scanning mode.\n");
+        } else if (tok->type == TOKEN_ENDLINE) {
+
+        } else if (tok->type == TOKEN_EOF) {
+
+        }
+      } else if (mode == 2) {
+        if (tok->type == TOKEN_IDENTIFIER) {
+          if (job_mode == 0) {
+            ttsAddJob(tts, tok->str);
+            job_name = stringDuplicate(tok->str);
+            job_mode = 1;
+          } else if (job_mode == 1) {
+            ttsAddJobRequirement(tts, job_name, tok->str);
+          }
+        } else if (tok->type == TOKEN_NUMBERS) {
+          if (job_mode == 1) {
+            job_mode = 2;
+            ttsAddJobDuration(tts, job_name, atoi(tok->str));
+          } else if (job_mode == 2) {
+            job_mode = 3;
+            ttsAddJobRepititions(tts, job_name, atoi(tok->str));
+          }
+        } else if (tok->type == TOKEN_ENDLINE) {
+          job_mode = 0;
+        } else if (tok->type == TOKEN_EOF) {
+
+        }
+      }
+    }
+
+  }
+
+  tokenDelete(tok);
+
+  return tts;
+}
