@@ -8,16 +8,18 @@ int main(int argc, char **argv) {
   // TODO: Argument parsing
   if (argc > 1) {
     File *file = fileOpen(argv[1]);
-    printf("file contents: %s\n", file->str);
+    //printf("file contents: %s\n", file->str);
 
     // Testing parsing
-    ttsFromBuffer(file->str, file->size); 
+    TimeTableSpecification * tts = ttsFromBuffer(file->str, file->size); 
+    ttsPrintSpecifications(tts);
 
+    ttsDelete(tts);
     fileClose(file);
   }
   
   // Testing tts
-  TimeTableSpecification *tts = ttsMake();
+  /*TimeTableSpecification *tts = ttsMake();
   ttsAddParty(tts, "CLASS_A");
   ttsAddParty(tts, "CLASS_B");
   ttsAddParty(tts, "CLASS_C");
@@ -27,7 +29,7 @@ int main(int argc, char **argv) {
   ttsAddJobRepititions(tts, "Physics-II", 5);
   ttsAddJobDuration(tts, "Physics-II", 30);
   ttsPrintSpecifications(tts);
-  ttsDelete(tts);
+  ttsDelete(tts);*/
 
   return 0;
 }

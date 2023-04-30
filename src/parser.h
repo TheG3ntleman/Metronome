@@ -3,6 +3,7 @@
 
 #include <ctype.h>
 #include "common/common.h"
+#include "timetable.h"
 
 #define MAXIMUM_PARSE_WORD_LENGTH 150
 
@@ -30,6 +31,6 @@ Token *tokenMake();
 void tokenClean(Token *tok);
 void tokenDelete(Token *tok);
 
-void ttsFromBuffer(char *buffer, uint size);
+TimeTableSpecification * ttsFromBuffer(char *buffer, uint size);
 
 #endif

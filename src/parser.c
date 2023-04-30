@@ -1,5 +1,6 @@
 #include "parser.h"
 #include "common/string.h"
+#include "timetable.h"
 
 char isNumber(char *str) {
   // If each character is a digit then the str is a number.
@@ -78,12 +79,71 @@ void tokenDelete(Token *tok) {
   free(tok);
 }
 
-
-void ttsFromBuffer(char *buffer, uint size) {
+TimeTableSpecification * ttsFromBuffer(char *buffer, uint size) {
   uint i = 0; 
   Token *tok = tokenMake();
 
+  TimeTableSpecification *tts = ttsMake();
+
+  // 0 stands for searching for a
+  // command mode.
+  // 1 stands for scanning for 
+  // PARTY names 
+  char mode = 0;
+
+  char job_mode = 0;
+  char *job_name;
+
   while (i < size) {
     i = tokenLex(buffer, tok, i);
+
+    if (tok->type == TOKEN_PARTIES) {
+      mode = 1;
+    } else if (tok->type == TOKEN_JOBS) {
+      mode = 2;
+      job_mode = 0;
+    } else {
+      if (mode == 0) {
+        printf("Found identifier \"%s\" without receiving a scanning mode command.\n", tok->str);
+        exit(0);
+      } else if (mode == 1){
+        if (tok->type == TOKEN_IDENTIFIER) {
+          ttsAddParty(tts, tok->str);
+        } else if (tok->type == TOKEN_NUMBERS) {
+          printf("Found number during parties scanning mode.\n");
+        } else if (tok->type == TOKEN_ENDLINE) {
+
+        } else if (tok->type == TOKEN_EOF) {
+
+        }
+      } else if (mode == 2) {
+        if (tok->type == TOKEN_IDENTIFIER) {
+          if (job_mode == 0) {
+            ttsAddJob(tts, tok->str);
+            job_name = stringDuplicate(tok->str);
+            job_mode = 1;
+          } else if (job_mode == 1) {
+            ttsAddJobRequirement(tts, job_name, tok->str);
+          }
+        } else if (tok->type == TOKEN_NUMBERS) {
+          if (job_mode == 1) {
+            job_mode = 2;
+            ttsAddJobDuration(tts, job_name, atoi(tok->str));
+          } else if (job_mode == 2) {
+            job_mode = 3;
+            ttsAddJobRepititions(tts, job_name, atoi(tok->str));
+          }
+        } else if (tok->type == TOKEN_ENDLINE) {
+          job_mode = 0;
+        } else if (tok->type == TOKEN_EOF) {
+
+        }
+      }
+    }
+
   }
+
+  tokenDelete(tok);
+
+  return tts;
 }
