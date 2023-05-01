@@ -31,4 +31,8 @@ void ttsAddJobRepititions(TimeTableSpecification *tts, char *job, uint reps);
 
 void ttsPrintSpecifications(TimeTableSpecification *tts);
 
+typedef struct {
+
+} timetable;
+
 #endif

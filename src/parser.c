@@ -134,6 +134,10 @@ TimeTableSpecification * ttsFromBuffer(char *buffer, uint size) {
             stringDelete(job_name);
           }
         } else if (tok->type == TOKEN_ENDLINE) {
+          if (job_mode != 3 && job_mode != 0) {
+            printf("Job specfication incomplete.\n");
+            exit(0);
+          }
           job_mode = 0;
         } else if (tok->type == TOKEN_EOF) {
 
