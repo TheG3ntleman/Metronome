@@ -151,6 +151,7 @@ void ttsAddJob(TimeTableSpecification *tts, char *job) {
 
 
 }
+
 int ttsGetJobIndex(TimeTableSpecification *tts, char *job) {
   uint i = 0;
   char match = 0;
@@ -160,6 +161,18 @@ int ttsGetJobIndex(TimeTableSpecification *tts, char *job) {
     return i;
   else
     return -1;
+}
+
+void ttsAddVenue(TimeTableSpecification *tts, char *venue) {
+  
+}
+
+int ttsGetVenueIndex(TimeTableSpecification *tts, char *job) {
+
+}
+
+void ttsAddVenueCapacity(TimeTableSpecification *tts, char *venue, uint capacity) {
+
 }
 
 void ttsAddJobRequirement(TimeTableSpecification *tts, char *job, char *party) {
