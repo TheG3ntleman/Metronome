@@ -24,13 +24,18 @@ TimeTableSpecification* ttsMake() {
   
   tts->num_parties = 0;
   tts->num_jobs = 0;
+  tts->num_venues = 0;
 
   tts->party_names = NULL;
+
   tts->job_names = NULL;
   tts->job_party_requirement_lenghts = NULL;
   tts->job_party_requirements = NULL;
   tts->job_time_durations = NULL;
   tts->job_repetitions_per_cycle = NULL;
+
+  tts->venue_names = NULL;
+  tts->venue_capacities = NULL;
 
   return tts;
 }
@@ -60,6 +65,14 @@ void ttsDelete(TimeTableSpecification *tts) {
 
   // Deleting job_repetitions_per_cycle
   free(tts->job_repetitions_per_cycle);
+
+  // Deleting venue names
+  for (uint i = 0; i < tts->num_venues; i++)
+    stringDelete(tts->venue_names[i]);
+  free(tts->venue_names);
+
+  // Deletingh venue capacities
+  free(tts->venue_capacities);
 
   free(tts);
 } 
@@ -165,13 +178,60 @@ int ttsGetJobIndex(TimeTableSpecification *tts, char *job) {
 
 void ttsAddVenue(TimeTableSpecification *tts, char *venue) {
   
+  char **venue_names = malloc(sizeof(char*) * (tts->num_venues + 1));
+  
+  // copying old venue names into new list
+  uint i = 0;
+  for(; i < tts->num_venues; i++) 
+    venue_names[i] = tts->venue_names[i];
+  
+  venue_names[i] = stringDuplicate(venue);
+
+  free(tts->venue_names);
+  tts->venue_names = venue_names;
+
+  // Now doing the exact same for venue capacities
+  uint *venue_capacities = malloc(sizeof(uint) * (tts->num_venues + 1));
+
+  i = 0;
+  for (; i < tts->num_venues; i++)
+    venue_capacities[i] = tts->venue_capacities[i];
+
+  venue_capacities[i] = 0;
+  
+  free(tts->venue_capacities);
+  tts->venue_capacities = venue_capacities;
+
+  tts->num_venues++;
 }
 
-int ttsGetVenueIndex(TimeTableSpecification *tts, char *job) {
+int ttsGetVenueIndex(TimeTableSpecification *tts, char *venue) {
+
+  char match = 0;
+  uint i = 0;
+  for (; i < tts->num_venues; i++) {
+    if (stringCompare(tts->venue_names[i], venue)) {
+      match = 1;
+      break;
+    }
+  }
+
+  if (match)
+    return i;
+  else
+    return -1;
 
 }
 
 void ttsAddVenueCapacity(TimeTableSpecification *tts, char *venue, uint capacity) {
+  int index = ttsGetVenueIndex(tts, venue);
+
+  if (index == -1) {
+    fprintf(stderr, "Reference to non-existant venue (%s).\n", venue);
+    exit(-1);
+  }
+
+  tts->venue_capacities[index] = capacity;
 
 }
 
@@ -229,25 +289,29 @@ void ttsPrintSpecifications(TimeTableSpecification *tts) {
 
   // Printing parties
 
-  printf("\nPARTY NAMES: (%u parties found)\n", tts->num_parties);
+  printf("\nPARTY NAMES: (%u parties found)\n\n", tts->num_parties);
 
   for (uint i = 0; i < tts->num_parties; i++) 
-    printf("%u. %s\n", i + 1, tts->party_names[i]);
+    printf("\t%u. %s\n", i + 1, tts->party_names[i]);
  
   // Printing jobs
 
   printf("\nJOBS NAMES: (%u jobs found)\n\n", tts->num_jobs);
   for (uint i = 0; i < tts->num_jobs; i++) {
-    printf("%u. %s, %u minutes, %u reps\n", i + 1, tts->job_names[i], tts->job_time_durations[i], tts->job_repetitions_per_cycle[i]);
+    printf("\t%u. %s, %u minutes, %u reps\n", i + 1, tts->job_names[i], tts->job_time_durations[i], tts->job_repetitions_per_cycle[i]);
     uint * job_party_requirement = tts->job_party_requirements[i];
     if (job_party_requirement != NULL) {
       for (uint j = 0; j < tts->job_party_requirement_lenghts[i]; j++) {
-        printf("\t%u. %s\n", j + 1, tts->party_names[job_party_requirement[j]]);
+        printf("\t\t%u. %s\n", j + 1, tts->party_names[job_party_requirement[j]]);
       }
     } else
       printf("\tNO REQUIREMENTS PROVIDED.\n");
   }
 
+  printf("\nVENUE NAMES: (%u venues found)\n\n", tts->num_venues);
+  for (uint i = 0; i < tts->num_venues; i++) {
+    printf("\t%u. %s, capacity: %u\n", i + 1, tts->venue_names[i], tts->venue_capacities[i]);
+  }
 }
 
 
