@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
   }
   
   // Testing tts
-  /*TimeTableSpecification *tts = ttsMake();
+  TimeTableSpecification *tts = ttsMake();
   ttsAddParty(tts, "CLASS_A");
   ttsAddParty(tts, "CLASS_B");
   ttsAddParty(tts, "CLASS_C");
@@ -40,8 +40,10 @@ int main(int argc, char **argv) {
   ttsAddJobRequirement(tts, "Physics-II", "CLASS_C");
   ttsAddJobRepititions(tts, "Physics-II", 5);
   ttsAddJobDuration(tts, "Physics-II", 30);
+  ttsAddVenue(tts, "ELT_2");
+  ttsAddVenueCapacity(tts, "ELT_2", 300);
   ttsPrintSpecifications(tts);
-  ttsDelete(tts);*/
+  ttsDelete(tts);
 
   return 0;
 }
