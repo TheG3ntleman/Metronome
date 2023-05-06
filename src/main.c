@@ -25,13 +25,12 @@ int main(int argc, char **argv) {
      * */
 
      
-
     ttsDelete(tts);
     fileClose(file);
   }
   
   // Testing tts
-  TimeTableSpecification *tts = ttsMake();
+  /*TimeTableSpecification *tts = ttsMake();
   ttsAddParty(tts, "CLASS_A");
   ttsAddParty(tts, "CLASS_B");
   ttsAddParty(tts, "CLASS_C");
@@ -43,7 +42,7 @@ int main(int argc, char **argv) {
   ttsAddVenue(tts, "ELT_2");
   ttsAddVenueCapacity(tts, "ELT_2", 300);
   ttsPrintSpecifications(tts);
-  ttsDelete(tts);
+  ttsDelete(tts);*/
 
   return 0;
 }

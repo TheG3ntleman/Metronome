@@ -41,7 +41,9 @@ uint tokenLex(char * buffer, Token *tok, uint point) {
     tok->type = TOKEN_PARTIES;
   } else if (stringCompare(tok->str, "JOBS")) {
     tok->type = TOKEN_JOBS; 
-  } else if (isNumber(tok->str)) {
+  } else if (stringCompare(tok->str, "VENUES")) {
+    tok->type = TOKEN_VENUE;
+  }else if (isNumber(tok->str)) {
     tok->type = TOKEN_NUMBERS;
   } else {
     tok->type = TOKEN_IDENTIFIER;
@@ -93,6 +95,9 @@ TimeTableSpecification * ttsFromBuffer(char *buffer, uint size) {
   char job_mode = 0;
   char *job_name;
 
+  char venue_mode = 0;
+  char *venue_name;
+
   while (i < size) {
     i = tokenLex(buffer, tok, i);
 
@@ -101,7 +106,9 @@ TimeTableSpecification * ttsFromBuffer(char *buffer, uint size) {
     } else if (tok->type == TOKEN_JOBS) {
       mode = 2;
       job_mode = 0;
-    } else {
+    } else if (tok->type == TOKEN_VENUE) {
+      mode = 3;
+    }else {
       if (mode == 0) {
         printf("Found identifier \"%s\" without receiving a scanning mode command.\n", tok->str);
         exit(0);
@@ -141,6 +148,20 @@ TimeTableSpecification * ttsFromBuffer(char *buffer, uint size) {
           job_mode = 0;
         } else if (tok->type == TOKEN_EOF) {
 
+        }
+      } else if (mode == 3) {
+        if (tok->type == TOKEN_IDENTIFIER) {
+          if (venue_mode == 0) {
+            ttsAddVenue(tts, tok->str);
+            venue_name = stringDuplicate(tok->str);
+            venue_mode = 1;
+          } 
+        } else if (tok->type == TOKEN_NUMBERS) {
+          if (venue_mode == 1) {
+            ttsAddVenueCapacity(tts, venue_name, atoi(tok->str));
+            venue_mode = 0;
+            stringDelete(venue_name);
+          }
         }
       }
     }
