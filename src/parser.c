@@ -49,7 +49,7 @@ uint tokenLex(char * buffer, Token *tok, uint point) {
     tok->type = TOKEN_IDENTIFIER;
   }
 
-  printf("at point: %4u found \"%10s\" of type %d\n", point, tok->str, (int)tok->type);
+  //printf("at point: %4u found \"%10s\" of type %d\n", point, tok->str, (int)tok->type);
 
   if (buffer[i] == '\n') {
     if (wlen == 0)
