@@ -1,0 +1,101 @@
+\documentclass[11pt]{book}
+
+% Fonts and aesthetic related stuff
+
+\usepackage[T1]{fontenc}
+\usepackage{librebaskerville}
+
+% Math related stuff
+
+\usepackage{amsmath, amssymb}
+
+\title {\textbf{Time tabling}}
+\author {Abhirath Sangala}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\part{General Time Tabling}
+
+\chapter{Introduction}
+
+The aim is to create a flexible system for managing timetables that can be easily customized for different needs. We will accomplish this by first creating a general framework for timetabling and then showing how it can solve a specific problem, the \textit{University Course Timetabling Problem} (\textbf{UCTP}). In this introductory chapter, we will address three key questions: Why is it important, What needs to be done, and How to approach it.
+
+\section{Motivation}
+
+\section{Precise formulation of  problem}
+A time table specification revolves around three main actors:
+\begin{enumerate}
+
+  \item \textbf{Parties}($P$): The parties involved in the activities taking place in the time table.
+  \item \textbf{Meetings}($M$): A meeting is an interaction that occurs between parties.
+  \item \textbf{Places}($L$): Meetings occur in places.
+\end{enumerate}
+Each one of these actors may have requirements which are compulsory:
+\begin{enumerate}
+
+  \item \textbf{Party requirements}: A party may have a set of requirements. Ex. Not working for more than $x$ hours in a day.
+  \item \textbf{Meeting requirements}: A meeting may have requiremets. Ex. Requires the prescence of certain parties to take place.
+  \item \textbf{Place requirements}:  A place may have requirements. Ex. A place may only be able to accomodate a perticular number of people.
+\end{enumerate}
+For a complete list of considered requirements refer to \textit{Appendix-A}. Apart from these 3 actors there is a fourth, time($T$). Available timings where meetings can take place must also be specified. Time is a little special compared to the other factors, as the requirements imposed by time are mostly common to all domains.
+
+Each one of these actors may have preferences:
+\begin{enumerate}
+
+  \item \textbf{Party preferences}: Likes it if all meetings are clumped together 
+  \item \textbf{Meeting preferences}: Would like it if there are less than $x$ meetings in a cycle.
+  \item \textbf{Place preferences}: Would like it if there are less than $y$ number of people at any instance of time.
+\end{enumerate}
+Time is unique in that it does not have preferences. Preferences \textbf{must be concrete}, i.e there exists a preference function which provides a rating of how good or bad a time table solution is. In literature, preferences are called \textit{soft-constraints} whereas requirements are called \textit{hard-constraints}.
+
+From here on out, $P$ refers to some subset of the power set of  $P$.
+
+\subsection{Solution}
+A subset $A\subset P\times M \times L \times  T$ is said to be a solution to the time table specification given that \textit{all meetings take place in} $A$, \textit{meetings must be singular}, and \textit{no conflicts should be present}.
+
+\subsubsection{Meetings taking place}
+A meeting $m\in M$ is said to take place in $A\subset P\times M \times L \times T$ iff $$\exists a\in A \text{ s.t } a = (p', m, l', t')$$ where $p'\in P, l' \in L, t' \in T$.
+
+\subsubsection{Singularity}
+A actor instance $x$ is said to be singular if $$\exists a\in A \text{ s.t } a = (\cdots, x, \cdots) \to \not\exists a'\in A \text{ s.t } a' \neq a \text{and} a = (\cdots, x, \cdots)$$
+
+\subsubsection{Conflicts}
+A conflict is a situation where for a $t\in T \exists {a_i}$ such that,
+ COMPLETE this.
+
+\subsection{Feasibility}
+A solution which satisfies all requirements is feasible.
+
+\subsection{Optimality}
+A solution is said to optimal if it satisfies the \textit{global preference function} better than any other solution. 
+
+\subsubsection{Global preference function}
+
+
+\section{Solution methodology in brief}
+
+\part{Specific Time Tabling Problems}
+
+\chapter{University Course Time Tabling Problem (UCTP)}
+
+\section{Terminology}
+
+\section{Requirements}
+
+\begin{enumerate}
+  \item 
+\end{enumerate}
+
+\section{Preferences}
+
+\section{References}
+\begin{enumerate}
+  \item First three sections have been paraphrased from \textit{"Problem Description of General UCTP.pdf"}
+\end{enumerate}
+
+\end{document}
