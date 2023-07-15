@@ -1,0 +1,103 @@
+\documentclass[11pt]{book}
+
+\title{\Huge\textbf{Automatic Timetabling}}
+\author{Abhirath Sangala}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Purpose}
+The problem of time tabling is one that cannot be stated in a simple manner, as any attempts to go about formulating it in its entire generality will quickly devolve into something that is not quite simple at all.
+
+However, a highly abstracted version of the time tabling problem can be used to create a framework of effecient solvers, which can then be used to solve specific and concrete instances of the problem. This text is an enquiry in the feasibility of this approach.
+
+\section*{Book structure}
+This book is divided into two parts. The first part discusses the theoretical aspects of automatic time tabling and the second part leverages the framework developed in the first part to implement a solver for a specific and conrete instance of the problem.
+
+\chapter{Formulation of the problem}
+% I first make the argument that automatic timetabling in india is different from the most general case of CTT. The curriculum in indian universities is usually predefined and the extent of choice if minimal if not non-existant in the initial semester of any professional course. The rigidity of courses reduces the granular deviations and makes batches of student groups taking a particular course more uniform. This could be exploited to make a more effecient system.
+
+\section{A summary of existing formulation}
+
+\textit{Most information from this section can be found in arXiv:2201.07525v1}. 
+
+\subsection{Post - Enrolment Course Timetabling (PE-CTT)}
+In \textit{PE-CTT} a set of events, a set of periods, and a set of rooms are given. Time partitions are also specified, in terms of days and periods such that each period is a timeslot belonging to one day. 
+
+Then there are also requirements:
+\begin{enumerate}
+	\item there is a set of room features that may be required by events. Room features and capacity (in terms of seats) together result in a compatibility relation between rooms and events.
+
+	\item In addition, a precedence relation between events is also provided. Some events must be scheduled before others\dots
+
+	\item Finally the last constraints are the ones originated from an unavailablity relation stating that an event cannot be scheduled in some specified periods.
+\end{enumerate}
+
+The objective function is composed by three components that penalize the following cases: 
+\begin{enumerate}
+	\item A student attending an event in the last timeslot of a day. 
+	\item A student attending three (or more) events in successive timeslots in the same day. 
+	\item A student attending only one event in a day.
+\end{enumerate}
+\subsection{Curriculum - Based Course Timetabling (CB-CTT)}
+\textbf{A note on differences:} The main difference between the previous formulation and this stems from the notion of a course as a set of lectures that is absent in PE-CTT. Many constraints and objectives in CB-CCT are defined at the level of a course, whereas in PE-CTT constraints and objectives are always expressed at the level of the single event / lecture. We consider the varient of this formulation introduced in ITC-2007.
+
+\textbf{Short specfication:}
+
+\begin{itemize}
+
+	\item Each course consists of a fixed number of lectures to be scheduled in different periods.
+	\item We are given a number of periods divided in days and timeslots in the day. 
+	\item Each room has a capacity, specified as the number of available seats, but no other feature. 
+	\item A curriculum is a group of courses that potentially have students in common. As a consequence, lectures of courses belonging to the same curriculum are in conflict and cannot be scheduled in the same period. \textit{two courses are also in conflict if they are taught by the same teacher.}
+	\item The hard constraints involve: conflicts, teacher availability, and room occupancy. 
+	\item The objective function (soft constraints): is composed by four components that penalize the following cases:
+		\begin{enumerate}
+			\item The capacity of the room assigned to a lecture 
+			\item The lectures of a course are not spread into the given minimum number of days. 
+			\item The lecture is isolated i.e not adjacent to any  other in the same curriculum. 
+			\item The lecture of a course are not given all in the same room.
+		\end{enumerate}
+
+\end{itemize}
+
+\subsection{More complicated formulations}
+High - School Timetabling (XHSTT) and University Course Timetabling (ITC-2019) are two formulations which are substantially more complicated than the ones discussed till now. This is primarily due to the fact that these formulatiosn try to reduce the gap between an idealized and simplfied problem to one that is actually encountered in practice. We omit specifying these formulations in breif as that would simply not be possible.
+
+\section{A generalized formulation}
+
+\subsection{Terminology}
+
+\textit{Students and faculty members carry there normal informal meanings}
+
+\subsubsection{Party}
+A party is defined as a set of students or faculty members but not a set containing both. In this way the distinction between members of faculty and the student body enters the formulation.
+
+\subsubsection{Time Cycles}
+A time cycle is defined as the total duration in which a time table can be specified. This is usually a week. The time table is repeated the start of each new cycle.
+
+\subsubsection{Day}
+A day is a subinterval of the time cycle. Requirements periodically repeat in a day. I.E times where nothing can be conducted.
+
+\subsubsection{Time slot}
+A subinterval of the day.
+
+\subsubsection{Period}
+A period is defined as the following \textit{3-tuple} $(P_s, P_f, t)$ where $P_s$ is defined as the party of students, $P_f$ is defined as the party of faculty members (which is usually singleton), and t is a timeslot. \textit{Note: Parties could be empty}
+
+\subsubsection{Course}
+A course is defined as the \textit{3-tuple}: $({P_s}, {P_f}, P)$ where $P$ is a set of periods. Requirements of periods are specified, not for the entire semester, but only for one time cycle.
+
+\subsubsection{Curriculum}
+A curriculum is a set of courses such that there exists a party of students who are enrolled in all and no more courses but those specified in a curriculum.
+
+\subsection{Formulation}
+
+\begin{enumerate}
+	\item \textbf{Parties}(P): The parties involved in the activ 
+\end{enumerate}
+
+\end{document}
+

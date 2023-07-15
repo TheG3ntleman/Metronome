@@ -1,0 +1,2 @@
+@mainpage Metronome
+Metronome is an automatic time tabling system for the university course time tabling problem.
