@@ -1,5 +1,6 @@
 # We will mostly be dealing with tables as pandas
 # dataframes for ease of manipulation.
+import pandas as pd
 
 def stage1_parsing(specification_folder_path):
     """
@@ -24,6 +25,9 @@ def stage2_parsing(specification_folder_path):
         4 tables to be present: parties,sessions,venues,
         assignments.
     """
+    path_assignment = 'https://github.com/TheG3ntleman/Metronome/blob/master/data/sample/assignments.csv'
+    df = pd.read_csv(path_assignment)
+    
     print("Attempting stage2 parsing and conversion on"
         f" specifications in {specification_folder_path}")
 
