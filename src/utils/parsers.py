@@ -25,10 +25,25 @@ def stage2_parsing(specification_folder_path):
         4 tables to be present: parties,sessions,venues,
         assignments.
     """
-    path_assignment = 'data/sample/assignments.csv'
-    assignments_df = pd.read_csv(path_assignment)
+    #reading assignments csv
+    path_assignments = 'data/sample/assignments.csv'
+    assignments_df = pd.read_csv(path_assignments)
     
+    #reading parties csv
+    path_parties = 'data/sample/parties.csv'
+    parties_df = pd.read_csv(path_parties)
+    
+    #reading sessions csv
+    path_sessions = 'data/sample/sessions.csv'
+    sessions_df = pd.read_csv(path_sessions)
+    
+    #reading venue csv
+    path_venue = 'data/sample/venue.csv'
+    venue_df = pd.read_csv(path_venue)
     
     print("Attempting stage2 parsing and conversion on"
         f" specifications in {specification_folder_path}")
+    
+    return assignments_df,parties_df,sessions_df,venue_df
+    # we are using pandas library in the above function
 
