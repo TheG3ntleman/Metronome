@@ -3,8 +3,16 @@
 
 from utils import *
 
-problem_specfication_path = "../data/sample"
 
 if __name__ == "__main__":
-    stage2_specification_folder = stage1_parsing(problem_specfication_path)
-    
+    sample_specifications = Specifications("../data/sample/")
+    tables, conversion_table = sample_specifications.get_numerical_tables()
+    with open("output.txt", "w") as file:
+        for table in tables:
+            file.writelines(str(table) + "\n\n")
+        file.writelines("\n\nCONVERSION TABLE\n\n")
+        for key in conversion_table.keys():
+            file.writelines(str(key) + ":\n" + str(conversion_table[key]) + "\n\n")
+    sample_specifications.test()
+
+
