@@ -27,9 +27,9 @@ LFLAGS =
 # RECIPES
 
 all: metronome
-	# This is the default make recepie, it will build all required
-	# library files and run the necessary python files to start
-	# working on specified data files.
+# This is the default make recepie, it will build all required
+# library files and run the necessary python files to start
+# working on specified data files.
 	python $(ENTRY_POINT_FILE)
 
 metronome: $(OUTPUT_LIBRARY_FILE)
