@@ -14,18 +14,19 @@ class Specifications:
         # print(self.assignments, self.parties, self.sessions, self.venue)
 
 
-    def get_sensible_dict_from_pd(self, table):
-        new_table = {}
-        for key in table.keys():
-            new_table[key] = list(table[key].values())
-        return new_table
 
     def get_numerical_tables(self):
         # Must identify critical common columns
         conversion_table = {}
 
+        def get_sensible_dict_from_pd(table):
+            new_table = {}
+            for key in table.keys():
+                new_table[key] = list(table[key].values())
+            return new_table
+        
         def get_numerical_table(df):
-            raw_table = self.get_sensible_dict_from_pd(df.to_dict())
+            raw_table = get_sensible_dict_from_pd(df.to_dict())
             numerical_table = {}
             for column in raw_table.keys():
                 numerical_table[column] = []
@@ -45,8 +46,4 @@ class Specifications:
         sessions = get_numerical_table(self.sessions)
         assignments = get_numerical_table(self.assignments)
 
-        return [parties, venues, sessions, assignments], conversion_table
-    
-    def test(self):
-        print(self.get_sensible_dict_from_pd(self.parties.to_dict()))
-
+        return [parties, venues, sessions, assignments], conversion_table 
