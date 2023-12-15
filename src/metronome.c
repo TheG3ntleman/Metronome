@@ -28,10 +28,33 @@ void solveTimeTablingProblem(
 	uint *a_priority
 ) {
 
-	printf("I am here!\n");
-	printf("I am counting %u parties!\n", p_size);
-	for (uint i = 0; i < p_size; i++) {
-		printf("%u\n", p_strength[i]);
-	}
+	TimeTableSpecifications *specs = makeTimeTableSpecifications(
+		p_size,
+		p_party_id,
+		p_strength,
+
+		// For venue table
+		v_size,
+		v_venue_id,
+		v_venue_type,
+		v_capacity,
+		v_number_available,
+
+		// For session table
+		s_size,
+		s_session_id,
+		s_venue_type,
+		s_duration,
+
+		// For assignments table
+		a_size,
+		a_party_id,
+		a_session_id,
+		a_priority
+	);
+
+	printTimeTableSpecificationSummary(specs);
+
+	deleteTimeTableSpecifications(specs);
 
 }
