@@ -116,5 +116,8 @@ void printTimeTableSpecificationSummary(TimeTableSpecifications *specs) {
 	printf("\tThere are %u venues.\n", specs->venues->size);
 	printf("\tThere are %u sessions/periods to be scheduled.\n", specs->sessions->size);
 	printf("\tThere are %u assignments.\n", specs->assignments->size);
+
+	// Other stuff
+	printf("\tThe size of the solution space is 2^%u.\n", specs->venues->size * specs->sessions->size * (7 * 5));
 }
 

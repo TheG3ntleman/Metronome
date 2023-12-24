@@ -8,10 +8,12 @@ ENTRY_POINT_FILE = ./main.py
 # C-Lib Solver Related
 
 SOURCE_FILES = src/metronome.c \
-	       src/timetable/specifications.c
+	       src/timetable/specifications.c \
+	       src/timetable/timetable.c \
+	       src/timetable/solver.c
 
-HEADER_FILES = src/metronome.c \
-	       src/timetable/specifications.c
+HEADER_FILES = src/metronome.h \
+	       src/timetable/specifications.h \
 
 OBJECT_FILES= src/metronome.o \
 	      src/timetable/specifications.o
