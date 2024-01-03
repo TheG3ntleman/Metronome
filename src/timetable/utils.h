@@ -2,7 +2,6 @@
 #define UTILS_H
 
 #include <stdlib.h>
-#include <math.h>
 
 typedef float numeric;
 typedef unsigned int uint;
