@@ -6,12 +6,8 @@ numeric norm_l1(numeric x1, numeric x2) {
 
 numeric norm_l2(numeric x1, numeric x2) {
 
-    // calculating x1^2 and x2^2
-    numeric ans1 = x1*x1;
-    numeric ans2 = x2*x2;
-
     // calculating square root of x1^2+x2^2
-    numeric x = ans1 + ans2;
+    numeric x = x1*x1 + x2*x2;
     numeric epsilon = 1e-3;
     numeric guess = x / 2.0;
     while (fabsf(powf(guess, 2) - x) > epsilon) {
