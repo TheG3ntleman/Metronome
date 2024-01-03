@@ -5,6 +5,7 @@
 #include <math.h>
 
 typedef float numeric;
+typedef unsigned int uint;
 
 // A bunch of norm options
 numeric norm_l1(numeric x1, numeric x2);
