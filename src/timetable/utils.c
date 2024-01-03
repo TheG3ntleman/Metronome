@@ -1,5 +1,30 @@
 #include "utils.h"
 
+// funcion to calculate absolute value of floating point number
+numeric fabsf(numeric num) {
+    if (num < 0) {
+        return -num;
+    } else {
+        return num;
+    }
+}
+
+// function to calculate the power of a number
+numeric powerOptimized(numeric base, int exponent) {
+    numeric result = 1;
+
+    while (exponent > 0) {
+        if (exponent % 2 == 1) {
+            result *= base;
+        }
+
+        base *= base;
+        exponent /= 2;
+    }
+
+    return result;
+}
+
 numeric norm_l1(numeric x1, numeric x2) {
     return fabsf(x1) + fabsf(x2);
 }
@@ -10,46 +35,25 @@ numeric norm_l2(numeric x1, numeric x2) {
     numeric x = x1*x1 + x2*x2;
     numeric epsilon = 1e-3;
     numeric guess = x / 2.0;
-    while (fabsf(powf(guess, 2) - x) > epsilon) {
-        guess = guess - (powf(guess, 2) - x) / (2 * powf(guess, 1));
+    while (fabsf(guess*guess - x) > epsilon) {
+        guess = guess - (guess*guess - x) / (2 * guess);
     }
 
     return guess;
 }
 
 numeric norm_lp(numeric x1, numeric x2, uint p) {
+    numeric x = powerOptimized(fabsf(x1), p) + powerOptimized(fabsf(x2), p);
 
-    // calculating x1^p
-    uint q = p;
-    numeric ans1 = 1;
-    while (p > 0) {
-        int last_bit = (p & 1);
-        if (last_bit) {
-            ans1 = ans1 * x1;
-        }
-        x1 = x1 * x1;
-        p = p >> 1;
-    }
-
-    // calculating x2^p
-    p = q;
-    numeric ans2 = 1;
-    while (p > 0) {
-        int last_bit = (p & 1);
-        if (last_bit) {
-            ans2 = ans2 * x2;
-        }
-        x2 = x2 * x2;
-        p = p >> 1;
-    }
-
-    // calculating the pth root of x1^p + x2^p using newtons method
-    p = q;
-    numeric x = ans1 + ans2;
-    numeric epsilon = 1e-3;
+    numeric epsilon = 1e-6; 
     numeric guess = x / 2.0;
-    while (fabsf(powf(guess, p) - x) > epsilon) {
-        guess = guess - (powf(guess, p) - x) / (p * powf(guess, p - 1));
+
+    // Limit the number of iterations to prevent infinite loop
+    int maxIterations = 1000;
+
+    while (fabsf(powerOptimized(guess, p) - x) > epsilon && maxIterations > 0) {
+        guess = guess - (powerOptimized(guess, p) - x) / (p * powerOptimized(guess, p - 1));
+        maxIterations--;
     }
 
     return guess;
