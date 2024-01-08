@@ -49,13 +49,13 @@ Population* evolveTimeTables(TimeTableSpecifications *specs, GASpecfications *ga
 
 
 		// Cleaning population and fitness arrays and replacing
-		deletePopulation(population);
-		free(soft_fitness);
-		free(hard_fitness);
+		for (uint i = 0; i < ga_specs->population_size; i++) {
+			soft_fitness[i] = new_soft_fitness[i];
+			hard_fitness[i] = new_hard_fitness[i];
+		}
 		
+		deletePopulation(population);
 		population = new_population;
-		soft_fitness = new_soft_fitness;
-		hard_fitness = new_hard_fitness;
 
 		// Can do some basic IO here.
 		numeric avg_soft_fitness = 0;
@@ -64,7 +64,7 @@ Population* evolveTimeTables(TimeTableSpecifications *specs, GASpecfications *ga
 			avg_soft_fitness = (avg_soft_fitness * i + soft_fitness[i]) / (i + 1);
 			avg_hard_fitness = (avg_hard_fitness * i + hard_fitness[i]) / (i + 1);	
 		}
-		printf("Generation %u has a soft fitness of %f and  hard fitness of %f\n", t, avg_soft_fitness, avg_hard_fitness);
+		printf("Generation %u has a soft fitness of %f and  hard fitness of %f\n", t + 1, avg_soft_fitness, avg_hard_fitness);
 
 	} 
 
