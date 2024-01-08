@@ -1,6 +1,7 @@
 #ifndef FITNESS_H
 #define FITNESS_H
 
+#include "config.h"
 #include "utils.h"
 #include "population.h"
 #include "specifications.h"

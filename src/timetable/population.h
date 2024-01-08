@@ -8,7 +8,7 @@
 typedef struct {
 
 	uint size;
-	uint tt_size;
+	uint n_sessions;
 
 	uint n_timeslots;
 	uint n_venues;
