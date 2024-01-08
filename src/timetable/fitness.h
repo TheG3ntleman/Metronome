@@ -5,6 +5,6 @@
 #include "population.h"
 #include "specifications.h"
 
-void computeFitnesses(Population *population, numeric *soft_fitness, numeric *hard_fitness);
+void computeFitnesses(Population *population, TimeTableSpecifications * specifications, numeric *soft_fitness, numeric *hard_fitness);
 
 #endif
