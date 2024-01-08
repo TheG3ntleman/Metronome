@@ -1,11 +1,18 @@
 #include "fitness.h"
 
-static uint computeHardConstraint_PartyNonCollision(Population *population, TimeTableSpecifications, uint timetable_index){
+// Default prototype: static uint computerHardConstraint_(Population *population, TimeTableSpecifications *specifications, uint timetable_index) {} 
+
+
+static uint computeHardConstraint_PartyNonCollision(Population *population, TimeTableSpecifications *specifications, uint timetable_index){
   	uint n = 0;
 	for(uint i = 0; i < population->size; i++){
 		//getTimeTableTuple();
 	}
 }
+
+static uint computerHardConstraint_SuccesiveMultiTimeSlotClasses(Population *population, TimeTableSpecifications *specifications, uint timetable_index) {
+	
+} 
 
 
 static numeric computeSoftFitness(Population *population, TimeTableSpecifications *specifications,  uint timetable_index) {
