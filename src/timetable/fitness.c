@@ -287,6 +287,78 @@ static numeric computeHardFitnesses(Population *population, TimeTableSpecificati
 
 }
 
+#ifdef SOFT_STUDENT_TRAVELTIME
+static numeric computeSoftConstraint_studenttraveltime(Population *population, TimeTableSpecifications *specifications, uint timetable_index){
+	/*Consecutive sessions may need to be scheduled in close proximity to each other to minimize student travel time between them.*/
+	
+	return 0;
+}
+#endif
+#ifdef SOFT_MAXIMIZE_CHUNKING
+static numeric computeSoftConstraint_maximize_chunking(Population *population, TimeTableSpecifications *specifications, uint timetable_index){
+	/*maximize session chunking.(have back to back sessions for students)*/
+	
+	return 0;
+}
+#endif
+#ifdef SOFT_ROOM_UTILIZATION
+static numeric computeSoftConstraint_room_utilization(Population *population, TimeTableSpecifications *specifications, uint timetable_index){
+	/*Maximize Room Utilization Constraint: Encourage the efficient use of rooms by maximizing their overall utilization.*/
+	
+	return 0;
+}
+#endif
+#ifdef SOFT_AVOID_EARLYLATE_TIME
+static numeric computeSoftConstraint_avoid_early_late_session(Population *population, TimeTableSpecifications *specifications, uint timetable_index){
+	/*Avoid Early/Late Times Constraint: Express preferences to avoid scheduling classes too early or too late in the day.*/
+	
+	return 0;
+}
+#endif
+#ifdef SOFT_ROOM_CAPACITY_UTILIZATION
+static numeric computeSoftConstraint_room_capacity_utilization(Population *population, TimeTableSpecifications *specifications, uint timetable_index){
+	/*avoid scheduling session with less strenght to venues which have high capacity ex: dont schedule ecm only class at auditorium*/
+	
+	return 0;
+}
+#endif
+#ifdef SOFT_COMMON_TIMSLOT_EMPTY
+static numeric computeSoftConstraint_common_timeslot_empty(Population *population, TimeTableSpecifications *specifications, uint timetable_index){
+	/*encourage common time slots being left empty for a particular batch, 
+ 	so if there are some sessions that were canceled during the week, they can be held at that time slot.*/
+	
+	return 0;
+}
+#endif
+#ifdef SOFT_MINIMIZE_BACKTOBACK_TEACHERCLASSES
+static numeric computeSoftConstraint_backtoback_teacher_class(Population *population, TimeTableSpecifications *specifications, uint timetable_index){
+	/*Minimization of Back-to-Back Classes for teachers.*/
+	
+	return 0;
+}
+#endif
+#ifdef SOFT_MINIMIZE_SAMECOURSE_SESSION
+static numeric computeSoftConstraint_samecouse_session(Population *population, TimeTableSpecifications *specifications, uint timetable_index){
+	/*discourage scheduling sessions of the same course more than once per day.*/
+	
+	return 0;
+}
+#endif
+#ifdef SOFT_LAB_AFTER_LECTURE
+static numeric computeSoftConstraint_lab_after_lecture(Population *population, TimeTableSpecifications *specifications, uint timetable_index){
+	/*have lab sessions after the lecture session for a particular course*/
+	
+	return 0;
+}
+#endif
+#ifdef SOFT_SESSIONS_EVENLY_THROUGHOUT_WEEK
+static numeric computeSoftConstraint_even_distrubution(Population *population, TimeTableSpecifications *specifications, uint timetable_index){
+	/*have an even distribution of events throughout the week (avoid having too many sessions at one day)*/
+	
+	return 0;
+}
+#endif
+
 void computeFitnesses(Population *population, TimeTableSpecifications *specfications, numeric *soft_fitness, numeric *hard_fitness) {
 
         //Iterate through all members of the population
