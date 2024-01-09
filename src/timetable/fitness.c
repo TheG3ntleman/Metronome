@@ -225,7 +225,7 @@ static numeric computeHardConstraint_PartyDuplicateConstraint(Population *popula
 #endif
 
 #ifdef HARD_SUFFECIENT_TIMESLOT
-static numeric computeHardConstraint_suffectient timeslotConstraint(Population *population, TimeTableSpecifications *specifications, uint timetable_index) {
+static numeric computeHardConstraint_suffectient_timeslotConstraint(Population *population, TimeTableSpecifications *specifications, uint timetable_index) {
     	numeric violations = 0;
 
     	for (uint i = 0; i < population->n_sessions; i++) {
@@ -280,7 +280,9 @@ static numeric computeHardFitnesses(Population *population, TimeTableSpecificati
 #ifdef HARD_PARTY_DUPLICATE
 	fitness += computeHardConstraint_PartyDuplicateConstraint(population, specifications, timetable_index); 
 #endif
-
+#ifdef HARD_SUFFECIENT_TIMESLOT
+	fitness += computeHardConstraint_suffectient_timeslotConstraint(population, specifications, timetable_index);
+#endif
 	return -fitness;
 
 }
