@@ -224,6 +224,38 @@ static numeric computeHardConstraint_PartyDuplicateConstraint(Population *popula
 }
 #endif
 
+#ifdef HARD_SUFFECIENT_TIMESLOT
+static numeric computeHardConstraint_suffectient timeslotConstraint(Population *population, TimeTableSpecifications *specifications, uint timetable_index) {
+    	numeric violations = 0;
+
+    	for (uint i = 0; i < population->n_sessions; i++) {
+        	uint timeslot1, venue1, timeslot2, venue2;
+		getTimeTableTuple(population, timetable_index, i, &venue1, &timeslot1);
+        	for (uint j = 0; j < specifications->sessions->size; j++) {
+            		if (specifications->sessions->session_id[j] == i) {
+                		if (specifications->sessions->duration[j] > 1) {
+                    			duration = specifications->sessions->duration[j]
+                    			for (k = i + 1; k < i + duration; k++) {
+                        			getTimeTableTuple(population, timetable_index, k, &venue2, &timeslot2);
+                        			if (timeslot1 + k - i != timeslot2) {
+                            				violations++;
+                        			}
+                        			else {
+                            				if (venue1 != venue2) {
+                                				violations++;
+                            				}
+                        			}
+                    			}
+                    			i = i + duration
+                		}
+            		}
+        	}
+    	}
+
+    	return violations;
+}
+#endif
+
 static numeric computeHardFitnesses(Population *population, TimeTableSpecifications *specifications, uint timetable_index) {
 
 	numeric fitness = 0;
