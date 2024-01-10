@@ -12,7 +12,7 @@ static numeric computeHardConstraint_CapacityConstraint(Population *population, 
             		session_party[i][j] = -1;
         	}
     	}
-	// 
+	
      	for (uint i = 0; i < population->n_sessions; i++) {
 		session_party[i][0] = i;
 		uint n = 0;
