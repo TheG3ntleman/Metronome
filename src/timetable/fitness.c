@@ -7,8 +7,8 @@ static numeric computeHardConstraint_CapacityConstraint(Population *population, 
 	
     	// creating an array of array which conatains all the session and parties associated with them
     	uint session_party[population->n_sessions][10];
-    	for (uint i = 0; i < population->n_sessions; ++i) {
-        	for (uint j = 0; j < 10; ++j) {
+    	for (uint i = 0; i < population->n_sessions; i++) {
+        	for (uint j = 0; j < 10; j++) {
             		session_party[i][j] = -1;
         	}
     	}
