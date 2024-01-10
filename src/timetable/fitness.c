@@ -12,13 +12,13 @@ static numeric computeHardConstraint_CapacityConstraint(Population *population, 
             		session_party[i][j] = -1;
         	}
     	}
-
+	// 
      	for (uint i = 0; i < population->n_sessions; i++) {
-		session_party[i][0] = i
+		session_party[i][0] = i;
 		uint n = 0;
 		for (uint j = 0; j < specifications->assignments->size, j++) {
 	    		if (i == specifications->assignments->session_id[j]) {
-				session_party[i][n] = specifications->assignments->party_id[j]
+				session_party[i][n] = specifications->assignments->party_id[j];
 				n++;
 	    		}
 		}
@@ -29,7 +29,7 @@ static numeric computeHardConstraint_CapacityConstraint(Population *population, 
         	for (uint j = 0; j < population->n_sessions; j++) {
             		for (uint k = 0; k < specifications->parties->size; k++){
                 		if (specifications->parties->party_id[k] == session_party[j][i]) {
-                    			session_party[j][i] = specifications->parties->strenght[k]
+                    			session_party[j][i] = specifications->parties->strenght[k];
                 		}
             		}
         	}
@@ -39,19 +39,19 @@ static numeric computeHardConstraint_CapacityConstraint(Population *population, 
     	uint session_strenght[population->n_sessions][2];
     	for (uint i = 0; i < population->n_sessions; ++i) {
         	for (uint j = 0; j < 2; ++j) {
-            	session_strenght[i][j] = -1;
+            		session_strenght[i][j] = -1;
         	}
     	}
 
-    	for (uint i = 0; i < population->sessions; i++) {
-        	session_strenght[i][0] = session_party[i][0]
+    	for (uint i = 0; i < population->n_sessions; i++) {
+        	session_strenght[i][0] = session_party[i][0];
         	uint n = 0;
         	for (uint j = 1; j < 10; j++) {
             		if (session_party[i][j] != -1) {
-                	n += session_party[i][j]
+                		n += session_party[i][j];
             		}
         	}
-        	session_strenght[i][1] = n
+        	session_strenght[i][1] = n;
     	}
 
     	numeric violations = 0;
@@ -110,18 +110,24 @@ static numeric computeHardConstraint_VenueTypeConstraint(Population *population,
 		getTimeTableTuple(population, timetable_index, i, &venue, &timeslot);
 
 		// Retrieve required venue type
-		uint venue_type;
+		uint venue_type, venue_type_assigned;
 		for (uint j = 0; j < specifications->sessions->size; j++) {
 			if (specifications->sessions->session_id[j] == i) {
 				venue_type = specifications->sessions->venue_type[j];
 				break;
 			}
 		}
+		// getting the venue type for the venue assigned by the solver
+		for (uint j = 0; j < specifications->venues->size; j++) {
+			if (specifications->venues->venue_id[j] == venue) {
+				venue_type_assigned = specifications->venues->venue_type[j];
+				break;
+			}
+		}
 
 		// check if they are matching
-		if (venue_type != venue)
+		if (venue_type != venue_type_assigned)
 			violations++;
-
 
 	} 
 
@@ -184,11 +190,11 @@ static numeric computeHardConstraint_PartyDuplicateConstraint(Population *popula
     	}
 
     	for (uint i = 0; i < population->n_sessions; i++) {
-        	session_party[i][0] = i
+        	session_party[i][0] = i;
         	uint n = 0;
         	for (uint j = 0; j < specifications->assignments->size, j++) {
             		if (i == specifications->assignments->session_id[j]) {
-                		session_party[i][n] = specifications->assignments->party_id[j]
+                		session_party[i][n] = specifications->assignments->party_id[j];
                 		n++;
             		}
         	}
@@ -220,7 +226,7 @@ static numeric computeHardConstraint_PartyDuplicateConstraint(Population *popula
 		}
 	}
 
-    	return violations
+    	return violations;
 }
 #endif
 
@@ -234,8 +240,8 @@ static numeric computeHardConstraint_suffectient_timeslotConstraint(Population *
         	for (uint j = 0; j < specifications->sessions->size; j++) {
             		if (specifications->sessions->session_id[j] == i) {
                 		if (specifications->sessions->duration[j] > 1) {
-                    			duration = specifications->sessions->duration[j]
-                    			for (k = i + 1; k < i + duration; k++) {
+                    			uint duration = specifications->sessions->duration[j];
+                    			for (uint k = i + 1; k < i + duration; k++) {
                         			getTimeTableTuple(population, timetable_index, k, &venue2, &timeslot2);
                         			if (timeslot1 + k - i != timeslot2) {
                             				violations++;
@@ -246,7 +252,7 @@ static numeric computeHardConstraint_suffectient_timeslotConstraint(Population *
                             				}
                         			}
                     			}
-                    			i = i + duration
+                    			i = i + duration;
                 		}
             		}
         	}
