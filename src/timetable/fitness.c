@@ -138,42 +138,72 @@ static numeric computeHardConstraint_VenueTypeConstraint(Population *population,
 #ifdef HARD_MAX_SESSIONS 
 static numeric computeHardConstraint_MaxSessionsConstraint(Population *population, TimeTableSpecifications *specifications, uint timetable_index) {
 
-	// Making array to record the number of sessions per day
-	uint hours[specifications->parties->size][NUMBER_OF_DAYS];
-	for (uint i = 0; i < specifications->parties->size; i++) {
-		for (uint j = 0; j < NUMBER_OF_DAYS; j++) {
-			hours[i][j] = 0;
-		}
-	}
+    	// calculating number of teacher id's
+    	uint teacher_number = 0;
+    	for (uint i = 0; i < specifications->parties->size; i++) {
+        	if (specifications->parties->strength[i] == 1) {
+            		teacher_number++;
+        	}
+    	}
 
-	// Actually recording the hours now.
-	// Iterating through sessions
-	for (uint i = 0; i < population->n_sessions; i++) {
-		uint timeslot, venue;
-		uint day = timeslot / 7.1f;
-		getTimeTableTuple(population, timetable_index, i, &venue, &timeslot);
+    	// creating an array that stores teacher party id and number of sessions per day
+    	uint teacher_hours[teacher_number][6];
+    	uint m = 0;
+    	for (uint i = 0; i < specifications->parties->size; i++) {
+        	if (specifications->parties->strength[i] == 1) {
+            		teacher_hours[m][0] = specifications->parties->party_id[i];
+            		for (uint j = 1; j < 6; j++) {
+                		teacher_hours[m][j] = 0;
+            		}
+            		m++;
+        	}
+    	}
 
-		uint party_id;
-		for (uint j = 0; j < specifications->assignments->size; j++) {
-			if (specifications->assignments->session_id[j] == i) {
-				party_id = specifications->assignments->party_id[j];
-				hours[party_id][day]++;	
-			}
-		}
-	}
+    	// creating an array of array which contains all the session and parties associated with them
+    	uint session_party[population->n_sessions][10];
+    	for (uint i = 0; i < population->n_sessions; ++i) {
+        	for (uint j = 0; j < 10; ++j) {
+            		session_party[i][j] = -1;
+        	}
+    	}
 
-	// Searching for violations
-	numeric violations = 0;
+    	for (uint i = 0; i < population->n_sessions; i++) {
+        	session_party[i][0] = i; 
+        	uint n = 1; 
+        	for (uint j = 0; j < specifications->assignments->size; j++) {
+            		if (i == specifications->assignments->session_id[j]) {
+                		session_party[i][n] = specifications->assignments->party_id[j]; 
+                		n++;
+            		}
+        	}
+    	}
 
-	for (uint i = 0; i < specifications->parties->size; i++) {
-		for (uint j = 0; j < NUMBER_OF_DAYS; j++) {
-			if (hours[i][j] > MAX_HOURS_PER_DAY)
-				violations++;
-		}
-	}
+    	// calculating how many session there are in each day for each teacher id
+    	for (uint i = 0; i < teacher_number; i++) {
+        	for (uint j = 0; j < population->n_sessions; j++) {
+            		for (uint k = 1; k < 10; k++) {
+                		if (teacher_hours[i][0] == session_party[j][k]) {
+                    			uint timeslot, venue;
+                    			getTimeTableTuple(population, timetable_index, session_party[j][0], &venue, &timeslot);
+                    			uint day = timeslot / 7.0f;
+                    			teacher_hours[i][day]++;
+                		}
+            		}
+        	}
+    	}
 
-	return violations;
+    	// calculating violations by comparing the number of sessions held each day for each teacher with max number of sessions
+    	numeric violations = 0;
 
+    	for (uint i = 0; i < teacher_number; i++) {
+        	for (uint j = 0; j < 6; j++) {
+            		if (teacher_hours[i][j] > MAX_HOURS_PER_DAY) {
+                		violations++;
+            		}
+        	}
+    	}
+
+    	return violations;
 }
 #endif
 
