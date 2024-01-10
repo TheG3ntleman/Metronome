@@ -15,7 +15,7 @@ static numeric computeHardConstraint_CapacityConstraint(Population *population, 
 	
      	for (uint i = 0; i < population->n_sessions; i++) {
 		session_party[i][0] = i;
-		uint n = 0;
+		uint n = 1;
 		for (uint j = 0; j < specifications->assignments->size, j++) {
 	    		if (i == specifications->assignments->session_id[j]) {
 				session_party[i][n] = specifications->assignments->party_id[j];
@@ -191,7 +191,7 @@ static numeric computeHardConstraint_PartyDuplicateConstraint(Population *popula
 
     	for (uint i = 0; i < population->n_sessions; i++) {
         	session_party[i][0] = i;
-        	uint n = 0;
+        	uint n = 1;
         	for (uint j = 0; j < specifications->assignments->size, j++) {
             		if (i == specifications->assignments->session_id[j]) {
                 		session_party[i][n] = specifications->assignments->party_id[j];
