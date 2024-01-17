@@ -1,4 +1,5 @@
 #include "fitness.h"
+#include "population.h"
 
 // Capacity constraint related fitness functions
 #ifdef HARD_CAPACITY_CONSTRAINT
@@ -363,7 +364,7 @@ void computeFitnesses(Population *population, TimeTableSpecifications *specficat
 
         //Iterate through all members of the population
 	
-	for (uint i = 0; i < population->n_timetables; i++) {
+	for (uint i = 0; i < population->size; i++) {
 		soft_fitness[i] = 0;
 		hard_fitness[i] = computeHardFitnesses(population, specfications, i);
 	}

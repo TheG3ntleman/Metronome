@@ -1,15 +1,7 @@
 #include "utils.h"
 
-uint randint(uint lower, uint upper) {
-	return lower + rand() % (upper - lower + 1);
-}
-
-numeric randunif(numeric lower, numeric upper) {
-	return lower + ((numeric)rand() / RAND_MAX) * (upper - lower);
-}
-
 // funcion to calculate absolute value of floating point number
-static numeric fabsf(numeric num) {
+numeric fabsf(numeric num) {
     if (num < 0) {
         return -num;
     } else {
@@ -18,7 +10,7 @@ static numeric fabsf(numeric num) {
 }
 
 // function to calculate the power of a number
-static numeric powerOptimized(numeric base, int exponent) {
+numeric powerOptimized(numeric base, int exponent) {
     numeric result = 1;
 
     while (exponent > 0) {

@@ -1,5 +1,7 @@
 #include "culling.h"
+#include <stdio.h>
 
+// Helper functions for quicksort algorithm
 
 static void swap(Cluster* a, Cluster* b) {
     Cluster temp = *a;
@@ -32,102 +34,144 @@ static void quickSort(Cluster arr[], int low, int high) {
     }
 }
 
-
-// Placeholder for similarity calculation
-numeric calculateTimeTableSimilarity(unsigned int schedule1, unsigned int schedule2) {
-
-    // Will be implemented by abhirath
-
-    
-    numeric similarity = abs((int)schedule1 - (int)schedule2);
-    return similarity;
+// Initializing a cluster with some capacity
+static void initializeCluster(Cluster *cluster, uint initial_capacity) {
+	cluster->timetable_indices = (uint*)malloc(initial_capacity * sizeof(uint));
+	cluster->size = 0;
+	cluster->capacity = initial_capacity;
 }
 
-// Initialize a cluster with initial capacity
-void initCluster(Cluster* cluster, unsigned int initial_capacity) {
-    cluster->schedules = (unsigned int*)malloc(initial_capacity * sizeof(unsigned int));
-    cluster->size = 0;
-    cluster->capacity = initial_capacity;
+// Expanding the capacity of an existing cluster if needed
+static void expandCluster(Cluster *cluster) {
+	// Doubling capacity
+	uint new_capacity = cluster->capacity * 2;
+
+	cluster->timetable_indices = (uint*)realloc(cluster->timetable_indices, new_capacity * sizeof(uint));
+	cluster->capacity = new_capacity;
 }
 
-// Expand the capacity of a cluster if needed
-void expandCluster(Cluster* cluster) {
-    unsigned int new_capacity = cluster->capacity * 2; // Double the capacity, why? --> Random
-    cluster->schedules = (unsigned int*)realloc(cluster->schedules, new_capacity * sizeof(unsigned int));
-    cluster->capacity = new_capacity;
+static uint getMostSimilarCluster(Population *population, uint timetable_index, Cluster *clusters, uint *n_clusters, GeneticSpecifications *gaSpecs) {
+
+	uint maximum_similarity = -10000;
+	uint closest_cluster = *n_clusters; // Assigning next cluster initially.
+	//
+	for (uint i = 0; i < *n_clusters; i++) {
+		numeric similarity = ttCalculateSimilarity(population, timetable_index, clusters[i].timetable_indices[0]);
+
+		if (similarity >= gaSpecs->similarity_threshold) {
+			// If the similrity
+			closest_cluster = i;
+			break;
+		}
+	}
+
+	// In case no existing cluster is close enough to this timetable then, we make a new cluster for it.
+	if (closest_cluster == *n_clusters) {
+		initializeCluster(clusters + *n_clusters, gaSpecs->minimum_timetables_per_cluster);
+		++(*n_clusters);
+	}
+
+	return closest_cluster;
+
 }
 
-unsigned int assignToCluster(Population* population, unsigned int schedule_index, Cluster* clusters, unsigned int* num_clusters, unsigned int min_schedules_per_cluster) {
-    numeric max_similarity = -10000; // Initializing maximum similarity
-    unsigned int closest_cluster = *num_clusters; // Assign to a new cluster initially
+void cullPopulationViaClustering(Population *population, numeric *soft_fitness, numeric *hard_fitness, uint *indices_of_selected_timetables, GeneticSpecifications *gaSpecs) {
+	// Making some calculations about the dimensions of the
+	// problem.
+	uint max_clusters = population->n_timetables / gaSpecs->minimum_timetables_per_cluster;
 
-    for (unsigned int i = 0; i < *num_clusters; ++i) {
-        numeric similarity = calculateTimeTableSimilarity(schedule_index, clusters[i].schedules[0]); // Assuming comparing with the first schedule in the cluster, why first one? cause finding centroid is a pain in the ass and the schedules in a cluster are similar
+	// Allocating memory for clusters
+	// For now, we will be allocating memory for the maximum
+	// number of possible clusters.
+	Cluster *clusters = (Cluster*)malloc(max_clusters * sizeof(Cluster));
+	// Variable to keep track of number of actual active clusters
+	uint n_clusters = 0;
 
-        if (similarity < SIMILARITY_THRESHOLD) {
-            closest_cluster = i; // Assign to a similar cluster if found
-            break;
-        }
-    }
+	// Assigning timetables to clusters based on similarity.
+	for (uint i = 0; i < population->n_timetables; ++i) {
+		uint cluster_index = getMostSimilarCluster(population, i, clusters, &n_clusters, gaSpecs);
+		uint cluster_size = clusters[cluster_index].size;
 
-    if (closest_cluster == *num_clusters) {
-        // No similar cluster found, create a new cluster --> Happens if the similarity between all the exisiting clusters exceeds the SIMILARITY_THRESHOLD
-        initCluster(&clusters[*num_clusters], min_schedules_per_cluster);
-        ++(*num_clusters);
-    }
+		if (cluster_size >= clusters[cluster_index].capacity) {
+			expandCluster(clusters + cluster_index);
+		}
 
-    return closest_cluster;
+		// Add timetable to cluster
+		clusters[cluster_index].timetable_indices[cluster_size] = i;
+		clusters[cluster_index].size++;
+	}
+
+	quickSort(clusters, 0, n_clusters - 1);
+	// Sorting clusters based on the least number of schedules in each cluster
+	for (uint i = 0; i < n_clusters; i++)
+		// Sort each timetable in cluster[i] in ascending order.
+		quickSort(clusters[i].timetable_indices, 0, clusters[i].size - 1);
+
+	uint selected_count = 0;
+
+	while (selected_count < gaSpecs->selection_size) {
+		for (uint i = 0; i < n_clusters; i++) {
+			uint schedule_to_select = clusters[i].size > gaSpecs->minimum_timetables_per_cluster ? gaSpecs->minimum_timetables_per_cluster : clusters[i].size;
+
+			for (uint j = 0; j < schedule_to_select && selected_count < gaSpecs->selection_size; j++) {
+				indices_of_selected_timetables[selected_count++] = clusters[i].timetable_indices[j];
+			}
+
+			// Reduce the cluster size after selecting those timetables. That way we won't select them again since they are sorted.
+			clusters[i].size -= schedule_to_select;
+		}
+	}
+
+	// Freeing allocated memory
+	for (uint i = 0; i < n_clusters; i++) {
+		free(clusters[i].timetable_indices);
+	}
+	free(clusters);
+
+
 }
 
-void cullPopulation(Population* population, numeric* soft_fitness, numeric* hard_fitness, unsigned int selection_size, unsigned int* selection_arr, unsigned int min_schedules_per_cluster) {
-    unsigned int total_schedules = population->number_of_organisms;  // Assuming population size is available
-    unsigned int max_clusters = total_schedules / min_schedules_per_cluster;  // Maximum possible clusters
+// Helper function for selection based culling
 
-    // Allocate memory for clusters
-    Cluster* clusters = (Cluster*)malloc(max_clusters * sizeof(Cluster));
-    unsigned int num_clusters = 0;
+static char isIn(uint x, uint *arr, uint size) {
 
-    // Assign schedules to clusters based on a similarity-based approach
-    for (unsigned int i = 0; i < total_schedules; ++i) {
-        unsigned int cluster_index = assignToCluster(population, i, clusters, &num_clusters, min_schedules_per_cluster);
-        unsigned int cluster_size = clusters[cluster_index].size;
+	for (uint i = 0; i < size; i++) {
+		if(arr[i] == x)
+			return 1;
+	}
 
-        if (cluster_size >= clusters[cluster_index].capacity) {
-            // Expand the cluster capacity if needed
-            expandCluster(&clusters[cluster_index]);
-        }
+	return 0;
 
-        // Add schedule to the cluster
-        clusters[cluster_index].schedules[cluster_size] = i;
-        clusters[cluster_index].size++;
-    }
+}
 
-    
+void cullPopulationViaSelection(Population *population, numeric *soft_fitness, numeric *hard_fitness, uint *indices_of_selected_timetables, GeneticSpecifications *gaSpecs) {
 
-    quickSort(clusters, 0, num_clusters - 1);
-    // sort the clusters based on the least number of schedules in each cluster
-    for(unsigned int i = 0;i < num_clusters;i++){
-        // sort each schedule in cluster[i] in ascending order
-        quickSort(clusters[i].schedules, 0, clusters[i].size - 1);
-    }
+	// Calcuting normed fitness values
+	numeric normed_fitness[population->n_timetables];
 
-    unsigned int selected_count = 0;
+	for (uint i = 0; i < population->n_timetables; i++) 
+		normed_fitness[i] = norm_l2(soft_fitness[i], hard_fitness[i]);
+	
+	// Selecting top timetable indices based on highest normed fitness
 
-    while (selected_count < selection_size) {
-        for (unsigned int i = 0; i < num_clusters; ++i) {
-            unsigned int schedules_to_select = clusters[i].size > min_schedules_per_cluster ? min_schedules_per_cluster : clusters[i].size;
-            
-            for (unsigned int j = 0; j < schedules_to_select && selected_count < selection_size; ++j) {
-                selection_arr[selected_count++] = clusters[i].schedules[j];
-            }
+	for (uint i = 0; i < gaSpecs->selection_size; i++) {
+		
+		uint index = 0;
+		numeric max_fitness = 0;
+		// Iterating through all normed fitness
 
-            clusters[i].size -= schedules_to_select; // Reduce the cluster size after selecting schedules
-        }
-    }
+		for (uint j = 0; j < population->n_timetables; j++) {
+		
+			// Recording timetable with highest fitness that is not already selected.
+			if (normed_fitness[j] > max_fitness && !isIn(j, indices_of_selected_timetables, i)) {
+				index = j;
+				max_fitness = normed_fitness[j];
+			}
 
-    // Free allocated memory for clusters
-    for (unsigned int i = 0; i < num_clusters; ++i) {
-        free(clusters[i].schedules);
-    }
-    free(clusters);
+		}
+
+		indices_of_selected_timetables[i] = index;
+
+	}
+
 }

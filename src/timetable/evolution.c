@@ -1,81 +1,56 @@
 #include "evolution.h"
-#include "fitness.h"
-#include "population.h"
-#include "termination.h"
 
-// GASpecifications related functions
-GASpecfications* makeGASpecifications() {
-}
 
-void deleteGASpecfications(GASpecfications *specs) {
-}
+Population *evolveTimeTables(TimeTableSpecifications *ttSpecs, GeneticSpecifications *gaSpecs) {
 
-// Main Evolution Function
-Population* evolveTimeTables(TimeTableSpecifications *specs, GASpecfications *ga_specs) {
+	// Allocating memory for various evolutionary objects
+	Population *population = makePopulation(gaSpecs->population_size, ttSpecs->sessions->size, 35, ttSpecs->venues->size); // Timeslots are hardcoded for now.
+	
+	numeric soft_fitness[population->n_timetables];
+	numeric hard_fitness[population->n_timetables];
 
-	// Allocating memory for necessary objects.
-	Population *population = makePopulation(ga_specs->population_size);
-	numeric *soft_fitness = malloc(ga_specs->population_size);
-	numeric *hard_fitness = malloc(ga_specs->population_size);
-	numeric *delta_soft_fitness = malloc(ga_specs->population_size);
-	numeric *delta_hard_fitness = malloc(ga_specs->population_size);
+	// Some buffer objects
+	Population *new_population;
+	uint indices_of_selected_timetable[gaSpecs->selection_size];
 
-	Population *new_population = makePopulation(ga_specs->population_size);
-	numeric *new_soft_fitness = malloc(ga_specs->population_size);
-	numeric *new_hard_fitness = malloc(ga_specs->population_size);
+	// Initializing various evolutionary objects
+	operatorInitialize(population, ttSpecs, gaSpecs); 
+	
+	// Evolutionary loop
+	for (uint num_generation = 1; !terminationCondition(num_generation, population->n_timetables, gaSpecs); num_generation++) {
 
-	// First initializing population
-	initializePopulation(population);
 
-	// Calculating inital fitnesses of organisms in population
-	computeFitnesses(population, soft_fitness, hard_fitness);
+		// Calculate fitnesses
+		computeFitnesses(population, ttSpecs, soft_fitness, hard_fitness);
 
-	for (uint t = 0; terminationCondition(t, delta_soft_fitness, delta_hard_fitness); t++) {
+		// Cull Population
+		cullPopulationViaSelection(population, soft_fitness, hard_fitness, indices_of_selected_timetable, gaSpecs);
+
+		// Using selected timetables to generate new population using crossover
+		new_population = makePopulation(gaSpecs->population_size, ttSpecs->sessions->size, 35, ttSpecs->venues->size); // Timeslots are hardcoded for now.
+		operatorCrossover(new_population, population, indices_of_selected_timetable, ttSpecs, gaSpecs);
 		
-		// First performing culling based on current fitness values
-		uint *selected_organsisms = (uint*)malloc(sizeof(uint) * ga_specs->selection_size);
-		cullPopulation(population, soft_fitness, hard_fitness, ga_specs->selection_size, selected_organsisms);
-
-		// Generating new population using crossover and mutation
-		crossOver(new_population, population, selected_organsisms);
-		mutation(new_population);
-
-		// Calculating fitness and updating delta fitness
-		computeFitnesses(new_population, new_soft_fitness, new_hard_fitness);
-		for (uint i = 0; i < ga_specs->population_size; i++) { 
-			delta_soft_fitness[i] = soft_fitness[i] - new_soft_fitness[i];
-			delta_hard_fitness[i] = hard_fitness[i] - new_hard_fitness[i];
-		}
-
-
-		// Cleaning population and fitness arrays and replacing
-		for (uint i = 0; i < ga_specs->population_size; i++) {
-			soft_fitness[i] = new_soft_fitness[i];
-			hard_fitness[i] = new_hard_fitness[i];
-		}
-		
+		// Deleting old population and replacing with new population
 		deletePopulation(population);
 		population = new_population;
 
-		// Can do some basic IO here.
+		// Applying the mutation operator
+		operatorMutation(population, ttSpecs, gaSpecs);
+
+		// IO for sanity
 		numeric avg_soft_fitness = 0;
 		numeric avg_hard_fitness = 0;
-		for (uint i = 0; i < ga_specs->population_size; i++) {
-			avg_soft_fitness = (avg_soft_fitness * i + soft_fitness[i]) / (i + 1);
-			avg_hard_fitness = (avg_hard_fitness * i + hard_fitness[i]) / (i + 1);	
+		for (uint i = 0; i < population->n_timetables; i++) {
+			avg_soft_fitness += soft_fitness[i];
+			avg_hard_fitness += hard_fitness[i];
 		}
-		printf("Generation %u has a soft fitness of %f and  hard fitness of %f\n", t + 1, avg_soft_fitness, avg_hard_fitness);
 
-	} 
+		avg_soft_fitness /= population->n_timetables;
+		avg_hard_fitness /= population->n_timetables;
 
-	// Deallocating objects
-	// deletePopulation(population OR new_population); IS NOT DEALLOCATED BECAUSE WE MUST RETURN
-	free(soft_fitness);
-	free(hard_fitness);
-	free(delta_soft_fitness);
-	free(delta_hard_fitness);
-	free(new_soft_fitness);
-	free(new_hard_fitness);
+		printf("%u. %f : %f\n", num_generation - 1, avg_soft_fitness, avg_hard_fitness);
+		
+	}
 
 	return population;
 }

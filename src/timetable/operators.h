@@ -1,14 +1,21 @@
 #ifndef OPERATORS_H
 #define OPERATORS_H
 
-#include <stdlib.h>
-
+#include "utils.h"
+#include "config.h"
+#include "specifications.h"
 #include "population.h"
 
-// Could benefit from better naming scheme
+// Operators are functions that act on entire populations and return
+// resultant populations. The resultants are not returned as they are rather populated in existing structures.
 
-void initializePopulation(Population *population);
-Population *crossOver(Population *newPopulation, Population *population, uint *selected_organisms);
-void mutation(Population *population);
+// Function to initialize population randomly
+void operatorInitialize(Population *population, TimeTableSpecifications *ttSpecs, GeneticSpecifications *gaSpecs);
+
+// Function for crossover operator
+void operatorCrossover(Population *new_population, Population *current_population, uint *indices_of_selected_organisms, TimeTableSpecifications *ttSpecs, GeneticSpecifications *gaSpecs); 
+
+// Function for mutation operator
+void operatorMutation(Population *population, TimeTableSpecifications *ttSpecs, GeneticSpecifications *gaSpecs);
 
 #endif

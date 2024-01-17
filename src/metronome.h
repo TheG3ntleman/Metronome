@@ -1,6 +1,8 @@
 #ifndef METRONOME_H
 #define METRONOME_H
 
+#include "timetable/config.h"
+#include "timetable/evolution.h"
 #include <stdlib.h>
 
 void solveTimeTablingProblem(

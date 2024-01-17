@@ -4,12 +4,9 @@
 #include <stdlib.h>
 
 typedef float numeric;
+typedef unsigned int uint;
 
-// Norm functions for fitness concatination.
-
-uint randint(uint lower, uint upper);
-numeric randunif(numeric lower, numeric upper);
-
+// A bunch of norm options
 numeric norm_l1(numeric x1, numeric x2);
 numeric norm_l2(numeric x1, numeric x2);
 numeric norm_lp(numeric x1, numeric x2, uint p);

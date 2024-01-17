@@ -55,6 +55,20 @@ void solveTimeTablingProblem(
 
 	printTimeTableSpecificationSummary(specs);
 
+	// Running GA/Evolution on the timetables
+	GeneticSpecifications gaSpecs = {
+		.population_size = 100,
+		.selection_size = 10,
+		.minimum_timetables_per_cluster = 5,
+		.similarity_threshold = 40,
+		.mutation_rate = 0.05,
+		.maximum_generations = 10,
+	};
+
+	Population *population = evolveTimeTables(specs, &gaSpecs);
+	
+	// branch and bound or IP or return IP problem, cplex
+
 	deleteTimeTableSpecifications(specs);
 
 }

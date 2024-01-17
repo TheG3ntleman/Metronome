@@ -13,8 +13,6 @@ class Specifications:
 
         # print(self.assignments, self.parties, self.sessions, self.venue)
 
-
-
     def get_numerical_tables(self):
         # Must identify critical common columns
         conversion_table = {}
