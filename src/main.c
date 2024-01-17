@@ -1,36 +1,15 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "timetable/specifications.h"
 #include "metronome.h"
 
 typedef unsigned int uint;
 
-void solveTimeTablingProblem(
-    // For party table
-    size_t p_size,
-    uint *p_party_id,
-    uint *p_strength,
-
-    // For venue table
-    size_t v_size,
-    uint *v_venue_id,
-    uint *v_venue_type,
-    uint *v_capacity,
-    uint *v_number_available,
-
-    // For session table
-    size_t s_size,
-    uint *s_session_id,
-    uint *s_venue_type,
-    uint *s_duration,
-
-    // For assignments table
-    size_t a_size,
-    uint *a_party_id,
-    uint *a_session_id,
-    uint *a_priority
-);
-
 int main() {
+
+	srand(time(NULL));
+
     // Sample data for demonstration purposes
     size_t p_size = 4;
     uint p_party_id[] = {1, 2, 3, 4}; // 1 -> party1, 2 -> party2, 3 -> teacher1, 4 -> teacher2
@@ -42,10 +21,10 @@ int main() {
     uint v_capacity[] = {50, 50, 50};
     uint v_number_available[] = {1, 1, 1};
 
-    size_t s_size = 3;
-    uint s_session_id[] = {201, 202, 203}; // 201 -> session1, 202 -> session2, 203 -> session3
-    uint s_venue_type[] = {5, 5, 6};
-    uint s_duration[] = {1, 1, 2};
+    size_t s_size = 7;
+    uint s_session_id[] = {201, 202, 203, 204, 205, 206, 207}; // 201 -> session1, 202 -> session2, 203 -> session3
+    uint s_venue_type[] = {5, 5, 6, 6, 5, 5, 5};
+    uint s_duration[] = {1, 1, 2, 2, 1, 1, 1};
 
     size_t a_size = 6;
     uint a_party_id[] = {1, 1, 2, 3, 4, 4}; // teacher2 has a lecture session with class1 and teacher1 has a lecture session with class1
@@ -60,5 +39,5 @@ int main() {
         a_size, a_party_id, a_session_id, a_priority
     );
 
-    return 0;
+	return 0;
 }

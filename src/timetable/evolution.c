@@ -48,8 +48,16 @@ Population *evolveTimeTables(TimeTableSpecifications *ttSpecs, GeneticSpecificat
 		avg_soft_fitness /= population->n_timetables;
 		avg_hard_fitness /= population->n_timetables;
 
-		printf("%u. %f : %f\n", num_generation - 1, avg_soft_fitness, avg_hard_fitness);
+		printf("%u. %Lf : %Lf\n", num_generation, avg_soft_fitness, avg_hard_fitness);
 		
+	}
+
+
+	printf("Some Time Tables:\n\n");
+
+	for (uint i = 0; i < 10; i++) {
+		ttPrint(population, i);
+		printf("\n\n");
 	}
 
 	return population;

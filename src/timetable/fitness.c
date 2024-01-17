@@ -59,7 +59,7 @@ static numeric computeHardConstraint_CapacityConstraint(Population *population, 
     	for (uint i = 0; i < population->n_sessions; i++) {
 		uint timeslot_id;
 		uint venue_id;
-		getTimeTableTuple(population, timetable_index, i, &venue_id, &timeslot_id);
+		ttGetTuple(population, timetable_index, i, &venue_id, &timeslot_id);
         	for (uint j = 0; j < population->n_sessions; j++) {
             		if (session_strength[j][0] == i) {
                 		// Final incrementation
@@ -83,9 +83,9 @@ static numeric computeHardConstraint_VenueConflictConstraint(Population *populat
 	// Iterating through sessions
 	for (uint i = 0; i < population->n_sessions; i++) {
 		uint timeslot1, venue1, timeslot2, venue2;
-		getTimeTableTuple(population, timetable_index, i, &venue1, &timeslot1);
+		ttGetTuple(population, timetable_index, i, &venue1, &timeslot1);
 		for (uint j = i + 1; j < population->n_sessions; j++) {
-			getTimeTableTuple(population, timetable_index, j, &venue2, &timeslot2);
+			ttGetTuple(population, timetable_index, j, &venue2, &timeslot2);
 			if (timeslot1 == timeslot2 && venue1 == venue2) {
 				violations++;	
 			}
@@ -106,7 +106,7 @@ static numeric computeHardConstraint_VenueTypeConstraint(Population *population,
 	for (uint i = 0; i < population->n_sessions; i++) {
 
 		uint timeslot, venue;
-		getTimeTableTuple(population, timetable_index, i, &venue, &timeslot);
+		ttGetTuple(population, timetable_index, i, &venue, &timeslot);
 
 		// Retrieve required venue type
 		uint venue_type;
@@ -144,7 +144,7 @@ static numeric computeHardConstraint_MaxSessionsConstraint(Population *populatio
 	for (uint i = 0; i < population->n_sessions; i++) {
 		uint timeslot, venue;
 		uint day = timeslot / 7.1f;
-		getTimeTableTuple(population, timetable_index, i, &venue, &timeslot);
+		ttGetTuple(population, timetable_index, i, &venue, &timeslot);
 
 		uint party_id;
 		for (uint j = 0; j < specifications->assignments->size; j++) {
@@ -198,9 +198,9 @@ static numeric computeHardConstraint_PartyDuplicateConstraint(Population *popula
     	// Iterate through parties
 	for (uint i = 0; i < population->n_sessions; i++) { 
 		uint timeslot1, venue1, timeslot2, venue2;
-		getTimeTableTuple(population, timetable_index, i, &venue1, &timeslot1);
+		ttGetTuple(population, timetable_index, i, &venue1, &timeslot1);
 		for (uint j = i + 1; j < population->n_sessions; j++) {
-			getTimeTableTuple(population, timetable_index, j, &venue2, &timeslot2);
+			ttGetTuple(population, timetable_index, j, &venue2, &timeslot2);
 			if (timeslot1 == timeslot2) {
 				for (uint k = 1; k < 10; k++) {
 					if (session_party[i][k] == -1) {
@@ -229,13 +229,13 @@ static numeric computeHardConstraint_suffectient_timeslotConstraint(Population *
 
     	for (uint i = 0; i < population->n_sessions; i++) {
         	uint timeslot1, venue1, timeslot2, venue2;
-		getTimeTableTuple(population, timetable_index, i, &venue1, &timeslot1);
+		ttGetTuple(population, timetable_index, i, &venue1, &timeslot1);
         	for (uint j = 0; j < specifications->sessions->size; j++) {
             		if (specifications->sessions->session_id[j] == i) {
                 		if (specifications->sessions->duration[j] > 1) {
                     			uint duration = specifications->sessions->duration[j];
                     			for (uint k = i + 1; k < i + duration; k++) {
-                        			getTimeTableTuple(population, timetable_index, k, &venue2, &timeslot2);
+                        			ttGetTuple(population, timetable_index, k, &venue2, &timeslot2);
                         			if (timeslot1 + k - i != timeslot2) {
                             				violations++;
                         			}
@@ -365,7 +365,7 @@ void computeFitnesses(Population *population, TimeTableSpecifications *specficat
 	
 	for (uint i = 0; i < population->n_timetables; i++) {
 		soft_fitness[i] = 0;
-		hard_fitness[i] = computeHardFitnesses(population, specfications, i);
+		hard_fitness[i] = -1 / computeHardFitnesses(population, specfications, i);
 	}
 
 

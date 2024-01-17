@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-typedef float numeric;
+typedef long double numeric;
 
 // Norm functions for fitness concatination.
 

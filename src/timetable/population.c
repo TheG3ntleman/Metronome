@@ -119,6 +119,6 @@ void ttPrint(Population *population, uint timetable_index) {
 	for (uint i = 0; i < population->n_sessions; i++) {
 		uint timeslot_id, venue_id;
 		ttGetTuple(population, timetable_index, i, &timeslot_id, &venue_id);
-		printf("\t%u - %u", timeslot_id, venue_id);
+		printf("\t%u - %u\n", timeslot_id, venue_id);
 	}
 }

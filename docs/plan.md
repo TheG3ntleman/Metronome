@@ -12,3 +12,17 @@
 10. Allow the user interface to call our python functions as required, 1 Feb
 11. Make the user interface display output in an appropriate format (with something like pdf exports), 5 Feb
 12. Polish everything, 5 Feb
+
+# Current objects
+
+1. Understand why the python call gives a segfault. (HITEN & ABHIRATH)
+2. Judge the feasibility and optimality of converged timetable solutions. (HITEN  & ABHIRATH)
+
+3. Mystery: why it likes specific numbers. (The timeslots are roughly always the number of sessions).
+
+4. Revamping stage 2 specifications (timeslot support and venue distance information) and data.  (ABHIRATH)
+5. Make stage 1 specification loader and converter (CHARAN)
+
+6. Integrate culling via clustering and termination via cluster fully. (CHARAN)
+7. Fix fitness functions. (HITEN & ABHIRATH)
+

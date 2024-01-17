@@ -62,7 +62,7 @@ void solveTimeTablingProblem(
 		.minimum_timetables_per_cluster = 5,
 		.similarity_threshold = 40,
 		.mutation_rate = 0.05,
-		.maximum_generations = 10,
+		.maximum_generations = 100,
 	};
 
 	Population *population = evolveTimeTables(specs, &gaSpecs);
