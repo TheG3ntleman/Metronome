@@ -16,7 +16,7 @@ static numeric computeHardConstraint_CapacityConstraint(Population *population, 
      	for (uint i = 0; i < population->n_sessions; i++) {
 		session_party[i][0] = i;
 		uint n = 1;
-		for (uint j = 0; j < specifications->assignments->size, j++) {
+		for (uint j = 0; j < specifications->assignments->size; j++) {
 	    		if (i == specifications->assignments->session_id[j]) {
 				session_party[i][n] = specifications->assignments->party_id[j];
 				n++;
