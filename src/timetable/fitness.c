@@ -64,7 +64,7 @@ static numeric computeHardConstraint_CapacityConstraint(Population *population, 
         	for (uint j = 0; j < population->n_sessions; j++) {
             		if (session_strenght[j][0] == i) {
                 		// Final incrementation
-                		if (session_strength[j][1] > specifications->venues->capacity[venue_id]) {
+                		if (session_strenght[j][1] > specifications->venues->capacity[venue_id]) {
                     			violations++;
                 		}
             		}
