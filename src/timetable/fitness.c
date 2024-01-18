@@ -6,9 +6,9 @@
 static numeric computeHardConstraint_CapacityConstraint(Population *population, TimeTableSpecifications *specifications, uint timetable_index) {
 	
     	// creating an array of array which conatains all the session and parties associated with them
-    	uint session_party[population->n_sessions][10];
+    	uint session_party[population->n_sessions][15];
     	for (uint i = 0; i < population->n_sessions; i++) {
-        	for (uint j = 0; j < 10; j++) {
+        	for (uint j = 0; j < 15; j++) {
             		session_party[i][j] = -1;
         	}
     	}
@@ -25,7 +25,7 @@ static numeric computeHardConstraint_CapacityConstraint(Population *population, 
     	}       
 
     	// converting from partyid to party strenght in session_party array
-    	for (uint i = 1; i < 10; i++) {
+    	for (uint i = 1; i < 15; i++) {
         	for (uint j = 0; j < population->n_sessions; j++) {
             		for (uint k = 0; k < specifications->parties->size; k++){
                 		if (specifications->parties->party_id[k] == session_party[j][i]) {
@@ -46,7 +46,7 @@ static numeric computeHardConstraint_CapacityConstraint(Population *population, 
     	for (uint i = 0; i < population->n_sessions; i++) {
         	session_strenght[i][0] = session_party[i][0];
         	uint n = 0;
-        	for (uint j = 1; j < 10; j++) {
+        	for (uint j = 1; j < 15; j++) {
             		if (session_party[i][j] != -1) {
                 		n += session_party[i][j];
             		}
@@ -160,9 +160,9 @@ static numeric computeHardConstraint_MaxSessionsConstraint(Population *populatio
     	}
 
     	// creating an array of array which contains all the session and parties associated with them
-    	uint session_party[population->n_sessions][10];
+    	uint session_party[population->n_sessions][15];
     	for (uint i = 0; i < population->n_sessions; i++) {
-        	for (uint j = 0; j < 10; j++) {
+        	for (uint j = 0; j < 15; j++) {
             		session_party[i][j] = -1;
         	}
     	}
@@ -181,7 +181,7 @@ static numeric computeHardConstraint_MaxSessionsConstraint(Population *populatio
     	// calculating how many session there are in each day for each teacher id
     	for (uint i = 0; i < teacher_number; i++) {
         	for (uint j = 0; j < population->n_sessions; j++) {
-            		for (uint k = 1; k < 10; k++) {
+            		for (uint k = 1; k < 15; k++) {
                 		if (teacher_hours[i][0] == session_party[j][k]) {
                     			uint timeslot, venue;
                     			getTimeTableTuple(population, timetable_index, session_party[j][0], &venue, &timeslot);
@@ -212,9 +212,9 @@ static numeric computeHardConstraint_MaxSessionsConstraint(Population *populatio
 static numeric computeHardConstraint_PartyDuplicateConstraint(Population *population, TimeTableSpecifications *specifications, uint timetable_index) {
 	
     	// creating an array of array which conatains all the session and parties associated with them
-    	uint session_party[population->n_sessions][10];
+    	uint session_party[population->n_sessions][15];
     	for (uint i = 0; i < population->n_sessions; ++i) {
-        	for (uint j = 0; j < 10; ++j) {
+        	for (uint j = 0; j < 15; ++j) {
             		session_party[i][j] = -1;
         	}
     	}
@@ -239,11 +239,11 @@ static numeric computeHardConstraint_PartyDuplicateConstraint(Population *popula
 		for (uint j = i + 1; j < population->n_sessions; j++) {
 			getTimeTableTuple(population, timetable_index, j, &venue2, &timeslot2);
 			if (timeslot1 == timeslot2) {
-				for (uint k = 1; k < 10; k++) {
+				for (uint k = 1; k < 15; k++) {
 					if (session_party[i][k] == -1) {
 						break;
 					}
-					for (uint w = 1; w < 10; w++) {
+					for (uint w = 1; w < 15; w++) {
 						if (session_party[j][w] == -1) {
 							break;
 						}
