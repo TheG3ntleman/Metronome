@@ -186,7 +186,7 @@ static numeric computeHardConstraint_MaxSessionsConstraint(Population *populatio
                 		if (teacher_hours[i][0] == session_party[j][k]) {
                     			uint timeslot, venue;
                     			getTimeTableTuple(population, timetable_index, session_party[j][0], &venue, &timeslot);
-                    			uint day = timeslot / 7.0f;
+                    			uint day = timeslot / 7;
                     			teacher_hours[i][day]++;
                 		}
             		}
@@ -197,7 +197,7 @@ static numeric computeHardConstraint_MaxSessionsConstraint(Population *populatio
     	numeric violations = 0;
 
     	for (uint i = 0; i < teacher_number; i++) {
-        	for (uint j = 0; j < 6; j++) {
+        	for (uint j = 1; j < 6; j++) {
             		if (teacher_hours[i][j] > MAX_HOURS_PER_DAY) {
                 		violations++;
             		}
@@ -214,8 +214,8 @@ static numeric computeHardConstraint_PartyDuplicateConstraint(Population *popula
 	
     	// creating an array of array which conatains all the session and parties associated with them
     	uint session_party[population->n_sessions][15];
-    	for (uint i = 0; i < population->n_sessions; ++i) {
-        	for (uint j = 0; j < 15; ++j) {
+    	for (uint i = 0; i < population->n_sessions; i++) {
+        	for (uint j = 0; j < 15; j++) {
             		session_party[i][j] = -1;
         	}
     	}
@@ -223,7 +223,7 @@ static numeric computeHardConstraint_PartyDuplicateConstraint(Population *popula
     	for (uint i = 0; i < population->n_sessions; i++) {
         	session_party[i][0] = i;
         	uint n = 1;
-        	for (uint j = 0; j < specifications->assignments->size, j++) {
+        	for (uint j = 0; j < specifications->assignments->size; j++) {
             		if (i == specifications->assignments->session_id[j]) {
                 		session_party[i][n] = specifications->assignments->party_id[j];
                 		n++;
@@ -276,6 +276,9 @@ static numeric computeHardConstraint_suffectient_timeslotConstraint(Population *
                         			getTimeTableTuple(population, timetable_index, k, &venue2, &timeslot2);
                         			if (timeslot1 + k - i != timeslot2) {
                             				violations++;
+							if (venue1 != venue2) {
+								violations++;
+							}
                         			}
                         			else {
                             				if (venue1 != venue2) {
