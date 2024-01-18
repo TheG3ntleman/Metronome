@@ -110,7 +110,8 @@ static numeric computeHardConstraint_VenueTypeConstraint(Population *population,
 		getTimeTableTuple(population, timetable_index, i, &venue, &timeslot);
 
 		// Retrieve required venue type
-		uint venue_type, venue_type_assigned;
+		uint venue_type = 0;
+		uint venue_type_assigned = 0;
 		for (uint j = 0; j < specifications->sessions->size; j++) {
 			if (specifications->sessions->session_id[j] == i) {
 				venue_type = specifications->sessions->venue_type[j];
@@ -126,9 +127,9 @@ static numeric computeHardConstraint_VenueTypeConstraint(Population *population,
 		}
 
 		// check if they are matching
-		if (venue_type != venue_type_assigned)
+		if (venue_type != venue_type_assigned) {
 			violations++;
-
+		}
 	} 
 
 	return violations;
