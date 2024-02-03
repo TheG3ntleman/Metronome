@@ -85,41 +85,11 @@ static numeric computeHardConstraint_VenueTypeConstraint(
 static numeric computeHardConstraint_MaxSessionsConstraint(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-
-  // Making array to record the number of sessions per day
-  uint hours[specifications->parties->size][NUMBER_OF_DAYS];
-  for (uint i = 0; i < specifications->parties->size; i++) {
-    for (uint j = 0; j < NUMBER_OF_DAYS; j++) {
-      hours[i][j] = 0;
-    }
-  }
-
-  // Actually recording the hours now.
-  // Iterating through sessions
-  for (uint i = 0; i < population->n_sessions; i++) {
-    uint timeslot, venue;
-    uint day = timeslot / 7;
-    ttGetTuple(population, timetable_index, i, &venue, &timeslot);
-
-    uint party_id;
-    for (uint j = 0; j < specifications->assignments->size; j++) {
-      if (specifications->assignments->session_id[j] == i) {
-        party_id = specifications->assignments->party_id[j];
-        hours[party_id][day]++;
-      }
-    }
-  }
-
-  // Searching for violations
   numeric violations = 0;
-
-  for (uint i = 0; i < specifications->parties->size; i++) {
-    for (uint j = 0; j < NUMBER_OF_DAYS; j++) {
-      if (hours[i][j] > MAX_HOURS_PER_DAY)
-        violations++;
-    }
+    
+  for (uint i = 0; i < specifications->party_table->size; i++){
+       
   }
-
   return violations;
 }
 #endif
