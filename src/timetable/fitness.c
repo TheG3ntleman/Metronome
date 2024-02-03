@@ -210,11 +210,29 @@ static numeric computeSoftConstraint_maximize_chunking(
 static numeric computeSoftConstraint_room_utilization(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-  /*Maximize Room Utilization Constraint: Encourage the efficient use of rooms
-   * by maximizing their overall utilization.*/
+    /* Maximize Room Utilization Constraint: Encourage the efficient use of rooms
+     by maximizing their overall utilization. */
+    numeric violations = 0;
 
-  return 0;
+    uint room_utilization[specifications->venue_table->size];
+    for (uint i = 0; i < specifications->venue_table->size; i++) {
+        room_utilization[i] = 0;
+    }
+
+    for (uint i = 0; i < population->n_sessions; i++) {  // Corrected n_sesions to n_sessions
+        uint venue_id, timeslot_id;
+        ttGetTuple(population, timetable_index, i, &venue_id, &timeslot_id);
+        room_utilization[venue_id]++;
+    }
+    for (uint i = 0; i < specifications->venue_table->size; i++) {  // Corrected venue_table to venue_table->size
+        if (room_utilization[i] == 0) {
+            violations++;
+        }
+    }
+
+    return specifications->constraint->weights[8] * violations;
 }
+
 #endif
 #ifdef SOFT_AVOID_EARLYLATE_TIME
 static numeric computeSoftConstraint_avoid_early_late_session(
