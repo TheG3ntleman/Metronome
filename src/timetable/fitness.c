@@ -188,10 +188,9 @@ static numeric computeHardConstraint_sufficient_timeslotConstraint(
 #endif
 
 #ifdef SOFT_STUDENT_TRAVELTIME
-static numeric
-computeSoftConstraint_studenttraveltime(Population *population,
-                                        TimeTableSpecifications *specifications,
-                                        uint timetable_index) {
+static numeric computeSoftConstraint_studenttraveltime(
+    Population *population, TimeTableSpecifications *specifications,
+    uint timetable_index) {
   /*Consecutive sessions may need to be scheduled in close proximity to each
    * other to minimize student travel time between them.*/
 
@@ -199,20 +198,18 @@ computeSoftConstraint_studenttraveltime(Population *population,
 }
 #endif
 #ifdef SOFT_MAXIMIZE_CHUNKING
-static numeric
-computeSoftConstraint_maximize_chunking(Population *population,
-                                        TimeTableSpecifications *specifications,
-                                        uint timetable_index) {
+static numeric computeSoftConstraint_maximize_chunking(
+    Population *population, TimeTableSpecifications *specifications,
+    uint timetable_index) {
   /*maximize session chunking.(have back to back sessions for students)*/
 
   return 0;
 }
 #endif
 #ifdef SOFT_ROOM_UTILIZATION
-static numeric
-computeSoftConstraint_room_utilization(Population *population,
-                                       TimeTableSpecifications *specifications,
-                                       uint timetable_index) {
+static numeric computeSoftConstraint_room_utilization(
+    Population *population, TimeTableSpecifications *specifications,
+    uint timetable_index) {
   /*Maximize Room Utilization Constraint: Encourage the efficient use of rooms
    * by maximizing their overall utilization.*/
 
@@ -260,30 +257,27 @@ static numeric computeSoftConstraint_backtoback_teacher_class(
 }
 #endif
 #ifdef SOFT_MINIMIZE_SAMECOURSE_SESSION
-static numeric
-computeSoftConstraint_samecouse_session(Population *population,
-                                        TimeTableSpecifications *specifications,
-                                        uint timetable_index) {
+static numeric computeSoftConstraint_samecouse_session(
+    Population *population, TimeTableSpecifications *specifications,
+    uint timetable_index) {
   /*discourage scheduling sessions of the same course more than once per day.*/
 
   return 0;
 }
 #endif
 #ifdef SOFT_LAB_AFTER_LECTURE
-static numeric
-computeSoftConstraint_lab_after_lecture(Population *population,
-                                        TimeTableSpecifications *specifications,
-                                        uint timetable_index) {
+static numeric computeSoftConstraint_lab_after_lecture(
+    Population *population, TimeTableSpecifications *specifications,
+    uint timetable_index) {
   /*have lab sessions after the lecture session for a particular course*/
 
   return 0;
 }
 #endif
 #ifdef SOFT_SESSIONS_EVENLY_THROUGHOUT_WEEK
-static numeric
-computeSoftConstraint_even_distrubution(Population *population,
-                                        TimeTableSpecifications *specifications,
-                                        uint timetable_index) {
+static numeric computeSoftConstraint_even_distrubution(
+    Population *population, TimeTableSpecifications *specifications,
+    uint timetable_index) {
   /*have an even distribution of events throughout the week (avoid having too
    * many sessions at one day)*/
 
@@ -291,9 +285,9 @@ computeSoftConstraint_even_distrubution(Population *population,
 }
 #endif
 
-static numeric computeHardFitnesses(Population *population,
-                                    TimeTableSpecifications *specifications,
-                                    uint timetable_index) {
+static numeric computeHardFitnesses(
+    Population *population, TimeTableSpecifications *specifications,
+    uint timetable_index) {
 
   numeric fitness = 0;
 
