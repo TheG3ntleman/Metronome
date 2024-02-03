@@ -238,11 +238,30 @@ static numeric computeSoftConstraint_room_utilization(
 static numeric computeSoftConstraint_avoid_early_late_session(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-  /*Avoid Early/Late Times Constraint: Express preferences to avoid scheduling
-   * classes too early or too late in the day.*/
+    /* Avoid Early/Late Times Constraint: Express preferences to avoid scheduling
+    * classes too early or too late in the day. */
+    numeric violations = 0;
+    uint number_of_days = specifications->timeslot_table->day[specifications->timeslot_table->size - 1];
 
-  return 0;
+    for (uint i = 0; i < specifications->party_table->size; i++) {
+        uint session_id_array[specifications->session_table->size];
+        uint number_of_session;
+        findAssociatedSessions(i, &number_of_session, session_id_array, specifications);
+        uint preferred_start_time = specifications->party_table->preferred_start_time[i];
+        uint preferred_end_time = specifications->party_table->preferred_end_time[i];
+        for (uint j = 0; j < number_of_session; j++) {
+            uint venue_id, timeslot_id;
+            ttGetTuple(population, timetable_index, session_id_array[j], &venue_id, &timeslot_id);
+            uint number_of_timeslot_per_day = specifications->timeslot_table->size / number_of_days;
+            if ((timeslot_id / number_of_timeslot_per_day) < preferred_start_time || (timeslot_id / number_of_timeslot_per_day) > preferred_end_time) {
+                violations++;
+            }
+        }
+    }
+
+    return specifications->constraint->weights[9] * violations;
 }
+
 #endif
 #ifdef SOFT_ROOM_CAPACITY_UTILIZATION
 static numeric computeSoftConstraint_room_capacity_utilization(
