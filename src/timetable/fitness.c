@@ -287,19 +287,37 @@ static numeric computeSoftConstraint_room_capacity_utilization(
 
     return specifications->constraint->weights[10] * violations;
 }
-
 #endif
+
 #ifdef SOFT_COMMON_TIMSLOT_EMPTY
 static numeric computeSoftConstraint_common_timeslot_empty(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-  /*encourage common time slots being left empty for a particular batch,
-  so if there are some sessions that were canceled during the week, they can be
-  held at that time slot.*/
+    /* Encourage common time slots being left empty for a particular batch,
+    so if there are some sessions that were canceled during the week, they can be
+    held at that time slot. */
+    numeric violations = 0;
 
-  return 0;
+    uint timeslot_array[specifications->timeslot_table->size];
+    for (uint i = 0; i < specifications->timeslot_table->size; i++) {
+        timeslot_array[i] = 0;
+    }
+
+    for (uint i = 0; i < specifications->session_table->size; i++) {  
+        uint venue_id, timeslot_id;
+        ttGetTuple(population, timetable_index, i, &venue_id, &timeslot_id);
+        timeslot_array[timeslot_id]++;
+    }
+    for (uint i = 0; i < specifications->timeslot_table->size; i++) {
+        if (timeslot_array[i] != 0) {
+            violations++;
+        }
+    }
+
+    return specifications->constraint->weights[11] * violations;
 }
 #endif
+
 #ifdef SOFT_MINIMIZE_BACKTOBACK_TEACHERCLASSES
 static numeric computeSoftConstraint_backtoback_teacher_class(
     Population *population, TimeTableSpecifications *specifications,
