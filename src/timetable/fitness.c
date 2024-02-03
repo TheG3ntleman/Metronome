@@ -85,13 +85,36 @@ static numeric computeHardConstraint_VenueTypeConstraint(
 static numeric computeHardConstraint_MaxSessionsConstraint(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-  numeric violations = 0;
     
-  for (uint i = 0; i < specifications->party_table->size; i++){
-       
-  }
-  return violations;
+    numeric violations = 0;
+    
+    for (uint i = 0; i < specifications->party_table->size; i++) {
+        uint session_id_array[specifications->session_table->size];
+        uint number_of_session;
+        findAssociatedSessions(i, &number_of_session, session_id_array, specifications);
+        
+        uint day_array[6];
+        for (uint j = 0; j < 6; j++) {
+            day_array[j] = 0;
+        }
+        
+        for (uint j = 0; j < number_of_session; j++) {  
+            uint venue_id, timeslot_id;
+            ttGetTuple(population, timetable_index, session_id_array[j], &venue_id, &timeslot_id); 
+            uint day = specifications->timeslot_table->day[timeslot_id];
+            day_array[day]++;
+        }
+        
+        for (uint j = 0; j < 6; j++) {
+            if (day_array[j] > specifications->party_table->max_hours[i]) {
+                violations++;
+            }
+        }
+    }
+  
+    return violations;
 }
+
 #endif
 
 #ifdef HARD_PARTY_DUPLICATE
