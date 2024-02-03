@@ -12,16 +12,16 @@ static numeric computeHardConstraint_CapacityConstraint(
         uint venue_id;
         ttGetTuple(population, timetable_index, i, &venue_id, &timeslot_id);
         
-        uint party_id_array[specifications->parties->size];
+        uint party_id_array[specifications->party_table->size];
         uint number_of_parties;
         uint strength = 0;
         findAssociatedParties(i, &number_of_parties, party_id_array, specifications);
         
         for (uint j = 0; j < number_of_parties; j++) {
-            strength += specifications->parties->strength[party_id_array[j]];
+            strength += specifications->party_table->strength[party_id_array[j]];
         }
 
-        uint capacity = specifications->venues->capacity[venue_id];
+        uint capacity = specifications->venue_table->capacity[venue_id];
         if (strength > capacity) {
             violations++;
         }
@@ -68,8 +68,8 @@ static numeric computeHardConstraint_VenueTypeConstraint(
     ttGetTuple(population, timetable_index, i, &venue, &timeslot);
 
     // Retrieve required and assigned venue type
-    uint venue_type_assigned = specifications->venues->venue_type[venue];
-    uint venue_type_required = specifications->sessions->venue_type[i]; 
+    uint venue_type_assigned = specifications->venue_table->type[venue];
+    uint venue_type_required = specifications->session_table->type[i]; 
 
     // Check if they are matching
     if (venue_type_assigned != venue_type_required) {
