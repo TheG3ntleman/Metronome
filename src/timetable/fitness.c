@@ -121,55 +121,33 @@ static numeric computeHardConstraint_MaxSessionsConstraint(
 static numeric computeHardConstraint_PartyDuplicateConstraint(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-
-  // creating an array of array which conatains all the session and parties
-  // associated with them
-  uint session_party[population->n_sessions][10];
-  for (uint i = 0; i < population->n_sessions; ++i) {
-    for (uint j = 0; j < 10; ++j) {
-      session_party[i][j] = -1;
-    }
-  }
-
-  for (uint i = 0; i < population->n_sessions; i++) {
-    session_party[i][0] = i;
-    uint n = 0;
-    for (uint j = 0; j < specifications->assignments->size; j++) {
-      if (i == specifications->assignments->session_id[j]) {
-        session_party[i][n] = specifications->assignments->party_id[j];
-        n++;
-      }
-    }
-  }
-
-  numeric violations = 0;
-
-  // Iterate through parties
-  for (uint i = 0; i < population->n_sessions; i++) {
-    uint timeslot1, venue1, timeslot2, venue2;
-    ttGetTuple(population, timetable_index, i, &venue1, &timeslot1);
-    for (uint j = i + 1; j < population->n_sessions; j++) {
-      ttGetTuple(population, timetable_index, j, &venue2, &timeslot2);
-      if (timeslot1 == timeslot2) {
-        for (uint k = 1; k < 10; k++) {
-          if (session_party[i][k] == -1) {
-            break;
-          }
-          for (uint w = 1; w < 10; w++) {
-            if (session_party[j][w] == -1) {
-              break;
-            }
-            if (session_party[i][k] == session_party[j][w]) {
-              violations++;
-            }
-          }
+    
+    numeric violations = 0;  // Initialize violations
+    
+    for (uint i = 0; i < specifications->party_table->size; i++) {
+        uint session_id_array[specifications->session_table->size];
+        uint number_of_session;
+        findAssociatedSessions(i, &number_of_session, session_id_array, specifications);
+        uint timeslot_array[specifications->timeslot_table->size];
+        uint n = 0;
+        for (uint j = 0; j < number_of_session; j++) {
+            uint venue_id, timeslot_id;
+            ttGetTuple(population, timetable_index, session_id_array[j], &venue_id, &timeslot_id);
+            timeslot_array[n] = timeslot_id;
+            n++;
         }
-      }
+        for (uint j = 0; j < n; j++) {  
+            for (uint k = j + 1; k < n; k++) {
+                if (timeslot_array[j] == timeslot_array[k]) {
+                    violations++;
+                }
+            }
+        }
     }
-  }
 
-  return violations;
+    return violations;
 }
+
 #endif
 
 #ifdef HARD_SUFFECIENT_TIMESLOT
