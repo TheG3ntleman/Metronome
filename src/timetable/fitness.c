@@ -377,12 +377,34 @@ static numeric computeSoftConstraint_backtoback_teacher_class(
 #endif
 
 #ifdef SOFT_MINIMIZE_SAMECOURSE_SESSION
-static numeric computeSoftConstraint_samecouse_session(
+static numeric computeSoftConstraint_samecourse_session(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-  /*discourage scheduling sessions of the same course more than once per day.*/
+    /* Discourage scheduling sessions of the same course more than once per day. */
+    numeric violations = 0;
 
-  return 0;
+    for (uint i = 0; i < specifications->session_table->size; i++) {
+        
+        uint venue_id1, timeslot_id1;
+        ttGetTuple(population, timetable_index, i, &venue_id1, &timeslot_id1);
+        uint day1 = specifications->timeslot_table->day[timeslot_id1];
+        
+        for (uint j = i + 1; j < specifications->session_table->size; j++) {
+            
+            if (specifications->session_table->course[i] == specifications->session_table->course[j]) {
+                
+                uint venue_id2, timeslot_id2;
+                ttGetTuple(population, timetable_index, j, &venue_id2, &timeslot_id2);
+                uint day2 = specifications->timeslot_table->day[timeslot_id2];
+                
+                if (day1 == day2) {
+                    violations++;
+                }
+            }
+        }
+    }
+
+    return specifications->constraint->weights[13] * violations;
 }
 #endif
 
@@ -397,13 +419,47 @@ static numeric computeSoftConstraint_lab_after_lecture(
 #endif
 
 #ifdef SOFT_SESSIONS_EVENLY_THROUGHOUT_WEEK
-static numeric computeSoftConstraint_even_distrubution(
+static numeric computeSoftConstraint_even_distribution(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-  /*have an even distribution of events throughout the week (avoid having too
-   * many sessions at one day)*/
+    /* Have an even distribution of events throughout the week (avoid having too
+    * many sessions on one day). */
+    numeric violations = 0;
+    uint number_of_days = specifications->timeslot_table->day[specifications->timeslot_table->size - 1];
 
-  return 0;
+    for (uint i = 0; i < specifications->party_table->size; i++) {
+        uint session_id_array[specifications->session_table->size];
+        uint number_of_session;
+        findAssociatedSessions(i, &number_of_session, session_id_array, specifications);
+
+        uint day_array[number_of_days];
+        for (uint j = 0; j < number_of_days; j++) {
+            day_array[j] = 0;
+        }
+
+        for (uint j = 0; j < number_of_session; j++) {
+            uint venue_id, timeslot_id;
+            ttGetTuple(population, timetable_index, session_id_array[j], &venue_id, &timeslot_id);
+            uint day = specifications->timeslot_table->day[timeslot_id];  // Corrected day access
+            day_array[day]++;
+        }
+
+        uint sum = 0;
+        for (uint j = 0; j < number_of_days; j++) {
+            sum += day_array[j];
+        }
+
+        uint average = sum / number_of_days;
+        for (uint j = 0; j < number_of_days; j++) {
+            if (day_array[j] >= average) {
+                violations += day_array[j] - average;
+            } else {
+                violations += average - day_array[j];
+            }
+        }
+    }
+
+    return specifications->constraint->weights[15] * violations;
 }
 #endif
 
