@@ -242,7 +242,8 @@ static numeric computeSoftConstraint_avoid_early_late_session(
     * classes too early or too late in the day. */
     numeric violations = 0;
     uint number_of_days = specifications->timeslot_table->day[specifications->timeslot_table->size - 1];
-
+    uint number_of_timeslot_per_day = specifications->timeslot_table->size / number_of_days;
+    
     for (uint i = 0; i < specifications->party_table->size; i++) {
         uint session_id_array[specifications->session_table->size];
         uint number_of_session;
@@ -252,7 +253,6 @@ static numeric computeSoftConstraint_avoid_early_late_session(
         for (uint j = 0; j < number_of_session; j++) {
             uint venue_id, timeslot_id;
             ttGetTuple(population, timetable_index, session_id_array[j], &venue_id, &timeslot_id);
-            uint number_of_timeslot_per_day = specifications->timeslot_table->size / number_of_days;
             if ((timeslot_id / number_of_timeslot_per_day) < preferred_start_time || (timeslot_id / number_of_timeslot_per_day) > preferred_end_time) {
                 violations++;
             }
@@ -304,10 +304,37 @@ static numeric computeSoftConstraint_common_timeslot_empty(
 static numeric computeSoftConstraint_backtoback_teacher_class(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-  /*Minimization of Back-to-Back Classes for teachers.*/
+    /* Minimization of Back-to-Back Classes for teachers. */
+    
+    numeric violations = 0;
+    uint number_of_days = specifications->timeslot_table->day[specifications->timeslot_table->size - 1];
+    uint number_of_timeslot_per_day = specifications->timeslot_table->size / number_of_days;
 
-  return 0;
+    for (uint i = 0; i < specifications->party_table->size; i++) {
+        
+        if (specifications->party_table->party_type[i] == 1) {
+            
+            uint session_id_array[specifications->session_table->size];
+            uint number_of_session;
+            findAssociatedSessions(i, &number_of_session, session_id_array, specifications);
+            
+            for (uint j = 0; j < number_of_session - 1; j = j + 2) {
+                
+                uint venue_id_prev, timeslot_id_prev;
+                ttGetTuple(population, timetable_index, session_id_array[j], &venue_id_prev, &timeslot_id_prev);
+                uint venue_id_next, timeslot_id_next;
+                ttGetTuple(population, timetable_index, session_id_array[j + 1], &venue_id_next, &timeslot_id_next);
+                
+                if ((timeslot_id_prev / number_of_timeslot_per_day) + 1 == (timeslot_id_next / number_of_timeslot_per_day)) {
+                    violations++;
+                }
+            }
+        }
+    }
+
+    return specifications->constraint->weights[12] * violations;
 }
+
 #endif
 #ifdef SOFT_MINIMIZE_SAMECOURSE_SESSION
 static numeric computeSoftConstraint_samecouse_session(
