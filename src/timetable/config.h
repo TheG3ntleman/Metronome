@@ -6,32 +6,32 @@
 // Evolutionary algorithm related specs
 typedef struct {
 
-	// Parameters related to selection and culling
+  // Parameters related to selection and culling
 
-	uint population_size;
-	uint selection_size; // Parameter regarding how many organisms of current population are seleceted to generate new population.
+  uint population_size;
+  uint selection_size; // Parameter regarding how many organisms of current
+                       // population are seleceted to generate new population.
 
-	// Options for cluster based culling
+  // Options for cluster based culling
 
-	uint minimum_timetables_per_cluster;
+  uint minimum_timetables_per_cluster;
 
-	// The similarity value after which two timetables 
-	// are put in the same cluster without further computation.
-	numeric similarity_threshold; 
-	
-	// Parameters related to mutation operation
-	numeric mutation_rate;
+  // The similarity value after which two timetables
+  // are put in the same cluster without further computation.
+  numeric similarity_threshold;
 
-	// Options for selection based culling
-	
-	// Remember the norm used can be swapped.
-	
+  // Parameters related to mutation operation
+  numeric mutation_rate;
 
-	// Termination condition related options
-	//uint minimum_generations;
-	uint maximum_generations;
-	//numeric minimum_soft_epsilon;
-	//numeric minimum_hard_epsilon;
+  // Options for selection based culling
+
+  // Remember the norm used can be swapped.
+
+  // Termination condition related options
+  // uint minimum_generations;
+  uint maximum_generations;
+  // numeric minimum_soft_epsilon;
+  // numeric minimum_hard_epsilon;
 
 } GeneticSpecifications;
 
@@ -40,19 +40,18 @@ typedef struct {
 
 // FITNESS RELATED OPTIONS
 
-
 #define NUMBER_OF_DAYS 6
 #define MAX_HOURS_PER_DAY 5
 
-// Hard constraint controls 
+// Hard constraint controls
 #define HARD_CAPACITY_CONSTRAINT
 #define HARD_VENUE_CONFLICT
 #define HARD_VENUE_TYPE
-#define HARD_MAX_SESSIONS
+// #define HARD_MAX_SESSIONS
 #define HARD_PARTY_DUPLICATE
 #define HARD_SUFFECIENT_TIMESLOT
 
-// Hard constraint controls 
+// Hard constraint controls
 #define SOFT_STUDENT_TRAVELTIME
 #define SOFT_MAXIMIZE_CHUNKING
 #define SOFT_ROOM_UTILIZATION
