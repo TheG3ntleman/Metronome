@@ -63,4 +63,6 @@ typedef struct {
 #define SOFT_LAB_AFTER_LECTURE
 #define SOFT_SESSIONS_EVENLY_THROUGHOUT_WEEK
 
+#define NUMBER_OF_CONSTRAINTS 16
+
 #endif
