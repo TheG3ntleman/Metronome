@@ -188,10 +188,60 @@ static numeric computeHardConstraint_sufficient_timeslotConstraint(
 static numeric computeSoftConstraint_studenttraveltime(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-  /*Consecutive sessions may need to be scheduled in close proximity to each
-   * other to minimize student travel time between them.*/
+    /*Consecutive sessions may need to be scheduled in close proximity to each
+    * other to minimize student travel time between them.*/
+    numeric violations = 0;
 
-  return 0;
+    for (uint i = 0; i < specifications->party_table->size; i++) {
+        uint session_id_array[specifications->session_table->size];
+        uint number_of_session;
+        findAssociatedSessions(i,&number_of_session,session_id_array,specifications);
+
+        uint timeslot_array[specifications->timeslot_table->size];
+        uint venue_array[specifications->venue_table->size];
+        uint n = 0;
+        for (uint j = 0; j < number_of_session; j++) {
+            uint venue_id,timeslot_id;
+            ttGetTuple(population, timetable_index, session_id_array[j], &venue_id, &timeslot_id);
+            timeslot_array[n] = timeslot_id;
+            venue_array[n] = venue_id;
+            n++;
+        }
+
+        for (uint i = 1; i < number_of_session; i++) {
+            uint key_timeslot = timeslot_array[i];
+            uint key_session_id = session_id_array[i];
+            uint key_venue = venue_array[i];
+            int j = i - 1;
+
+            while (j >= 0 && timeslot_array[j] > key_timeslot) {
+                // Directly swap elements
+                timeslot_array[j + 1] = timeslot_array[j];
+                session_id_array[j + 1] = session_id_array[j];
+                venue_array[j + 1] = venue_array[j];
+                j = j - 1;
+            }
+
+            // Assign the key values to their correct positions
+            timeslot_array[j + 1] = key_timeslot;
+            session_id_array[j + 1] = key_session_id;
+            venue_array[j + 1] = key_venue;
+        }
+
+        for(uint j = 0; j < n - 1; j++) {
+            uint day1 = specifications->timeslot_table->day[timeslot_array[j]];
+            uint day2 = specifications->timeslot_table->day[timeslot_array[j+1]];
+            if (day1 == day2){
+                uint locality_i = specifications->venue_table->locality[venue_array[j]];
+                uint locality_j = specifications->venue_table->locality[venue_array[j+1]];
+                uint distance = 0;
+                locality_to_distance(locality_i, locality_j, &distance, specifications);
+                violations += distance;
+            }
+        }
+    }
+
+    return specifications->constraint->weights[0] * violations;
 }
 #endif
 
