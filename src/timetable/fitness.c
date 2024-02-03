@@ -248,11 +248,27 @@ static numeric computeSoftConstraint_avoid_early_late_session(
 static numeric computeSoftConstraint_room_capacity_utilization(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-  /*avoid scheduling session with less strenght to venues which have high
-   * capacity ex: dont schedule ecm only class at auditorium*/
+    /* Avoid scheduling sessions with less strength to venues which have high
+      capacity ex: don't schedule ECM-only class at auditorium */
+    numeric violations = 0;
 
-  return 0;
+    for (uint i = 0; i < population->n_sessions; i++) {
+        uint venue_id, timeslot_id;
+        ttGetTuple(population, timetable_index, i, &venue_id, &timeslot_id);
+        uint party_id_array[specifications->party->size];
+        uint number_of_parties;
+        findAssociatedParties(i, &number_of_parties, party_id_array, specifications);
+        uint strength = 0;
+        for (uint j = 0; j < number_of_parties; j++) {  // Corrected the loop condition
+            strength += specifications->party_table->strength[party_id_array[j]];
+        }
+        uint capacity = specifications->venue_table->capacity[venue_id];
+        violations += capacity - strength;
+    }
+
+    return specifications->constraint->weights[10] * violations;
 }
+
 #endif
 #ifdef SOFT_COMMON_TIMSLOT_EMPTY
 static numeric computeSoftConstraint_common_timeslot_empty(
