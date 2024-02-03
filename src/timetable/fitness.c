@@ -7,7 +7,7 @@ static numeric computeHardConstraint_CapacityConstraint(
     uint timetable_index) {
     
     numeric violations = 0; 
-    for (uint i = 0; i < population->n_sesions; i++) {
+    for (uint i = 0; i < population->n_sessions; i++) {
         uint timeslot_id;
         uint venue_id;
         ttGetTuple(population, timetable_index, i, &venue_id, &timeslot_id);
