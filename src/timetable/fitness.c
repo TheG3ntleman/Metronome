@@ -36,21 +36,21 @@ static numeric computeHardConstraint_VenueConflictConstraint(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
 
-  numeric violations = 0;
+    numeric violations = 0;
 
-  // Iterating through sessions
-  for (uint i = 0; i < population->n_sessions; i++) {
-    uint timeslot1, venue1, timeslot2, venue2;
-    ttGetTuple(population, timetable_index, i, &venue1, &timeslot1);
-    for (uint j = i + 1; j < population->n_sessions; j++) {
-      ttGetTuple(population, timetable_index, j, &venue2, &timeslot2);
-      if (timeslot1 == timeslot2 && venue1 == venue2) {
-        violations++;
-      }
+    // Iterating through sessions
+    for (uint i = 0; i < population->n_sessions; i++) {
+        uint timeslot1, venue1, timeslot2, venue2;
+        ttGetTuple(population, timetable_index, i, &venue1, &timeslot1);
+        for (uint j = i + 1; j < population->n_sessions; j++) {
+            ttGetTuple(population, timetable_index, j, &venue2, &timeslot2);
+            if (timeslot1 == timeslot2 && venue1 == venue2) {
+                violations++;
+            }
+        }
     }
-  }
 
-  return violations;
+    return violations;
 }
 #endif
 
@@ -59,25 +59,25 @@ static numeric computeHardConstraint_VenueTypeConstraint(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
 
-  numeric violations = 0;
+    numeric violations = 0;
 
-  // Iterating through sessions
-  for (uint i = 0; i < population->n_sessions; i++) {
+    // Iterating through sessions
+    for (uint i = 0; i < population->n_sessions; i++) {
 
-    uint timeslot, venue;
-    ttGetTuple(population, timetable_index, i, &venue, &timeslot);
+        uint timeslot, venue;
+        ttGetTuple(population, timetable_index, i, &venue, &timeslot);
 
-    // Retrieve required and assigned venue type
-    uint venue_type_assigned = specifications->venue_table->type[venue];
-    uint venue_type_required = specifications->session_table->type[i]; 
+        // Retrieve required and assigned venue type
+        uint venue_type_assigned = specifications->venue_table->type[venue];
+        uint venue_type_required = specifications->session_table->type[i]; 
 
-    // Check if they are matching
-    if (venue_type_assigned != venue_type_required) {
-      violations++;
+        // Check if they are matching
+        if (venue_type_assigned != venue_type_required) {
+            violations++;
+        }
     }
-  }
 
-  return violations;
+    return violations;
 }
 #endif
 
@@ -151,36 +151,40 @@ static numeric computeHardConstraint_PartyDuplicateConstraint(
 #endif
 
 #ifdef HARD_SUFFECIENT_TIMESLOT
-static numeric computeHardConstraint_suffectient_timeslotConstraint(
+static numeric computeHardConstraint_sufficient_timeslotConstraint(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-  numeric violations = 0;
+    
+    numeric violations = 0;
 
-  for (uint i = 0; i < population->n_sessions; i++) {
-    uint timeslot1, venue1, timeslot2, venue2;
-    ttGetTuple(population, timetable_index, i, &venue1, &timeslot1);
-    for (uint j = 0; j < specifications->sessions->size; j++) {
-      if (specifications->sessions->session_id[j] == i) {
-        if (specifications->sessions->duration[j] > 1) {
-          uint duration = specifications->sessions->duration[j];
-          for (uint k = i + 1; k < i + duration; k++) {
-            ttGetTuple(population, timetable_index, k, &venue2, &timeslot2);
-            if (timeslot1 + k - i != timeslot2) {
-              violations++;
-            } else {
-              if (venue1 != venue2) {
-                violations++;
-              }
+    for (uint i = 0; i < population->n_sessions; i++) {
+        uint venue_id1, timeslot_id1;
+        ttGetTuple(population, timetable_index, i, &venue_id1, &timeslot_id1);
+        uint duration = specifications->session_table->duration[i];
+
+        if (duration > 1) {
+            for (uint k = i+1; k < duration; k++) {  // Corrected the loop initialization
+                uint timeslot_id2, venue_id2;
+                ttGetTuple(population, timetable_index, i + k, &venue_id2, &timeslot_id2);  
+                if (venue_id1 == venue_id2) {
+                    if (timeslot_id1 + k - i != timeslot_id2) {  
+                        violations++;
+                    }
+                } else {
+                    if (timeslot_id1 + k - i != timeslot_id2) {
+                        violations += 2;
+                    } else {
+                        violations++;
+                    }
+                }
             }
-          }
-          i = i + duration;
+            i = i + duration;  
         }
-      }
     }
-  }
 
-  return violations;
+    return violations;
 }
+
 #endif
 
 #ifdef SOFT_STUDENT_TRAVELTIME
