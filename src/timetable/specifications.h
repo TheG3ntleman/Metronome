@@ -148,5 +148,7 @@ void findAssociatedParties(uint session_id, uint *number_of_parties,
                            uint *party_id, TimeTableSpecifications *specs);
 void findAssociatedSessions(uint party_id, uint *number_of_session,
                             uint *session_id, TimeTableSpecifications *specs);
+void locality_to_distance(uint locality_i, uint locality_j, 
+                            uint *distance, TimeTableSpecifications *specs);
 
 #endif
