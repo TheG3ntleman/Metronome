@@ -114,7 +114,6 @@ static numeric computeHardConstraint_MaxSessionsConstraint(
   
     return violations;
 }
-
 #endif
 
 #ifdef HARD_PARTY_DUPLICATE
@@ -147,7 +146,6 @@ static numeric computeHardConstraint_PartyDuplicateConstraint(
 
     return violations;
 }
-
 #endif
 
 #ifdef HARD_SUFFECIENT_TIMESLOT
@@ -184,7 +182,6 @@ static numeric computeHardConstraint_sufficient_timeslotConstraint(
 
     return violations;
 }
-
 #endif
 
 #ifdef SOFT_STUDENT_TRAVELTIME
@@ -197,15 +194,40 @@ static numeric computeSoftConstraint_studenttraveltime(
   return 0;
 }
 #endif
+
 #ifdef SOFT_MAXIMIZE_CHUNKING
 static numeric computeSoftConstraint_maximize_chunking(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-  /*maximize session chunking.(have back to back sessions for students)*/
+    /* Maximize session chunking (have back-to-back sessions for students). */
+    numeric violations = 0;
+    
+    for (uint i = 0; i < specifications->party_table->size; i++) {
+        uint session_id_array[specifications->session_table->size];
+        uint number_of_session;
+        findAssociatedSessions(i, &number_of_session, session_id_array, specifications);
+        uint timeslot_array[specifications->timeslot_table->size];
+        for (uint j = 0; j < specifications->timeslot_table->size; j++) {
+            timeslot_array[j] = 0;
+        }
+        uint n = 0;
+        for (uint j = 0; j < number_of_session; j++) {
+            uint venue_id, timeslot_id;
+            ttGetTuple(population, timetable_index, session_id_array[j], &venue_id, &timeslot_id);
+            timeslot_array[n] = timeslot_id;
+            n++;
+        }
+        for (uint j = 0; j < n - 1; j++) {  // Loop up to n - 1 to avoid out-of-bounds access
+            if (timeslot_array[j] + 1 != timeslot_array[j + 1]) {
+                violations++;
+            }
+        }
+    }
 
-  return 0;
+    return specifications->constraint->weights[1] * violations;
 }
 #endif
+
 #ifdef SOFT_ROOM_UTILIZATION
 static numeric computeSoftConstraint_room_utilization(
     Population *population, TimeTableSpecifications *specifications,
@@ -232,8 +254,8 @@ static numeric computeSoftConstraint_room_utilization(
 
     return specifications->constraint->weights[8] * violations;
 }
-
 #endif
+
 #ifdef SOFT_AVOID_EARLYLATE_TIME
 static numeric computeSoftConstraint_avoid_early_late_session(
     Population *population, TimeTableSpecifications *specifications,
@@ -261,8 +283,8 @@ static numeric computeSoftConstraint_avoid_early_late_session(
 
     return specifications->constraint->weights[9] * violations;
 }
-
 #endif
+
 #ifdef SOFT_ROOM_CAPACITY_UTILIZATION
 static numeric computeSoftConstraint_room_capacity_utilization(
     Population *population, TimeTableSpecifications *specifications,
@@ -352,8 +374,8 @@ static numeric computeSoftConstraint_backtoback_teacher_class(
 
     return specifications->constraint->weights[12] * violations;
 }
-
 #endif
+
 #ifdef SOFT_MINIMIZE_SAMECOURSE_SESSION
 static numeric computeSoftConstraint_samecouse_session(
     Population *population, TimeTableSpecifications *specifications,
@@ -363,6 +385,7 @@ static numeric computeSoftConstraint_samecouse_session(
   return 0;
 }
 #endif
+
 #ifdef SOFT_LAB_AFTER_LECTURE
 static numeric computeSoftConstraint_lab_after_lecture(
     Population *population, TimeTableSpecifications *specifications,
@@ -372,6 +395,7 @@ static numeric computeSoftConstraint_lab_after_lecture(
   return 0;
 }
 #endif
+
 #ifdef SOFT_SESSIONS_EVENLY_THROUGHOUT_WEEK
 static numeric computeSoftConstraint_even_distrubution(
     Population *population, TimeTableSpecifications *specifications,
