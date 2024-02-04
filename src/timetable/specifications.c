@@ -150,7 +150,7 @@ void deleteTimeTableSpecifications(TimeTableSpecifications *specs) {
   free(specs->locality_table);
   free(specs->session_table);
   free(specs->assignment_table);
-  free(specs->constraint_weights);
+  // free(specs->constraint_weights);
 
   free(specs);
 }
@@ -170,7 +170,7 @@ void findAssociatedParties(uint session_id, uint *number_of_parties,
   *number_of_parties = 0;
   for (uint i = 0; i < specs->assignment_table->size; i++) {
     if (specs->assignment_table->session_id[i] == session_id) {
-      party_id[*number_of_parties++] = specs->assignment_table->party_id[i];
+      party_id[(*number_of_parties)++] = specs->assignment_table->party_id[i];
     }
   }
 }
@@ -180,7 +180,36 @@ void findAssociatedSessions(uint party_id, uint *number_of_session,
   *number_of_session = 0;
   for (uint i = 0; i < specs->assignment_table->size; i++) {
     if (specs->assignment_table->party_id[i] == party_id) {
-      session_id[*number_of_session++] = specs->assignment_table->session_id[i];
+      session_id[(*number_of_session)++] =
+          specs->assignment_table->session_id[i];
     }
   }
+}
+
+void locality_to_distance(uint locality_i, uint locality_j, uint *distance,
+                          TimeTableSpecifications *specs) {
+  if (locality_j < locality_i) {
+    uint t = locality_j;
+    locality_j = locality_i;
+    locality_i = t;
+  } else if (locality_j == locality_i) {
+    *distance = 0;
+    return;
+  }
+
+  uint c = 0, flag = 0;
+  ;
+  for (uint i = 0; i <= locality_i; i++) {
+    for (uint j = i + 1; j <= specs->locality_table->size; j++) {
+      if (i == locality_i && j == locality_j) {
+        break;
+        flag = 1;
+      }
+      c++;
+    }
+    if (flag)
+      break;
+  }
+
+  *distance = specs->locality_table->distance[c];
 }

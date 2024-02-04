@@ -6,29 +6,28 @@
 #include <stdlib.h>
 
 void solveTimeTablingProblem(
-	// For party table
-	size_t p_size,
-	uint *p_party_id,
-	uint *p_strength,
+    // For party table
+    size_t p_size, uint *p_id, uint *p_strength, uint *p_max_hours,
+    uint *p_party_type, uint *p_preferred_start_time,
+    uint *p_preferred_end_time, uint *p_preferred_back_to_back,
+    uint *p_preferred_max_hours,
 
-	// For venue table
-	size_t v_size,
-	uint *v_venue_id,
-	uint *v_venue_type,
-	uint *v_capacity,
-	uint *v_number_available,
+    // For venue table
+    size_t v_size, uint *v_id, uint *v_type, uint *v_capacity, uint *v_locality,
 
-	// For session table
-	size_t s_size,
-	uint *s_session_id,
-	uint *s_venue_type,
-	uint *s_duration,
+    // For timeslot table
+    size_t t_size, uint *t_id, uint *t_day,
 
-	// For assignments table
-	size_t a_size,
-	uint *a_party_id,
-	uint *a_session_id,
-	uint *a_priority
-);
+    // For locality table
+    size_t l_size, uint *l_id, uint *l_distance,
+
+    // For session table
+    size_t s_size, uint *s_id, uint *s_type, uint *s_duration, uint *s_course,
+
+    // For assignments table
+    size_t a_size, uint *a_party_id, uint *a_session_id, uint *a_priority,
+
+    // For constraint weights
+    float *constraint_weights);
 
 #endif

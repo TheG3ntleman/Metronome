@@ -1,32 +1,54 @@
 #include "metronome.h"
 #include "timetable/specifications.h"
-#include <stdio.h>
 
 void solveTimeTablingProblem(
     // For party table
-    size_t p_size, uint *p_party_id, uint *p_strength,
+    size_t p_size, uint *p_id, uint *p_strength, uint *p_max_hours,
+    uint *p_party_type, uint *p_preferred_start_time,
+    uint *p_preferred_end_time, uint *p_preferred_back_to_back,
+    uint *p_preferred_max_hours,
 
     // For venue table
-    size_t v_size, uint *v_venue_id, uint *v_venue_type, uint *v_capacity,
-    uint *v_number_available,
+    size_t v_size, uint *v_id, uint *v_type, uint *v_capacity, uint *v_locality,
+
+    // For timeslot table
+    size_t t_size, uint *t_id, uint *t_day,
+
+    // For locality table
+    size_t l_size, uint *l_id, uint *l_distance,
 
     // For session table
-    size_t s_size, uint *s_session_id, uint *s_venue_type, uint *s_duration,
+    size_t s_size, uint *s_id, uint *s_type, uint *s_duration, uint *s_course,
 
     // For assignments table
-    size_t a_size, uint *a_party_id, uint *a_session_id, uint *a_priority) {
+    size_t a_size, uint *a_party_id, uint *a_session_id, uint *a_priority,
+
+    // For constraint weights
+    float *constraint_weights) {
 
   TimeTableSpecifications *specs = makeTimeTableSpecifications(
-      p_size, p_party_id, p_strength,
+      // For party table
+      p_size, p_id, p_strength, p_max_hours, p_party_type,
+      p_preferred_start_time, p_preferred_end_time, p_preferred_back_to_back,
+      p_preferred_max_hours,
 
       // For venue table
-      v_size, v_venue_id, v_venue_type, v_capacity, v_number_available,
+      v_size, v_id, v_type, v_capacity, v_locality,
+
+      // For timeslot table
+      t_size, t_id, t_day,
+
+      // For locality table
+      l_size, l_id, l_distance,
 
       // For session table
-      s_size, s_session_id, s_venue_type, s_duration,
+      s_size, s_id, s_type, s_duration, s_course,
 
       // For assignments table
-      a_size, a_party_id, a_session_id, a_priority);
+      a_size, a_party_id, a_session_id, a_priority,
+
+      // For constraint weights
+      constraint_weights);
 
   printTimeTableSpecificationSummary(specs);
 

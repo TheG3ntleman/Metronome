@@ -4,9 +4,10 @@ Population *evolveTimeTables(TimeTableSpecifications *ttSpecs,
                              GeneticSpecifications *gaSpecs) {
 
   // Allocating memory for various evolutionary objects
-  Population *population =
-      makePopulation(gaSpecs->population_size, ttSpecs->sessions->size, 35,
-                     ttSpecs->venues->size); // Timeslots are hardcoded for now.
+  Population *population = makePopulation(
+      gaSpecs->population_size, ttSpecs->session_table->size,
+      ttSpecs->timeslot_table->size,
+      ttSpecs->venue_table->size); // Timeslots are hardcoded for now.
 
   numeric soft_fitness[population->n_timetables];
   numeric hard_fitness[population->n_timetables];
@@ -32,8 +33,9 @@ Population *evolveTimeTables(TimeTableSpecifications *ttSpecs,
 
     // Using selected timetables to generate new population using crossover
     new_population = makePopulation(
-        gaSpecs->population_size, ttSpecs->sessions->size, 35,
-        ttSpecs->venues->size); // Timeslots are hardcoded for now.
+        gaSpecs->population_size, ttSpecs->session_table->size,
+        ttSpecs->timeslot_table->size,
+        ttSpecs->venue_table->size); // Timeslots are hardcoded for now.
     operatorCrossover(new_population, population, indices_of_selected_timetable,
                       ttSpecs, gaSpecs);
 
