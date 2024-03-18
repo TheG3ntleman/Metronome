@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 typedef long double numeric;
+typedef float snumeric;
 
 // Norm functions for fitness concatination.
 

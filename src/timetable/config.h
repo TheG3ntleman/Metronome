@@ -1,7 +1,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+
 #include "utils.h"
+
 
 // Evolutionary algorithm related specs
 typedef struct {

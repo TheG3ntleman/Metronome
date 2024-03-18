@@ -64,7 +64,8 @@ void solveTimeTablingProblem(
 
   Population *population = evolveTimeTables(specs, &gaSpecs);
 
-  // branch and bound or IP or return IP problem, cplex
+  // Making an MCTS Problem from population
+  MCTSProblem *mcts_problem = makeMCTSProblem(population);
 
   deleteTimeTableSpecifications(specs);
 }

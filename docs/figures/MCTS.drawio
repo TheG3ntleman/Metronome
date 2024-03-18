@@ -1,0 +1,159 @@
+<mxfile host="Electron" modified="2024-03-13T11:30:18.821Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="xNXBIdLrOge2o3-Wp_Mw" version="23.1.5" type="device">
+  <diagram name="Page-1" id="SFUOpzbFy-iIGiC_o_NS">
+    <mxGraphModel dx="1562" dy="918" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="s41_LNfAGbLVSgbbDMFi-6" value="Agent" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=bottom;" parent="1" vertex="1">
+          <mxGeometry x="380" y="440" width="120" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="s41_LNfAGbLVSgbbDMFi-1" value="N tuples with K choices" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="880" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="s41_LNfAGbLVSgbbDMFi-2" target="8SnU-9017Otqi9TWjV0V-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s41_LNfAGbLVSgbbDMFi-2" value="Selection" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="120" y="490" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s41_LNfAGbLVSgbbDMFi-3" target="8SnU-9017Otqi9TWjV0V-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-24" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="s41_LNfAGbLVSgbbDMFi-3" target="8SnU-9017Otqi9TWjV0V-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s41_LNfAGbLVSgbbDMFi-3" value="Simulation" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="630" y="265" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="s41_LNfAGbLVSgbbDMFi-4" target="s41_LNfAGbLVSgbbDMFi-5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="100" />
+              <mxPoint x="840" y="630" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s41_LNfAGbLVSgbbDMFi-4" value="Backpropagation" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="790" y="50" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="s41_LNfAGbLVSgbbDMFi-5" value="State Space Tree" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=bottom;" parent="1" vertex="1">
+          <mxGeometry x="630" y="480" width="120" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-2" target="8SnU-9017Otqi9TWjV0V-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-2" value="Root" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="630" y="490" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-3" target="8SnU-9017Otqi9TWjV0V-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-3" value="Iterate from root node to select a leaf node via selection" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="380" y="455" width="120" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-8" value="Run Simulate at this node and get reward" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="380" y="230" width="120" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-11" target="8SnU-9017Otqi9TWjV0V-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-11" value="Reward Formula" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="265" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;verticalAlign=middle;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-15" target="8SnU-9017Otqi9TWjV0V-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;verticalAlign=middle;" edge="1" parent="1" source="s41_LNfAGbLVSgbbDMFi-1" target="8SnU-9017Otqi9TWjV0V-15">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="440" y="880" as="sourcePoint" />
+            <mxPoint x="440" y="585" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-15" target="8SnU-9017Otqi9TWjV0V-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-15" target="8SnU-9017Otqi9TWjV0V-36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-15" value="Intermediate State/Solution" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="630" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-17" value="If you get L completed branches then terminate" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="30" y="710" width="130" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-19" value="Nodes" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="630" y="580" width="120" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-20" target="s41_LNfAGbLVSgbbDMFi-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-20" value="Reward" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="595" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-21">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="180" y="540" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-21" value="Counter" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="660" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-27" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-23" target="8SnU-9017Otqi9TWjV0V-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-43" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-23" target="8SnU-9017Otqi9TWjV0V-42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-23" value="If not at leaf node/terminal state" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="900" y="255" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-32" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-26" target="8SnU-9017Otqi9TWjV0V-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-26" value="Check feasible options" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="255" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-28" target="8SnU-9017Otqi9TWjV0V-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-28" value="Feasibility Checker" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="425" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-37" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-31" target="8SnU-9017Otqi9TWjV0V-36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-31" value="Select an option" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="255" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-33" target="8SnU-9017Otqi9TWjV0V-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-33" value="Heuristic/Random Simulation Policy" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="425" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-36" target="8SnU-9017Otqi9TWjV0V-23">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1380" y="360" />
+              <mxPoint x="940" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-36" value="Update Agent State" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="255" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="8SnU-9017Otqi9TWjV0V-42" target="s41_LNfAGbLVSgbbDMFi-4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="940" y="80" />
+              <mxPoint x="910" y="80" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8SnU-9017Otqi9TWjV0V-42" value="Is leaf node" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="900" y="140" width="80" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
