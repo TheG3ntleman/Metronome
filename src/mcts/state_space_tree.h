@@ -2,21 +2,33 @@
 #define STATE_SPACE_TREE_H
 
 #include "../timetable/utils.h"
+#include <stdlib.h>
 
-typedef struct StateNode {
+typedef uint Counter;
 
+typedef struct StateNode{
+
+  uint option;
+
+  Counter visits;
   snumeric reward;
-  uint counter;
 
-  struct StateNode *children; // The number of tuples per session is also the number of children per node.
+  struct StateNode *parent;
 
+  char children_expanded;
+
+  uint n_children;
+  struct StateNode *children;
 
 } StateNode;
 
 typedef struct {
 
-  StateNode *root;
+  StateNode *root;  
 
 } StateSpaceTree;
+
+StateSpaceTree *StateSpaceTree_make();
+void StateSpaceTree_free(StateSpaceTree *tree);
 
 #endif

@@ -3,7 +3,7 @@
 
 #include "timetable/config.h"
 #include "timetable/evolution.h"
-#include "mcts/mcts.h"
+#include "mcts/monte_carlo_tree_search.h"
 #include <stdlib.h>
 
 void solveTimeTablingProblem(
@@ -31,7 +31,5 @@ void solveTimeTablingProblem(
     // For constraint weights
     float *constraint_weights);
 
-
-MCTSProblem *makeMCTSProblem(Population *population);
 
 #endif

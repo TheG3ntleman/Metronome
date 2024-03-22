@@ -1,29 +1,25 @@
 #ifndef AGENT_H
 #define AGENT_H
 
-#include "../timetable/config.h"
-#include "../timetable/utils.h"
+#include <stdlib.h>
 #include "state_space_tree.h"
 
+typedef uint Solution;
 typedef struct {
-  // Populate this with the necessary information
-} PartialTimeTable;
 
-typedef struct{
+  Solution *solution;
+  StateNode *current_node;
+  uint depth;
 
-  uint n_complete_vectors;
-  uint max_complete_vectors;
 
-  PartialTimeTable *solutions; // An array of "max_complete_vectors" PartialTimeTables.
-  uint *solution_vector;
-
-  StateSpaceTree *tree;
 } Agent;
 
-uint select_action(Agent *agent);
-numeric reward(Agent *agent, uint action);
-void simulate(Agent *agent, uint action);
-uint heuristic(Agent *agent, uint *feasible_actions, uint n_feasible_actions);
-void backpropagate(Agent *agent, uint action, numeric reward);
+Agent *Agent_make(uint n_sessions);
+void Agent_free(Agent *agent);
+
+void Agent_move_to_child(Agent *agent, uint child_index);
+  // Updates depth
+  // Update branch vector
+  // Updategs current node
 
 #endif

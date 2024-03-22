@@ -1,5 +1,8 @@
 #include "metronome.h"
+#include "mcts/monte_carlo_tree_search.h"
 #include "timetable/specifications.h"
+
+#define OPTIONS_PER_SESSION 5
 
 void solveTimeTablingProblem(
     // For party table
@@ -65,7 +68,10 @@ void solveTimeTablingProblem(
   Population *population = evolveTimeTables(specs, &gaSpecs);
 
   // Making an MCTS Problem from population
-  MCTSProblem *mcts_problem = makeMCTSProblem(population);
+  MCTS_problem *problem = MCTS_make_problem_from_population(
+      population, OPTIONS_PER_SESSION, 1, specs);
+
+  MCTS_solution *solution = MCTS_execute(problem);
 
   deleteTimeTableSpecifications(specs);
 }

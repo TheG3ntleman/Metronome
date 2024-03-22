@@ -1,8 +1,12 @@
 #ifndef FEASIBILITY_H
 #define FEASIBILITY_H
 
+#include "../timetable/specifications.h"
 #include "agent.h"
+#include "state_space_tree.h"
 
-void get_feasible_actions(PartialTimeTable *time_table, uint *feasible_actions, uint n_feasible_action);
+void get_feasible_actions(StateSpaceTree *state_space_tree, Agent *agent,
+                          TimeTableSpecifications *specifications,
+                          uint *actions, uint *n_actions);
 
 #endif

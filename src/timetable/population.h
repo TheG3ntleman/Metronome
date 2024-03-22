@@ -45,7 +45,6 @@ numeric ttCalculateSimilarity(Population *population, uint timetable_index_1, ui
 
 // Getters and Setters
 void ttGetTuple(Population *population, uint timetable_index, uint session_id, uint *timeslot_id, uint *venue_id);
-
 void ttSetTuple(Population *population, uint timetable_index, uint session_id, uint timeslot_id, uint venue_id);
 void ttSetVenue(Population *population, uint timetable_index, uint session_id, uint venue_id);
 void ttSetTimeslot(Population *population,  uint timetable_index, uint session_id, uint timeslot_id);
