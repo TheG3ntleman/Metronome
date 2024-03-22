@@ -3,16 +3,16 @@
 
 #include "../timetable/population.h"
 #include "../timetable/specifications.h"
+#include "agent.h"
 
 #include <stdlib.h>
 
-typedef struct {
+// typedef struct {
 
-  uint timeslot;
-  uint venue;
+//   uint timeslot;
+//   uint venue;
 
-} MCTS_option;
-
+// } MCTS_option;
 typedef struct {
 
   uint max_complete_branches;
@@ -20,7 +20,7 @@ typedef struct {
   uint n_sessions;
   uint n_options;
 
-  MCTS_option **problem;
+  TimeTableEntry **problem;
 
   TimeTableSpecifications *time_table_specifications;
 
@@ -29,7 +29,7 @@ typedef struct {
 typedef struct {
 
   uint n_sessions;
-  MCTS_option *solution;
+  TimeTableEntry *solution;
 
 } MCTS_solution;
 

@@ -7,6 +7,7 @@
 
 void get_feasible_actions(StateSpaceTree *state_space_tree, Agent *agent,
                           TimeTableSpecifications *specifications,
-                          uint *actions, uint *n_actions);
+                          TimeTableEntry *options, uint n_options, uint *actions,
+                          uint *n_actions);
 
 #endif

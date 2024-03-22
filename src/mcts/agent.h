@@ -5,12 +5,20 @@
 #include "state_space_tree.h"
 
 typedef uint Solution;
+
+typedef struct {
+
+  uint timeslot;
+  uint venue;
+
+} TimeTableEntry;
 typedef struct {
 
   Solution *solution;
   StateNode *current_node;
   uint depth;
 
+  TimeTableEntry *timetable;
 
 } Agent;
 

@@ -64,15 +64,27 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem) {
       uint n_feasible_children = 0;
       uint feasible_children[problem->n_options];
 
-      get_feasible_actions(state_space_tree, agent,
-                           problem->time_table_specifications,
-                           feasible_children, &n_feasible_children);
+      /*StateSpaceTree *state_space_tree, Agent *agent,
+                            TimeTableSpecifications *specifications,
+                            TimeTableEntry *options, uint n_options, uint
+         *actions, uint *n_actions*/
+
+      // Extracting all possible options from the MCTS Problem
+      TimeTableEntry options[problem->n_options];
+      for (uint i = 0; i < problem->n_options; i++) {
+        options[i].timeslot = problem->problem[i]->timeslot;
+        options[i].venue = problem->problem[i]->venue;
+      }
+
+      get_feasible_actions(
+          state_space_tree, agent, problem->time_table_specifications, options,
+          problem->n_options, feasible_children, &n_feasible_children);
 
       agent->current_node->n_children = n_feasible_children;
       agent->current_node->children =
           malloc(n_feasible_children * sizeof(StateNode));
 
-      for (uint i = 0; i < n_feasible_children; i++) { 
+      for (uint i = 0; i < n_feasible_children; i++) {
         StateNode *child = agent->current_node->children + i;
         child->option = feasible_children[i];
         child->visits = 0;
@@ -82,7 +94,7 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem) {
         child->n_children = 0;
         child->children = NULL;
       }
-      
+
       agent->current_node->children_expanded = 1;
     }
 
@@ -91,7 +103,8 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem) {
     Agent_move_to_child(agent, child_index);
 
     // Simulating the child node
-    snumeric reward = simulate(state_space_tree, agent, problem->time_table_specifications);
+    snumeric reward =
+        simulate(state_space_tree, agent, problem->time_table_specifications);
 
     // Backpropagating the reward
     backpropagate(state_space_tree, agent->solution, reward);
@@ -99,18 +112,20 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem) {
 
   // Wrapping the solution in an MCTS Solution object
   MCTS_solution *mcts_solution = malloc(sizeof(MCTS_solution));
-  mcts_solution->solution = (MCTS_option*)malloc(problem->n_sessions * sizeof(MCTS_option));
+  mcts_solution->solution =
+      (TimeTableEntry *)malloc(problem->n_sessions * sizeof(TimeTableEntry));
 
   mcts_solution->n_sessions = problem->n_sessions;
   StateNode *current_node = state_space_tree->root;
   for (uint i = 0; i < problem->n_sessions; i++) {
     current_node = current_node->children + solutions[0][i];
-    mcts_solution->solution->timeslot = problem->problem[i][current_node->option].timeslot;
-    mcts_solution->solution->venue = problem->problem[i][current_node->option].venue;
+    mcts_solution->solution->timeslot =
+        problem->problem[i][current_node->option].timeslot;
+    mcts_solution->solution->venue =
+        problem->problem[i][current_node->option].venue;
   }
 
   return mcts_solution;
-
 }
 
 void MCTS_free_solution(MCTS_solution *solution) {
