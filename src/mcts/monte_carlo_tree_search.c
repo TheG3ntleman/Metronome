@@ -12,11 +12,32 @@
 #include "selection.h"
 #include "simulation.h"
 #include "state_space_tree.h"
+#define uint uint32_t
+
+
+void swap(uint *a, uint *b){
+  uint temp = *a;
+  *a = *b;
+  *b = temp;
+}
+
+void sort(uint **arr, uint n_timeslots, uint n_venues){
+  for(uint i=0; i<n_timeslots; i++){
+    for(uint j=0; j < n_venues - 1; j++){
+      for(uint k = 0; k < n_venues - j - 1;k++){
+        if(arr[i][k] < arr[i][k+1]){
+          swap(arr[i][k], arr[i][k+1]);
+        }
+      }
+    }
+  }
+}
 
 MCTS_problem *MCTS_make_problem_from_population(
     Population *population, uint options_per_session,
     uint max_complete_branches,
-    TimeTableSpecifications *time_table_specifications) {
+    TimeTableSpecifications *time_table_specifications)
+{
   MCTS_problem *problem = malloc(sizeof(MCTS_problem));
 
   problem->n_sessions = population->n_sessions;
@@ -27,12 +48,51 @@ MCTS_problem *MCTS_make_problem_from_population(
   // Sorting and ranking most frequent options
   // and then constructing the MCTS problem.
 
+  // Cheap fix for now -> just copying the first population member (Duplication)
+
+  uint frequency_table[population->n_timeslots][population->n_venues][1];
+
+  for (uint k = 0; k < population->n_timetables; k++){
+    for (uint i = 0; i < problem->n_sessions; i++){
+      for (uint j = 0; j < problem->n_options; j++){
+        TimeTableEntry dummy = {0, 0};                             // set to some value
+        ttGetTuple(population, k, i, dummy.timeslot, dummy.venue); // this updates the dummy.timeslot and dummy.venue values based on the getters
+        frequency_table[dummy.timeslot][dummy.venue][0] += 1;
+      }
+    }
+  }
+
+  // Sort the frequency_table
+
+  for(uint i=0;i<population->n_timeslots;i++){
+    sort(frequency_table[i], population->n_venues, 1);
+  }
+  // This will give the sorted 3d array.
+
+  uint max_no_of_sessions = 0; // let's say we have 0 sessions initially
+  for(uint i=0;i<population->n_timeslots;i++){
+    uint check = 0;
+    for(uint j=0;j<population->n_venues;j++){
+      problem->problem[i][j].timeslot = i;
+      problem->problem[i][j].venue = j;
+      max_no_of_sessions++;
+      if(max_no_of_sessions == problem->n_sessions){
+        check = 1;
+        break;
+      }
+    }
+    if(check){
+      break;
+    }
+  }
+  
   return problem;
 }
 
 void MCTS_free_problem(MCTS_problem *problem) {}
 
-MCTS_solution *MCTS_execute(MCTS_problem *problem) {
+MCTS_solution *MCTS_execute(MCTS_problem *problem)
+{
 
   // Making a state space tree
   StateSpaceTree *state_space_tree = StateSpaceTree_make();
@@ -43,15 +103,18 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem) {
   // Running the MCTS algorithm
   Solution solutions[problem->max_complete_branches][problem->n_sessions];
 
-  for (uint n_solutions = 0; n_solutions < problem->max_complete_branches;) {
+  for (uint n_solutions = 0; n_solutions < problem->max_complete_branches;)
+  {
 
     // Selecting a parent node
     select_parent_node(state_space_tree, agent);
 
-    if (agent->depth == problem->n_sessions) {
+    if (agent->depth == problem->n_sessions)
+    {
       // If the agent has reached the end of the tree
       // then we have a complete solution
-      for (uint i = 0; i < problem->n_sessions; i++) {
+      for (uint i = 0; i < problem->n_sessions; i++)
+      {
         solutions[n_solutions][i] = agent->solution[i];
       }
       n_solutions++;
@@ -60,7 +123,8 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem) {
     }
 
     // Check if this node has been expanded
-    if (!agent->current_node->children_expanded) {
+    if (!agent->current_node->children_expanded)
+    {
       uint n_feasible_children = 0;
       uint feasible_children[problem->n_options];
 
@@ -71,7 +135,8 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem) {
 
       // Extracting all possible options from the MCTS Problem
       TimeTableEntry options[problem->n_options];
-      for (uint i = 0; i < problem->n_options; i++) {
+      for (uint i = 0; i < problem->n_options; i++)
+      {
         options[i].timeslot = problem->problem[i]->timeslot;
         options[i].venue = problem->problem[i]->venue;
       }
@@ -84,7 +149,8 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem) {
       agent->current_node->children =
           malloc(n_feasible_children * sizeof(StateNode));
 
-      for (uint i = 0; i < n_feasible_children; i++) {
+      for (uint i = 0; i < n_feasible_children; i++)
+      {
         StateNode *child = agent->current_node->children + i;
         child->option = feasible_children[i];
         child->visits = 0;
@@ -117,7 +183,8 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem) {
 
   mcts_solution->n_sessions = problem->n_sessions;
   StateNode *current_node = state_space_tree->root;
-  for (uint i = 0; i < problem->n_sessions; i++) {
+  for (uint i = 0; i < problem->n_sessions; i++)
+  {
     current_node = current_node->children + solutions[0][i];
     mcts_solution->solution->timeslot =
         problem->problem[i][current_node->option].timeslot;
@@ -128,7 +195,8 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem) {
   return mcts_solution;
 }
 
-void MCTS_free_solution(MCTS_solution *solution) {
+void MCTS_free_solution(MCTS_solution *solution)
+{
   free(solution->solution);
   free(solution);
 }
