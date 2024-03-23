@@ -15,22 +15,24 @@
 #define uint uint32_t
 
 
-void swap(uint *a, uint *b){
-  uint temp = *a;
-  *a = *b;
-  *b = temp;
-}
-
-void sort(uint **arr, uint n_timeslots, uint n_venues){
-  for(uint i=0; i<n_timeslots; i++){
-    for(uint j=0; j < n_venues - 1; j++){
-      for(uint k = 0; k < n_venues - j - 1;k++){
-        if(arr[i][k] < arr[i][k+1]){
-          swap(arr[i][k], arr[i][k+1]);
-        }
+TimeTableEntry find_max(uint arr[][2], uint n_timeslots, uint n_venues){
+  uint mx = 0;
+  uint n_timeslot_number = -1;
+  uint n_venue_number = -1;
+  for(uint i=0; i < n_timeslots; i++){
+    for(uint j=0;j< n_venues;j++){
+      if(arr[i*n_venues + j][1]!=1 && arr[i*n_venues + j][0] > mx){
+        mx = arr[i*n_venues + j][0];
+        n_timeslot_number = i;
+        n_venue_number = j;
       }
     }
   }
+  arr[n_timeslot_number * n_venues + n_venue_number][1] = 1;
+  TimeTableEntry result;
+  result.timeslot = n_timeslot_number;
+  result.venue = n_venue_number;
+  return result;
 }
 
 MCTS_problem *MCTS_make_problem_from_population(
@@ -45,48 +47,47 @@ MCTS_problem *MCTS_make_problem_from_population(
   problem->max_complete_branches = max_complete_branches;
   problem->time_table_specifications = time_table_specifications;
 
-  // Sorting and ranking most frequent options
-  // and then constructing the MCTS problem.
+  uint frequency_table[population->n_timeslots * population->n_venues][2]; // Converted 3d array to 2d array
 
-  // Cheap fix for now -> just copying the first population member (Duplication)
-
-  uint frequency_table[population->n_timeslots][population->n_venues][1];
-
-  for (uint k = 0; k < population->n_timetables; k++){
-    for (uint i = 0; i < problem->n_sessions; i++){
-      for (uint j = 0; j < problem->n_options; j++){
-        TimeTableEntry dummy = {0, 0};                             // set to some value
-        ttGetTuple(population, k, i, dummy.timeslot, dummy.venue); // this updates the dummy.timeslot and dummy.venue values based on the getters
-        frequency_table[dummy.timeslot][dummy.venue][0] += 1;
+  for(uint k = 0; k < population->n_timetables; k++){
+    for(uint i = 0; i < population->n_sessions; i++){
+      for(uint j = 0; j < options_per_session; j++){
+        TimeTableEntry temp = {0,0};
+        ttGetTuple(population, k, i, temp.timeslot, temp.venue);
+        frequency_table[(temp.timeslot * (options_per_session)) + temp.venue][0]++;
+        frequency_table[(temp.timeslot * (options_per_session)) + temp.venue][1] = 0;
       }
     }
   }
+  uint max_no_of_sessions = 0;
 
-  // Sort the frequency_table
-
-  for(uint i=0;i<population->n_timeslots;i++){
-    sort(frequency_table[i], population->n_venues, 1);
-  }
-  // This will give the sorted 3d array.
-
-  uint max_no_of_sessions = 0; // let's say we have 0 sessions initially
-  for(uint i=0;i<population->n_timeslots;i++){
+  // n_options, n_sessions
+  for(uint i = 0; i < population->n_sessions; i++){
     uint check = 0;
-    for(uint j=0;j<population->n_venues;j++){
-      problem->problem[i][j].timeslot = i;
-      problem->problem[i][j].venue = j;
+    for(uint j = 0; j < options_per_session; j++){
+      TimeTableEntry temp = find_max(frequency_table, population->n_timeslots, population->n_venues);
+      problem->problem[i][j].timeslot = temp.timeslot;
+      problem->problem[i][j].venue = temp.venue;
       max_no_of_sessions++;
       if(max_no_of_sessions == problem->n_sessions){
         check = 1;
         break;
       }
     }
-    if(check){
+    if(check == 1){
       break;
     }
   }
-  
+
   return problem;
+
+
+
+
+
+
+
+
 }
 
 void MCTS_free_problem(MCTS_problem *problem) {}
