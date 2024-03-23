@@ -12,26 +12,26 @@
 #include "selection.h"
 #include "simulation.h"
 #include "state_space_tree.h"
-// uint uint32_t
+#define uint uint32_t
 
 
-TimeTableEntry find_max(uint arr[][2], uint n_timeslots, uint n_venues){
+TimeTableEntry find_max(uint ***arr, uint n_timeslots, uint n_venues){
   uint mx = 0;
-  uint n_timeslot_number = -1;
-  uint n_venue_number = -1;
+  uint n_timeslot_number = 0;
+  uint n_venue_number = 0;
   for(uint i=0; i < n_timeslots; i++){
-    for(uint j=0;j< n_venues;j++){
-      if(arr[i*n_venues + j][1]!=1 && arr[i*n_venues + j][0] > mx){
-        mx = arr[i*n_venues + j][0];
+    for(uint j=0;j < n_venues;j++){
+      if(arr[i][j][1] == 0 && arr[i][j][1] > mx){
+        mx = arr[i][j][1];
         n_timeslot_number = i;
         n_venue_number = j;
       }
     }
   }
-  arr[n_timeslot_number * n_venues + n_venue_number][1] = 1;
-  TimeTableEntry result;
-  result.timeslot = n_timeslot_number;
-  result.venue = n_venue_number;
+
+  arr[n_timeslot_number][n_venue_number][1] = 1;
+  TimeTableEntry result = {n_timeslot_number, n_venue_number};
+
   return result;
 }
 
@@ -47,15 +47,22 @@ MCTS_problem *MCTS_make_problem_from_population(
   problem->max_complete_branches = max_complete_branches;
   problem->time_table_specifications = time_table_specifications;
 
-  uint frequency_table[population->n_timeslots * population->n_venues][2]; // Converted 3d array to 2d array
+
+  uint frequency_table[population->n_timeslots][population->n_venues][2];
+
+  for (uint i = 0; i < population->n_timeslots; i++) {
+    for (uint j = 0; j < population->n_venues; j++) {
+      frequency_table[i][j][0] = 0; // Corresponds to the counter
+      frequency_table[i][j][1] = 0; // Corresponds to the Flag
+    }
+  }
 
   for(uint k = 0; k < population->n_timetables; k++){
     for(uint i = 0; i < population->n_sessions; i++){
       for(uint j = 0; j < options_per_session; j++){
         TimeTableEntry temp = {0,0};
         ttGetTuple(population, k, i, &temp.timeslot, &temp.venue);
-        frequency_table[(temp.timeslot * (options_per_session)) + temp.venue][0]++;
-        frequency_table[(temp.timeslot * (options_per_session)) + temp.venue][1] = 0;
+        frequency_table[temp.timeslot][temp.venue][0]++;
       }
     }
   }
@@ -65,7 +72,7 @@ MCTS_problem *MCTS_make_problem_from_population(
   for(uint i = 0; i < population->n_sessions; i++){
     uint check = 0;
     for(uint j = 0; j < options_per_session; j++){
-      TimeTableEntry temp = find_max(frequency_table, population->n_timeslots, population->n_venues);
+      TimeTableEntry temp = find_max((uint ***)frequency_table, population->n_timeslots, population->n_venues);
       problem->problem[i][j].timeslot = temp.timeslot;
       problem->problem[i][j].venue = temp.venue;
       max_no_of_sessions++;
