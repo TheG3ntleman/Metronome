@@ -91,7 +91,7 @@ Problem *make_problem() {
           max_venue_capacity = problem->v_capacity[i];
     }
     // Sessions
-    problem->s_size = 50; // Assuming 3 sessions
+    problem->s_size = 50; // Assuming 3 sessions (too many sessions)
     problem->s_session_id = (uint *)malloc(sizeof(uint) * problem->s_size);
     problem->s_venue_type = (uint *)malloc(sizeof(uint) * problem->s_size);
     problem->s_duration = (uint *)malloc(sizeof(uint) * problem->s_size);
