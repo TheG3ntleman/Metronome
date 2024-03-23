@@ -38,12 +38,12 @@ Problem *make_problem() {
 
   // Randomly making party names
   problem->p_names = (char **)malloc(sizeof(char *) * problem->p_size);
+  uint name_counters[7] = {0, 0, 0, 0, 0, 0, 0};
   for (uint i = 0; i < problem->p_size; i++) {
     problem->p_names[i] = (char *)malloc(sizeof(char) * 4);
 
     // Randomly selecting a party name from the bank
     uint name_index = rand() % 7;
-    uint name_counters[7] = {0, 0, 0, 0, 0, 0, 0};
 
     strcpy(problem->p_names[i], party_name_bank[name_index]);
     if (problem->p_names[i][2] == '\0') problem->p_names[i][2] = ' ';
@@ -125,6 +125,12 @@ Problem *make_problem() {
             counter[problem->a_session_id[i]] += problem->p_strength[problem->a_party_id[i]];
         }
     }
+
+    // Randomly initializing constraint weights
+    problem->constraint_weights = (float *)malloc(sizeof(float) * 15);
+    for (uint i = 0; i < 15; i++) {
+        problem->constraint_weights[i] = 1.0;
+    }    
     
     return problem;
 }

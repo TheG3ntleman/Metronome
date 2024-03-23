@@ -1,5 +1,6 @@
 #include "metronome.h"
 #include "mcts/monte_carlo_tree_search.h"
+#include "src/testing/problem.h"
 #include "timetable/specifications.h"
 
 #define OPTIONS_PER_SESSION 5
@@ -61,8 +62,8 @@ void solveTimeTablingProblem(
       .selection_size = 10,
       .minimum_timetables_per_cluster = 5,
       .similarity_threshold = 40,
-      .mutation_rate = 0.05,
-      .maximum_generations = 10,
+      .mutation_rate = 0.001,
+      .maximum_generations = 500,
   };
 
   Population *population = evolveTimeTables(specs, &gaSpecs);
@@ -71,7 +72,9 @@ void solveTimeTablingProblem(
   MCTS_problem *problem = MCTS_make_problem_from_population(
       population, OPTIONS_PER_SESSION, 1, specs);
 
-  MCTS_solution *solution = MCTS_execute(problem);
+    MCTS_print_problem(problem);
+
+  //MCTS_solution *solution = MCTS_execute(problem);
 
   deleteTimeTableSpecifications(specs);
 }
