@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <string.h>
 #include <stdio.h>
+#include "../timetable/specifications.h"
 
 #define N_MINIMUM_PARTIES 10
 #define N_MAXIMUM_PARTIES 20
