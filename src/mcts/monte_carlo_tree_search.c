@@ -12,7 +12,6 @@
 #include "selection.h"
 #include "simulation.h"
 #include "state_space_tree.h"
-#define uint uint32_t
 
 
 TimeTableEntry find_max(uint ***arr, uint n_timeslots, uint n_venues){
@@ -21,7 +20,7 @@ TimeTableEntry find_max(uint ***arr, uint n_timeslots, uint n_venues){
   uint n_venue_number = 0;
   for(uint i=0; i < n_timeslots; i++){
     for(uint j=0;j < n_venues;j++){
-      if(arr[i][j][1] == 0 && arr[i][j][1] > mx){
+      if(arr[i][j][1] == 0 && arr[i][j][0] > mx){
         mx = arr[i][j][1];
         n_timeslot_number = i;
         n_venue_number = j;
