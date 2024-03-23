@@ -21,7 +21,7 @@ TimeTableEntry find_max(uint ***arr, uint n_timeslots, uint n_venues){
   uint n_venue_number = 0;
   for(uint i=0; i < n_timeslots; i++){
     for(uint j=0;j < n_venues;j++){
-      if(arr[i][j][1] == 0 && arr[i][j][1] > mx){
+      if(arr[i][j][1] == 0 && arr[i][j][0] > mx){
         mx = arr[i][j][1];
         n_timeslot_number = i;
         n_venue_number = j;
@@ -29,7 +29,7 @@ TimeTableEntry find_max(uint ***arr, uint n_timeslots, uint n_venues){
     }
   }
 
-  arr[n_timeslot_number][n_venue_number][1] = 1;
+  arr[n_timeslot_number][n_venue_number][1] = 1; // already used
   TimeTableEntry result = {n_timeslot_number, n_venue_number};
 
   return result;
@@ -48,7 +48,15 @@ MCTS_problem *MCTS_make_problem_from_population(
   problem->time_table_specifications = time_table_specifications;
 
 
-  uint frequency_table[population->n_timeslots][population->n_venues][2];
+  uint ***frequency_table = malloc(population->n_timeslots * sizeof(uint **));
+  for (uint i = 0; i < population->n_timeslots; i++) {
+    frequency_table[i] = malloc(population->n_venues * sizeof(uint *));
+    for (uint j = 0; j < population->n_venues; j++) {
+      frequency_table[i][j] = malloc(2 * sizeof(uint));
+    }
+  }
+  // 0 ->  counter
+  // 1 ->  flag
 
   for (uint i = 0; i < population->n_timeslots; i++) {
     for (uint j = 0; j < population->n_venues; j++) {
@@ -66,6 +74,7 @@ MCTS_problem *MCTS_make_problem_from_population(
       }
     }
   }
+
   uint max_no_of_sessions = 0;
 
   // n_options, n_sessions
