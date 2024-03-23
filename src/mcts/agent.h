@@ -5,27 +5,23 @@
 #include "state_space_tree.h"
 
 typedef uint Solution;
-
 typedef struct {
-
-  uint timeslot;
-  uint venue;
-
-} TimeTableEntry;
-typedef struct {
+  uint depth;
+  StateNode *current_node;
 
   Solution *solution;
-  StateNode *current_node;
-  uint depth;
 
   TimeTableEntry *timetable;
-
 } Agent;
 
-Agent *Agent_make(uint n_sessions);
-void Agent_free(Agent *agent);
+Agent *agent_make(uint n_sessions);
+void agent_free(Agent *agent);
+Agent *agent_clone(Agent *agent);
 
-void Agent_move_to_child(Agent *agent, uint child_index);
+// This function could take something analagous to the problem or something
+// Remember the first shitty option, it turns out that that was better.
+void agent_move_to_child(Agent *agent, uint child_index);
+
   // Updates depth
   // Update branch vector
   // Updategs current node

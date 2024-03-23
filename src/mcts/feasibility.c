@@ -20,10 +20,9 @@ bool is_feasible(TimeTableEntry *time_table, TimeTableEntry *option,
   return 1;
 }
 
-void get_feasible_actions(StateSpaceTree *state_space_tree, Agent *agent,
-                          TimeTableSpecifications *specifications,
-                          TimeTableEntry *options, uint n_options, uint *actions,
-                          uint *n_actions) {
+void get_feasible_actions(Agent *agent, TimeTableSpecifications *specifications,
+                          TimeTableEntry *options, uint n_options,
+                          uint *actions, uint *n_actions) {
 
   // We expect options to be an array of size n_options
 

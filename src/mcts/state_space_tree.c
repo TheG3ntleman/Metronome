@@ -6,6 +6,8 @@ StateSpaceTree *StateSpaceTree_make() {
     
     tree->root = (StateNode*) malloc(sizeof(StateNode));
 
+    // Going to have to redo this entire function.
+
     return tree;
 }
 

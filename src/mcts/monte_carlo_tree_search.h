@@ -4,6 +4,7 @@
 #include "../timetable/population.h"
 #include "../timetable/specifications.h"
 #include "agent.h"
+#include "basic.h"
 
 #include <stdlib.h>
 
@@ -13,18 +14,7 @@
 //   uint venue;
 
 // } MCTS_option;
-typedef struct {
 
-  uint max_complete_branches;
-
-  uint n_sessions;
-  uint n_options;
-
-  TimeTableEntry **problem;
-
-  TimeTableSpecifications *time_table_specifications;
-
-} MCTS_problem;
 
 typedef struct {
 
@@ -37,6 +27,8 @@ MCTS_problem *MCTS_make_problem_from_population(
     Population *population, uint options_per_session,
     uint max_complete_branches,
     TimeTableSpecifications *time_table_specifications);
+void MCTS_print_problem(MCTS_problem *problem);
+
 MCTS_solution *MCTS_execute(MCTS_problem *problem);
 void MCTS_free_problem(MCTS_problem *problem);
 

@@ -6,6 +6,13 @@
 
 typedef uint Counter;
 
+typedef struct {
+
+  uint timeslot;
+  uint venue;
+
+} TimeTableEntry;
+
 typedef struct StateNode{
 
   uint option;
@@ -19,6 +26,8 @@ typedef struct StateNode{
 
   uint n_children;
   struct StateNode *children;
+
+  TimeTableEntry choice;
 
 } StateNode;
 

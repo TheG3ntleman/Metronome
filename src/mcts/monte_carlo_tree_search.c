@@ -12,7 +12,7 @@
 #include "selection.h"
 #include "simulation.h"
 #include "state_space_tree.h"
-#define uint uint32_t
+// uint uint32_t
 
 
 void swap(uint *a, uint *b){
@@ -26,7 +26,7 @@ void sort(uint **arr, uint n_timeslots, uint n_venues){
     for(uint j=0; j < n_venues - 1; j++){
       for(uint k = 0; k < n_venues - j - 1;k++){
         if(arr[i][k] < arr[i][k+1]){
-          swap(arr[i][k], arr[i][k+1]);
+          swap(arr[i] + k, arr[i] + k + 1);
         }
       }
     }
@@ -56,7 +56,7 @@ MCTS_problem *MCTS_make_problem_from_population(
     for (uint i = 0; i < problem->n_sessions; i++){
       for (uint j = 0; j < problem->n_options; j++){
         TimeTableEntry dummy = {0, 0};                             // set to some value
-        ttGetTuple(population, k, i, dummy.timeslot, dummy.venue); // this updates the dummy.timeslot and dummy.venue values based on the getters
+        ttGetTuple(population, k, i, &dummy.timeslot, &dummy.venue); // this updates the dummy.timeslot and dummy.venue values based on the getters
         frequency_table[dummy.timeslot][dummy.venue][0] += 1;
       }
     }
@@ -89,6 +89,21 @@ MCTS_problem *MCTS_make_problem_from_population(
   return problem;
 }
 
+void MCTS_print_problem(MCTS_problem *problem) {
+  printf("MCTS Problem:\n");
+  printf("  n_sessions: %d\n", problem->n_sessions);
+  printf("  n_options: %d\n", problem->n_options);
+  printf("  max_complete_branches: %d\n", problem->max_complete_branches);
+  printf("  problem:\n");
+  for (uint i = 0; i < problem->n_sessions; i++) {
+    printf("    session %d:\n", i);
+    for (uint j = 0; j < problem->n_options; j++) {
+      printf("      option %d: timeslot %d, venue %d\n", j, problem->problem[i][j].timeslot, problem->problem[i][j].venue);
+    }
+  }
+
+}
+
 void MCTS_free_problem(MCTS_problem *problem) {}
 
 MCTS_solution *MCTS_execute(MCTS_problem *problem)
@@ -98,7 +113,7 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem)
   StateSpaceTree *state_space_tree = StateSpaceTree_make();
 
   // Making an agent
-  Agent *agent = Agent_make(problem->n_sessions);
+  Agent *agent = agent_make(problem->n_sessions);
 
   // Running the MCTS algorithm
   Solution solutions[problem->max_complete_branches][problem->n_sessions];
@@ -142,7 +157,7 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem)
       }
 
       get_feasible_actions(
-          state_space_tree, agent, problem->time_table_specifications, options,
+          agent, problem->time_table_specifications, options,
           problem->n_options, feasible_children, &n_feasible_children);
 
       agent->current_node->n_children = n_feasible_children;
@@ -159,6 +174,12 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem)
         child->children_expanded = 0;
         child->n_children = 0;
         child->children = NULL;
+        
+        // There is a chance of an indexing problem here, 
+        // because of agent->depth + 1 may be incorrect
+        // due to 0 indexing.
+        child->choice.timeslot = problem->problem[agent->depth + 1][feasible_children[i]].timeslot;
+        child->choice.venue = problem->problem[agent->depth + 1][feasible_children[i]].venue;
       }
 
       agent->current_node->children_expanded = 1;
@@ -166,14 +187,14 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem)
 
     // Getting children for the parent node
     uint child_index = select_child_node(state_space_tree, agent);
-    Agent_move_to_child(agent, child_index);
+    agent_move_to_child(agent, child_index);
 
     // Simulating the child node
     snumeric reward =
-        simulate(state_space_tree, agent, problem->time_table_specifications);
+        simulate(state_space_tree, agent, problem->time_table_specifications, problem);
 
     // Backpropagating the reward
-    backpropagate(state_space_tree, agent->solution, reward);
+    backpropagate(state_space_tree, agent->solution, agent->depth, reward);
   }
 
   // Wrapping the solution in an MCTS Solution object
