@@ -1,19 +1,23 @@
 #include "specifications.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-static uint *mallocColumn(uint size) {
+#define uint uint32_t
+static uint *mallocColumn(uint size)
+{
   uint *arr = (uint *)malloc(sizeof(uint) * size);
   return arr;
 }
 
-static void copy(uint *from, uint *to, uint size) {
-  for (uint i = 0; i < size; i++) {
+static void copy(uint *from, uint *to, uint size)
+{
+  for (uint i = 0; i < size; i++)
+  {
     to[i] = from[i];
   }
 }
 
-static uint *set(uint *src, uint size) {
+static uint *set(uint *src, uint size)
+{
   uint *res = mallocColumn(size);
   copy(src, res, size);
   return res;
@@ -42,7 +46,8 @@ TimeTableSpecifications *makeTimeTableSpecifications(
     size_t a_size, uint *a_party_id, uint *a_session_id, uint *a_priority,
 
     // For constraint weights
-    float *constraint_weights) {
+    float *constraint_weights)
+{
 
   TimeTableSpecifications *specs =
       (TimeTableSpecifications *)malloc(sizeof(TimeTableSpecifications));
@@ -113,7 +118,8 @@ TimeTableSpecifications *makeTimeTableSpecifications(
   return specs;
 }
 
-void deleteTimeTableSpecifications(TimeTableSpecifications *specs) {
+void deleteTimeTableSpecifications(TimeTableSpecifications *specs)
+{
 
   free(specs->party_table->id);
   free(specs->party_table->strength);
@@ -155,7 +161,8 @@ void deleteTimeTableSpecifications(TimeTableSpecifications *specs) {
   free(specs);
 }
 
-void printTimeTableSpecificationSummary(TimeTableSpecifications *specs) {
+void printTimeTableSpecificationSummary(TimeTableSpecifications *specs)
+{
   printf("\nTime Table Specifications:\n");
   printf("\tThere are %u parties.\n", specs->party_table->size);
   printf("\tThere are %u venues.\n", specs->venue_table->size);
@@ -166,42 +173,82 @@ void printTimeTableSpecificationSummary(TimeTableSpecifications *specs) {
 }
 
 void findAssociatedParties(uint session_id, uint *number_of_parties,
-                           uint *party_id, TimeTableSpecifications *specs) {
+                           uint *party_id, TimeTableSpecifications *specs)
+{
   *number_of_parties = 0;
-  for (uint i = 0; i < specs->assignment_table->size; i++) {
-    if (specs->assignment_table->session_id[i] == session_id) {
+  for (uint i = 0; i < specs->assignment_table->size; i++)
+  {
+    if (specs->assignment_table->session_id[i] == session_id)
+    {
       party_id[(*number_of_parties)++] = specs->assignment_table->party_id[i];
     }
   }
 }
 
 void findAssociatedSessions(uint party_id, uint *number_of_session,
-                            uint *session_id, TimeTableSpecifications *specs) {
+                            uint *session_id, TimeTableSpecifications *specs)
+{
   *number_of_session = 0;
-  for (uint i = 0; i < specs->assignment_table->size; i++) {
-    if (specs->assignment_table->party_id[i] == party_id) {
+  for (uint i = 0; i < specs->assignment_table->size; i++)
+  {
+    if (specs->assignment_table->party_id[i] == party_id)
+    {
       session_id[(*number_of_session)++] =
           specs->assignment_table->session_id[i];
     }
   }
 }
-
-void locality_to_distance(uint locality_i, uint locality_j, uint *distance,
-                          TimeTableSpecifications *specs) {
-  if (locality_j < locality_i) {
+uint locality_pair_to_index(uint locality_i, uint locality_j, uint size)
+{
+  if (locality_j < locality_i)
+  {
     uint t = locality_j;
     locality_j = locality_i;
     locality_i = t;
-  } else if (locality_j == locality_i) {
+  }
+  
+
+  uint c = 0, flag = 0;
+  ;
+  for (uint i = 0; i <= locality_i; i++)
+  {
+    for (uint j = i + 1; j <= size; j++)
+    {
+      if (i == locality_i && j == locality_j)
+      {
+        break;
+        flag = 1;
+      }
+      c++;
+    }
+    if (flag)
+      break;
+  }
+  return c;
+}
+void locality_to_distance(uint locality_i, uint locality_j, uint *distance,
+                          TimeTableSpecifications *specs)
+{
+  if (locality_j < locality_i)
+  {
+    uint t = locality_j;
+    locality_j = locality_i;
+    locality_i = t;
+  }
+  else if (locality_j == locality_i)
+  {
     *distance = 0;
     return;
   }
 
   uint c = 0, flag = 0;
   ;
-  for (uint i = 0; i <= locality_i; i++) {
-    for (uint j = i + 1; j <= specs->locality_table->size; j++) {
-      if (i == locality_i && j == locality_j) {
+  for (uint i = 0; i <= locality_i; i++)
+  {
+    for (uint j = i + 1; j <= specs->locality_table->size; j++)
+    {
+      if (i == locality_i && j == locality_j)
+      {
         break;
         flag = 1;
       }

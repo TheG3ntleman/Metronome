@@ -104,10 +104,10 @@ typedef struct {
   char **v_names;
 
   // Timeslot
-  char **timeslot_names;
+  // char **timeslot_names;
 
   // Locality
-  char **locality_names;
+  // char **locality_names;
 
   // Session
   char **session_names;
