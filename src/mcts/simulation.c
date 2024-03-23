@@ -50,7 +50,7 @@ snumeric simulate(StateSpaceTree *state_space_tree, Agent *agent,
   }
 
   // Getting optimality of the solution
-  snumeric reward = get_optimality(agent, time_table_specifications);
+  snumeric reward = get_optimality(agent->timetable, time_table_specifications);
 
   agent_free(t_agent);
 
