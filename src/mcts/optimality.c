@@ -159,7 +159,7 @@ numeric soft_constraint_room_capacity_utilisation(TimeTableEntry *timetable, uin
     uint venue_id = timetable[i].venue;
     uint party_id_array[specs->party_table->size];
     uint number_of_parties;
-    find_parties_from_session(i, &number_of_parties, party_id_array, specs);
+    findAssociatedParties(i, &number_of_parties, party_id_array, specs);
     uint strength = 0;
 
     for (uint j = 0; j < number_of_parties; j++) { // Corrected the loop condition
