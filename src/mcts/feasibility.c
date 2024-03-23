@@ -1,7 +1,6 @@
 #include "agent.h"
 #include "feasibility.h"
 #include "monte_carlo_tree_search.h"
-#include "specifications.h"
 #include <stdlib.h>
 
 typedef char bool;
@@ -21,10 +20,14 @@ typedef char bool;
 void Get_tuple(Agent *agent, TimeTableEntry *option, uint i, uint *venue_id, uint *timeslot_id) {
   // implement
   if (i < agent->depth) {
-    return agent->timetable[i];
-  } else if (i == agent->depth + 1) 
-    return option;
-  else {
+    *timeslot_id = agent->timetable[i].timeslot;
+    *venue_id = agent->timetable[i].venue;
+    return ;
+  } else if (i == agent->depth + 1) {
+    *timeslot_id = option->timeslot;
+    *venue_id = option->venue;
+    return ;
+  } else {
     printf("Invalid get tuple call.\n");
     exit(-1);
   }

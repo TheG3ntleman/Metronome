@@ -9,6 +9,9 @@
 #define N_MINIMUM_PARTIES 10
 #define N_MAXIMUM_PARTIES 20
 
+#define N_MINIMUM_VENUES 25
+#define N_MAXIMUM_VENUES 40
+
 typedef struct {
 
   /*uint p_size = 4;
