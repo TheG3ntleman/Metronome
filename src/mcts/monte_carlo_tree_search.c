@@ -22,7 +22,7 @@ TimeTableEntry find_max(uint ***arr, uint n_timeslots, uint n_venues) {
   for (uint i = 0; i < n_timeslots; i++) {
     for (uint j = 0; j < n_venues; j++) {
       if (arr[i][j][1] == 0 && arr[i][j][0] > mx) {
-        mx = arr[i][j][1];
+        mx = arr[i][j][0];
         n_timeslot_number = i;
         n_venue_number = j;
       }
@@ -107,6 +107,7 @@ MCTS_problem *MCTS_make_problem_from_population(
   }
 
   for(uint i = 0; i < population->n_sessions; i++){
+    printf("Tuple %u, (Frequency : %d)\n", dummy_counter[i]);
     printf("Frequency: %d\n", dummy_counter[i]);
     printf("Timeslot: %d\n", dummy[i].timeslot);
     printf("Venue: %d\n", dummy[i].venue);

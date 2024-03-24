@@ -1,4 +1,7 @@
 #include "optimality.h"
+#include "src/mcts/state_space_tree.h"
+#include "src/timetable/specifications.h"
+
 
 numeric soft_constraint_student_travel_time(TimeTableEntry *timetable,
                                             uint n_sessions,
@@ -70,6 +73,7 @@ numeric soft_constraint_maximize_chunking(TimeTableEntry *timetable,
   numeric violations = 0;
 
   for (uint i = 0; i < specs->party_table->size; i++) {
+    
     uint session_id_array[specs->session_table->size];
     uint number_of_session;
     findAssociatedSessions(i, &number_of_session, session_id_array, specs);

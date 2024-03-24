@@ -8,6 +8,8 @@ snumeric simulate(StateSpaceTree *state_space_tree, Agent *agent,
                   TimeTableSpecifications *time_table_specifications,
                   MCTS_problem *problem) {
 
+START_SIMULATION_AGAIN:
+
   // Making a temporary copy of the agent.
   Agent *t_agent = agent_clone(agent);
   t_agent->current_node = NULL; // this is not used
@@ -35,7 +37,6 @@ snumeric simulate(StateSpaceTree *state_space_tree, Agent *agent,
                          &n_feasible_children);
 
     if (n_feasible_children == 0) {
-      agent->current_node->children_expanded = 1;
 
       // Calling soft contraint optimality functions
       // to check if the current solution is optimal
@@ -47,7 +48,7 @@ snumeric simulate(StateSpaceTree *state_space_tree, Agent *agent,
       backpropagate(state_space_tree, agent->solution, agent->depth,
                     reward / k);
 
-      continue;
+      goto START_SIMULATION_AGAIN;
     }
 
     // using a random selection heuristic for now
