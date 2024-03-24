@@ -41,6 +41,11 @@ MCTS_problem *MCTS_make_problem_from_population(
 {
   MCTS_problem *problem = malloc(sizeof(MCTS_problem));
 
+  problem->problem = malloc(population->n_sessions * sizeof(TimeTableEntry*));
+  for (uint i = 0; i < population->n_sessions; i++) {
+    problem->problem[i] = malloc(options_per_session * sizeof(TimeTableEntry));
+  }
+
   problem->n_sessions = population->n_sessions;
   problem->n_options = options_per_session;
   problem->max_complete_branches = max_complete_branches;
