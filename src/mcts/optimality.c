@@ -1,15 +1,36 @@
 #include "optimality.h"
 
+uint is_party_in(uint depth, uint party_id, TimeTableSpecifications *specs) {
+  // binary array which contains 1 if the party_id is there on that index otherwise 0
+
+  for (uint i = 0; i < depth; i++) {
+    uint party_id_array[specs->party_table->size];
+    uint number_of_parties;
+    findAssociatedParties(i, &number_of_parties, party_id_array, specs);
+    for (uint j = 0; j < number_of_parties; j++) {
+      if (party_id_array[j] == party_id) {
+        return 1;
+      }
+    }
+  }
+
+  return 0;
+}
+
 numeric soft_constraint_student_travel_time(TimeTableEntry *timetable,
-                                            uint n_sessions,
+                                            uint n_sessions, uint depth,
                                             TimeTableSpecifications *specs) {
   /*Consecutive sessions may need to be scheduled in close proximity to each
    * other to minimize student travel time between them.*/
   numeric violations = 0;
 
   for (uint i = 0; i < specs->party_table->size; i++) {
-
-    uint session_id_array[specs->session_table->size];
+    // checking if the party has been included in any of the sessions till now
+    if (is_party_in(depth, i, specs) == 0) {
+      continue;
+    }
+    
+    uint session_id_array[depth];
     uint number_of_session;
     findAssociatedSessions(i, &number_of_session, session_id_array, specs);
 
@@ -18,7 +39,6 @@ numeric soft_constraint_student_travel_time(TimeTableEntry *timetable,
     uint n = 0;
 
     for (uint j = 0; j < number_of_session; j++) {
-      // timetable[i].timeslot
       uint venue_id = timetable[session_id_array[j]].venue;
       uint timeslot_id = timetable[session_id_array[j]].timeslot;
       timeslot_array[n] = timeslot_id;
@@ -63,20 +83,27 @@ numeric soft_constraint_student_travel_time(TimeTableEntry *timetable,
 }
 
 numeric soft_constraint_maximize_chunking(TimeTableEntry *timetable,
-                                          uint n_sessions,
+                                          uint n_sessions, uint depth,
                                           TimeTableSpecifications *specs) {
 
   /* Maximize session chunking (have back-to-back sessions for students). */
   numeric violations = 0;
 
   for (uint i = 0; i < specs->party_table->size; i++) {
-    uint session_id_array[specs->session_table->size];
+    // checking if the party has been included in any of the sessions till now
+    if (is_party_in(depth, i, specs) == 0) {
+      continue;
+    }
+
+    uint session_id_array[depth];
     uint number_of_session;
     findAssociatedSessions(i, &number_of_session, session_id_array, specs);
+
     uint timeslot_array[specs->timeslot_table->size];
     for (uint j = 0; j < specs->timeslot_table->size; j++) {
       timeslot_array[j] = 0;
     }
+
     uint n = 0;
     for (uint j = 0; j < number_of_session; j++) {
       uint venue_id = timetable[session_id_array[j]].venue;
@@ -96,7 +123,7 @@ numeric soft_constraint_maximize_chunking(TimeTableEntry *timetable,
 }
 
 numeric soft_constraint_room_utlisation(TimeTableEntry *timetable,
-                                        uint n_sessions,
+                                        uint n_sessions, uint depth,
                                         TimeTableSpecifications *specs) {
 
   /* Maximize Room Utilization Constraint: Encourage the efficient use of rooms
@@ -108,7 +135,7 @@ numeric soft_constraint_room_utlisation(TimeTableEntry *timetable,
     room_utilization[i] = 0;
   }
 
-  for (uint i = 0; i < n_sessions; i++) { // Corrected n_sesions to n_sessions
+  for (uint i = 0; i < depth; i++) { // Corrected n_sesions to n_sessions
     uint timeslot_id = timetable[i].timeslot;
     uint venue_id = timetable[i].venue;
     room_utilization[venue_id]++;
@@ -124,7 +151,7 @@ numeric soft_constraint_room_utlisation(TimeTableEntry *timetable,
 }
 
 numeric soft_constraint_avoid_early_time(TimeTableEntry *timetable,
-                                         uint n_sessions,
+                                         uint n_sessions, uint depth,
                                          TimeTableSpecifications *specs) {
 
   /* Avoid Early/Late Times Constraint: Express preferences to avoid scheduling
@@ -136,8 +163,12 @@ numeric soft_constraint_avoid_early_time(TimeTableEntry *timetable,
       specs->timeslot_table->size / number_of_days;
 
   for (uint i = 0; i < specs->party_table->size; i++) {
+    // checking if the party has been included in any of the sessions till now
+    if (is_party_in(depth, i, specs) == 0) {
+      continue;
+    }
 
-    uint session_id_array[specs->session_table->size];
+    uint session_id_array[depth];
     uint number_of_session;
     findAssociatedSessions(i, &number_of_session, session_id_array, specs);
     uint preferred_start_time = specs->party_table->preferred_start_time[i];
@@ -160,20 +191,22 @@ numeric soft_constraint_avoid_early_time(TimeTableEntry *timetable,
 
 numeric
 soft_constraint_room_capacity_utilisation(TimeTableEntry *timetable,
-                                          uint n_sessions,
+                                          uint n_sessions, uint depth,
                                           TimeTableSpecifications *specs) {
 
   /* Avoid scheduling sessions with less strength to venues which have high
     capacity ex: don't schedule ECM-only class at auditorium */
   numeric violations = 0;
 
-  for (uint i = 0; i < n_sessions; i++) {
+  for (uint i = 0; i < depth; i++) {
 
     uint timeslot_id = timetable[i].timeslot;
     uint venue_id = timetable[i].venue;
+
     uint party_id_array[specs->party_table->size];
     uint number_of_parties;
     findAssociatedParties(i, &number_of_parties, party_id_array, specs);
+
     uint strength = 0;
 
     for (uint j = 0; j < number_of_parties;
@@ -188,7 +221,7 @@ soft_constraint_room_capacity_utilisation(TimeTableEntry *timetable,
 }
 
 numeric soft_constraint_common_timeslot_empty(TimeTableEntry *timetable,
-                                              uint n_sessions,
+                                              uint n_sessions, uint depth,
                                               TimeTableSpecifications *specs) {
 
   /* Encourage common time slots being left empty for a particular batch,
@@ -201,7 +234,7 @@ numeric soft_constraint_common_timeslot_empty(TimeTableEntry *timetable,
     timeslot_array[i] = 0;
   }
 
-  for (uint i = 0; i < specs->session_table->size; i++) {
+  for (uint i = 0; i < depth; i++) {
     uint timeslot_id = timetable[i].timeslot;
     uint venue_id = timetable[i].venue;
     timeslot_array[timeslot_id]++;
@@ -216,7 +249,7 @@ numeric soft_constraint_common_timeslot_empty(TimeTableEntry *timetable,
 }
 
 numeric soft_constraint_minimize_backtoback_teacher_classes(
-    TimeTableEntry *timetable, uint n_sessions,
+    TimeTableEntry *timetable, uint n_sessions, uint depth,
     TimeTableSpecifications *specs) {
 
   /* Minimization of Back-to-Back Classes for teachers. */
@@ -228,10 +261,14 @@ numeric soft_constraint_minimize_backtoback_teacher_classes(
       specs->timeslot_table->size / number_of_days;
 
   for (uint i = 0; i < specs->party_table->size; i++) {
+    // checking if the party has been included in any of the sessions till now
+    if (is_party_in(depth, i, specs) == 0) {
+      continue;
+    }
 
     if (specs->party_table->party_type[i] == 1) {
 
-      uint session_id_array[specs->session_table->size];
+      uint session_id_array[depth];
       uint number_of_session;
       findAssociatedSessions(i, &number_of_session, session_id_array, specs);
 
@@ -254,20 +291,20 @@ numeric soft_constraint_minimize_backtoback_teacher_classes(
 
 numeric
 soft_constraint_minimize_samecourse_sessions(TimeTableEntry *timetable,
-                                             uint n_sessions,
+                                             uint n_sessions, uint depth,
                                              TimeTableSpecifications *specs) {
 
   /* Discourage scheduling sessions of the same course more than once per day.
    */
   numeric violations = 0;
 
-  for (uint i = 0; i < specs->session_table->size; i++) {
+  for (uint i = 0; i < depth; i++) {
     uint timeslot_id1 = timetable[i].timeslot;
     uint venue_id1 = timetable[i].venue;
 
     uint day1 = specs->timeslot_table->day[timeslot_id1];
 
-    for (uint j = i + 1; j < specs->session_table->size; j++) {
+    for (uint j = i + 1; j < depth; j++) {
 
       if (specs->session_table->course[i] == specs->session_table->course[j]) {
         uint timeslot_id2 = timetable[j].timeslot;
@@ -285,7 +322,7 @@ soft_constraint_minimize_samecourse_sessions(TimeTableEntry *timetable,
 }
 
 numeric soft_constraint_evenly_throughout_week(TimeTableEntry *timetable,
-                                               uint n_sessions,
+                                               uint n_sessions, uint depth,
                                                TimeTableSpecifications *specs) {
   /* Have an even distribution of events throughout the week (avoid having too
    * many sessions on one day). */
@@ -294,7 +331,12 @@ numeric soft_constraint_evenly_throughout_week(TimeTableEntry *timetable,
       specs->timeslot_table->day[specs->timeslot_table->size - 1];
 
   for (uint i = 0; i < specs->party_table->size; i++) {
-    uint session_id_array[specs->session_table->size];
+    // checking if the party has been included in any of the sessions till now
+    if (is_party_in(depth, i, specs) == 0) {
+      continue;
+    }
+
+    uint session_id_array[depth];
     uint number_of_session;
     findAssociatedSessions(i, &number_of_session, session_id_array, specs);
 
@@ -330,37 +372,37 @@ numeric soft_constraint_evenly_throughout_week(TimeTableEntry *timetable,
   return specs->constraint_weights[15] * violations;
 }
 
-snumeric get_optimality(TimeTableEntry *timetable,
+snumeric get_optimality(TimeTableEntry *timetable, Agent *agent,
                         TimeTableSpecifications *specifications) {
 
   snumeric fitness = 0;
 
   fitness += soft_constraint_student_travel_time(
-      timetable, specifications->session_table->size, specifications);
+      timetable, specifications->session_table->size, agent->depth, specifications);
 
   fitness += soft_constraint_avoid_early_time(
-      timetable, specifications->session_table->size, specifications);
+      timetable, specifications->session_table->size, agent->depth, specifications);
 
   fitness += soft_constraint_common_timeslot_empty(
-      timetable, specifications->session_table->size, specifications);
+      timetable, specifications->session_table->size, agent->depth, specifications);
 
   fitness += soft_constraint_maximize_chunking(
-      timetable, specifications->session_table->size, specifications);
+      timetable, specifications->session_table->size,agent->depth, specifications);
 
   fitness += soft_constraint_minimize_backtoback_teacher_classes(
-      timetable, specifications->session_table->size, specifications);
+      timetable, specifications->session_table->size, agent->depth, specifications);
 
   fitness += soft_constraint_minimize_samecourse_sessions(
-      timetable, specifications->session_table->size, specifications);
+      timetable, specifications->session_table->size, agent->depth, specifications);
 
   fitness += soft_constraint_room_capacity_utilisation(
-      timetable, specifications->session_table->size, specifications);
+      timetable, specifications->session_table->size, agent->depth, specifications);
 
   fitness += soft_constraint_room_utlisation(
-      timetable, specifications->session_table->size, specifications);
+      timetable, specifications->session_table->size, agent->depth, specifications);
 
   fitness += soft_constraint_evenly_throughout_week(
-      timetable, specifications->session_table->size, specifications);
+      timetable, specifications->session_table->size, agent->depth, specifications);
 
   return fitness;
 }
