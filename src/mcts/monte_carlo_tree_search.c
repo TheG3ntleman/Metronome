@@ -5,6 +5,7 @@
 #include "optimality.h"*/
 
 #include <limits.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "backpropagate.h"
@@ -51,6 +52,10 @@ MCTS_problem *MCTS_make_problem_from_population(
   problem->time_table_specifications = time_table_specifications;
 
   uint ***frequency_table = malloc(population->n_timeslots * sizeof(uint **));
+
+  TimeTableEntry *dummy = malloc(population->n_sessions * sizeof(TimeTableEntry));
+  uint *dummy_counter = malloc(population->n_sessions * sizeof(uint));
+
   for (uint i = 0; i < population->n_timeslots; i++) {
     frequency_table[i] = malloc(population->n_venues * sizeof(uint *));
     for (uint j = 0; j < population->n_venues; j++) {
@@ -88,6 +93,8 @@ MCTS_problem *MCTS_make_problem_from_population(
                    population->n_venues);
       problem->problem[i][j].timeslot = temp.timeslot;
       problem->problem[i][j].venue = temp.venue;
+      dummy[max_no_of_sessions] = temp;
+      dummy_counter[max_no_of_sessions] = frequency_table[temp.timeslot][temp.venue][0];
       max_no_of_sessions++;
       if (max_no_of_sessions == problem->n_sessions) {
         check = 1;
@@ -97,6 +104,12 @@ MCTS_problem *MCTS_make_problem_from_population(
     if (check == 1) {
       break;
     }
+  }
+
+  for(uint i = 0; i < population->n_sessions; i++){
+    printf("Frequency: %d\n", dummy_counter[i]);
+    printf("Timeslot: %d\n", dummy[i].timeslot);
+    printf("Venue: %d\n", dummy[i].venue);
   }
 
   return problem;

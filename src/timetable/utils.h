@@ -5,7 +5,7 @@
 
 typedef long double numeric;
 typedef float snumeric;
-
+typedef unsigned int uint;
 // Norm functions for fitness concatination.
 
 uint randint(uint lower, uint upper);
