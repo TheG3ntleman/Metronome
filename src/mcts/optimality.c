@@ -372,37 +372,37 @@ numeric soft_constraint_evenly_throughout_week(TimeTableEntry *timetable,
   return specs->constraint_weights[15] * violations;
 }
 
-snumeric get_optimality(TimeTableEntry *timetable, Agent *agent,
+snumeric get_optimality(TimeTableEntry *timetable, uint depth,
                         TimeTableSpecifications *specifications) {
 
   snumeric fitness = 0;
 
   fitness += soft_constraint_student_travel_time(
-      timetable, specifications->session_table->size, agent->depth, specifications);
+      timetable, specifications->session_table->size, depth, specifications);
 
   fitness += soft_constraint_avoid_early_time(
-      timetable, specifications->session_table->size, agent->depth, specifications);
+      timetable, specifications->session_table->size, depth, specifications);
 
   fitness += soft_constraint_common_timeslot_empty(
-      timetable, specifications->session_table->size, agent->depth, specifications);
+      timetable, specifications->session_table->size, depth, specifications);
 
   fitness += soft_constraint_maximize_chunking(
-      timetable, specifications->session_table->size,agent->depth, specifications);
+      timetable, specifications->session_table->size, depth, specifications);
 
   fitness += soft_constraint_minimize_backtoback_teacher_classes(
-      timetable, specifications->session_table->size, agent->depth, specifications);
+      timetable, specifications->session_table->size, depth, specifications);
 
   fitness += soft_constraint_minimize_samecourse_sessions(
-      timetable, specifications->session_table->size, agent->depth, specifications);
+      timetable, specifications->session_table->size, depth, specifications);
 
   fitness += soft_constraint_room_capacity_utilisation(
-      timetable, specifications->session_table->size, agent->depth, specifications);
+      timetable, specifications->session_table->size, depth, specifications);
 
   fitness += soft_constraint_room_utlisation(
-      timetable, specifications->session_table->size, agent->depth, specifications);
+      timetable, specifications->session_table->size, depth, specifications);
 
   fitness += soft_constraint_evenly_throughout_week(
-      timetable, specifications->session_table->size, agent->depth, specifications);
+      timetable, specifications->session_table->size, depth, specifications);
 
   return fitness;
 }
