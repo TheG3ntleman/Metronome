@@ -13,6 +13,7 @@
 #include "selection.h"
 #include "simulation.h"
 #include "src/mcts/optimality.h"
+#include "src/timetable/population.h"
 #include "state_space_tree.h"
 
 TimeTableEntry find_max(uint ***arr, uint n_timeslots, uint n_venues) {
@@ -51,67 +52,52 @@ MCTS_problem *MCTS_make_problem_from_population(
   problem->max_complete_branches = max_complete_branches;
   problem->time_table_specifications = time_table_specifications;
 
-  uint ***frequency_table = malloc(population->n_timeslots * sizeof(uint **));
+  
 
-  TimeTableEntry *dummy = malloc(population->n_sessions * sizeof(TimeTableEntry));
-  uint *dummy_counter = malloc(population->n_sessions * sizeof(uint));
 
-  for (uint i = 0; i < population->n_timeslots; i++) {
-    frequency_table[i] = malloc(population->n_venues * sizeof(uint *));
-    for (uint j = 0; j < population->n_venues; j++) {
-      frequency_table[i][j] = malloc(2 * sizeof(uint));
+  for(uint i = 0 ; i < population->n_sessions;i++){
+    uint *frequency_table = malloc(population->n_timeslots * population-> n_venues *sizeof(uint));
+    char *selection_flag = malloc(population->n_timeslots * population-> n_venues *sizeof(char)); 
+    for(uint ii=0;ii<population->n_timeslots * population->n_venues;ii++){
+        frequency_table[ii] = 0;
+        selection_flag[ii] = 0;
     }
-  }
-  // 0 ->  counter
-  // 1 ->  flag
-
-  for (uint i = 0; i < population->n_timeslots; i++) {
-    for (uint j = 0; j < population->n_venues; j++) {
-      frequency_table[i][j][0] = 0; // Corresponds to the counter
-      frequency_table[i][j][1] = 0; // Corresponds to the Flag
+    for(uint j = 0; j < population->n_timetables; j++){
+      uint timeslot, venue;
+      ttGetTuple(population, j, i , &timeslot, &venue);
+      frequency_table[timeslot * population->n_venues + venue]++;
     }
-  }
-
-  for (uint k = 0; k < population->n_timetables; k++) {
-    for (uint i = 0; i < population->n_sessions; i++) {
-      for (uint j = 0; j < options_per_session; j++) {
-        TimeTableEntry temp = {0, 0};
-        ttGetTuple(population, k, i, &temp.timeslot, &temp.venue);
-        frequency_table[temp.timeslot][temp.venue][0]++;
+    for(uint j=0;j<options_per_session;j++){
+      uint maximum_frequency = 0;
+      uint maximum_frequency_index = 0;
+      for(uint ii=0;ii<population->n_timeslots * population->n_venues;ii++){
+        if(frequency_table[ii] > maximum_frequency && selection_flag[ii] == 0){
+          maximum_frequency = frequency_table[ii];
+          maximum_frequency_index = ii;
+        }
+      }
+      selection_flag[maximum_frequency_index] = 1;
+      problem->problem[i][j].timeslot = maximum_frequency_index / population->n_venues;
+      problem->problem[i][j].venue = maximum_frequency_index % population->n_venues;
+    }
+    printf("Frequencies for session %d\n", i);
+    for (uint i = 0; i < population->n_timeslots; i++) {
+      for (uint j = 0; j < population->n_venues; j++) {
+        printf("\tTimeslot: %u, Venue: %u, Frequency: %u\n", i, j, frequency_table[i * population->n_venues + j]);
       }
     }
   }
 
-  uint max_no_of_sessions = 0;
 
-  // n_options, n_sessions
-  for (uint i = 0; i < population->n_sessions; i++) {
-    uint check = 0;
-    for (uint j = 0; j < options_per_session; j++) {
-      TimeTableEntry temp =
-          find_max((uint ***)frequency_table, population->n_timeslots,
-                   population->n_venues);
-      problem->problem[i][j].timeslot = temp.timeslot;
-      problem->problem[i][j].venue = temp.venue;
-      dummy[max_no_of_sessions] = temp;
-      dummy_counter[max_no_of_sessions] = frequency_table[temp.timeslot][temp.venue][0];
-      max_no_of_sessions++;
-      if (max_no_of_sessions == problem->n_sessions) {
-        check = 1;
-        break;
-      }
-    }
-    if (check == 1) {
-      break;
-    }
+  for(uint i=0; i < population->n_timetables;i++){
+    uint timeslot, venue;
+    ttGetTuple(population, i, 0 , &timeslot, &venue);
+    printf("\t(%u, %u)\n", timeslot, venue);
   }
+  
 
-  for(uint i = 0; i < population->n_sessions; i++){
-    printf("Tuple %u, (Frequency : %d)\n", dummy_counter[i]);
-    printf("Frequency: %d\n", dummy_counter[i]);
-    printf("Timeslot: %d\n", dummy[i].timeslot);
-    printf("Venue: %d\n", dummy[i].venue);
-  }
+
+
 
   return problem;
 }
