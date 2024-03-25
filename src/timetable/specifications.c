@@ -174,8 +174,8 @@ void findAssociatedParties(uint session_id, uint *number_of_parties,
   }
 }
 
-void findAssociatedSessions(uint party_id, uint *number_of_session, uint depth,
-                            uint *session_id, TimeTableSpecifications *specs) {
+void findAssociatedSessions(uint party_id, uint *number_of_session, 
+                            uint *session_id, uint depth, TimeTableSpecifications *specs) {
   *number_of_session = 0;
   for (uint i = 0; i < specs->assignment_table->size; i++) {
     if (specs->assignment_table->party_id[i] == party_id && specs->assignment_table->session_id[i] <= depth) {
