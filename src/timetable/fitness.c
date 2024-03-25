@@ -95,7 +95,7 @@ static numeric computeHardConstraint_MaxSessionsConstraint(
   for (uint i = 0; i < specifications->party_table->size; i++) {
     uint session_id_array[specifications->session_table->size];
     uint number_of_session;
-    findAssociatedSessions(i, &number_of_session, session_id_array, Population->n_sessions,
+    findAssociatedSessions(i, &number_of_session, session_id_array, population->n_sessions,
                            specifications);
 
     uint day_array[number_of_days];
