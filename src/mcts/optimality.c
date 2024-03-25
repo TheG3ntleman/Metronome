@@ -6,7 +6,7 @@ uint is_party_in(uint depth, uint party_id, TimeTableSpecifications *specs) {
   for (uint i = 0; i < depth; i++) {
     uint party_id_array[specs->party_table->size];
     uint number_of_parties;
-    findAssociatedParties(i, &number_of_parties, party_id_array, depth, specs);
+    findAssociatedParties(i, &number_of_parties, party_id_array, depth + 1, specs);
     for (uint j = 0; j < number_of_parties; j++) {
       if (party_id_array[j] == party_id) {
         return 1;
@@ -32,7 +32,7 @@ numeric soft_constraint_student_travel_time(TimeTableEntry *timetable,
     
     uint session_id_array[depth];
     uint number_of_session;
-    findAssociatedSessions(i, &number_of_session, session_id_array, depth, specs);
+    findAssociatedSessions(i, &number_of_session, session_id_array, depth + 1, specs);
 
     uint timeslot_array[specs->timeslot_table->size];
     uint venue_array[specs->venue_table->size];
@@ -97,7 +97,7 @@ numeric soft_constraint_maximize_chunking(TimeTableEntry *timetable,
 
     uint session_id_array[depth];
     uint number_of_session;
-    findAssociatedSessions(i, &number_of_session, session_id_array, depth, specs);
+    findAssociatedSessions(i, &number_of_session, session_id_array, depth + 1, specs);
 
     uint timeslot_array[specs->timeslot_table->size];
     for (uint j = 0; j < specs->timeslot_table->size; j++) {
@@ -170,7 +170,7 @@ numeric soft_constraint_avoid_early_time(TimeTableEntry *timetable,
 
     uint session_id_array[depth];
     uint number_of_session;
-    findAssociatedSessions(i, &number_of_session, session_id_array, depth, specs);
+    findAssociatedSessions(i, &number_of_session, session_id_array, depth + 1, specs);
     uint preferred_start_time = specs->party_table->preferred_start_time[i];
     uint preferred_end_time = specs->party_table->preferred_end_time[i];
 
@@ -205,7 +205,7 @@ soft_constraint_room_capacity_utilisation(TimeTableEntry *timetable,
 
     uint party_id_array[specs->party_table->size];
     uint number_of_parties;
-    findAssociatedParties(i, &number_of_parties, party_id_array, depth, specs);
+    findAssociatedParties(i, &number_of_parties, party_id_array, depth + 1, specs);
 
     uint strength = 0;
 
@@ -270,7 +270,7 @@ numeric soft_constraint_minimize_backtoback_teacher_classes(
 
       uint session_id_array[depth];
       uint number_of_session;
-      findAssociatedSessions(i, &number_of_session, session_id_array, depth, specs);
+      findAssociatedSessions(i, &number_of_session, session_id_array, depth + 1, specs);
 
       for (uint j = 0; j < number_of_session - 1; j = j + 2) {
         uint timeslot_id_prev = timetable[session_id_array[j]].timeslot;
@@ -338,7 +338,7 @@ numeric soft_constraint_evenly_throughout_week(TimeTableEntry *timetable,
 
     uint session_id_array[depth];
     uint number_of_session;
-    findAssociatedSessions(i, &number_of_session, session_id_array, depth, specs);
+    findAssociatedSessions(i, &number_of_session, session_id_array, depth + 1, specs);
 
     uint day_array[number_of_days];
     for (uint j = 0; j < number_of_days; j++) {
