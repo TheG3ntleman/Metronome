@@ -3,8 +3,6 @@
 #include "monte_carlo_tree_search.h"
 #include <stdlib.h>
 
-typedef unsigned int uint;
-
 typedef char bool;
 
 #define true 1
