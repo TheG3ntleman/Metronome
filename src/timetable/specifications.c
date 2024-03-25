@@ -164,21 +164,21 @@ void printTimeTableSpecificationSummary(TimeTableSpecifications *specs) {
   printf("\tThere are %u assignments.\n", specs->assignment_table->size);
 }
 
-void findAssociatedParties(uint session_id, uint *number_of_parties,
-                           uint *party_id, TimeTableSpecifications *specs) {
+void findAssociatedParties(uint session_id, uint *number_of_parties, 
+                           uint *party_id, uint depth, TimeTableSpecifications *specs) {
   *number_of_parties = 0;
   for (uint i = 0; i < specs->assignment_table->size; i++) {
-    if (specs->assignment_table->session_id[i] == session_id) {
+    if (specs->assignment_table->session_id[i] == session_id && specs->assignment_table->session_id[i] <= depth) {
       party_id[(*number_of_parties)++] = specs->assignment_table->party_id[i];
     }
   }
 }
 
-void findAssociatedSessions(uint party_id, uint *number_of_session,
+void findAssociatedSessions(uint party_id, uint *number_of_session, uint depth,
                             uint *session_id, TimeTableSpecifications *specs) {
   *number_of_session = 0;
   for (uint i = 0; i < specs->assignment_table->size; i++) {
-    if (specs->assignment_table->party_id[i] == party_id) {
+    if (specs->assignment_table->party_id[i] == party_id && specs->assignment_table->session_id[i] <= depth) {
       session_id[(*number_of_session)++] =
           specs->assignment_table->session_id[i];
     }
