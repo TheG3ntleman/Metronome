@@ -145,9 +145,9 @@ void deleteTimeTableSpecifications(TimeTableSpecifications *specs);
 void printTimeTableSpecificationSummary(TimeTableSpecifications *specs);
 
 void findAssociatedParties(uint session_id, uint *number_of_parties,
-                           uint *party_id, TimeTableSpecifications *specs);
+                           uint *party_id, uint depth, TimeTableSpecifications *specs);
 void findAssociatedSessions(uint party_id, uint *number_of_session,
-                            uint *session_id, TimeTableSpecifications *specs);
+                            uint *session_id, uint depth, TimeTableSpecifications *specs);
 uint locality_pair_to_index(uint locality_i, uint locality_j, uint size);
 void locality_to_distance(uint locality_i, uint locality_j, uint *distance,
                           TimeTableSpecifications *specs);
