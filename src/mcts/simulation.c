@@ -43,7 +43,7 @@ START_SIMULATION_AGAIN:
       // or not.
 
       snumeric reward =
-          get_optimality(agent->timetable, problem->time_table_specifications);
+          get_optimality(agent->timetable, agent->depth, problem->time_table_specifications);
       snumeric k = (problem->n_sessions - agent->depth) / (t_agent->depth - agent->depth);
       backpropagate(state_space_tree, agent->solution, agent->depth,
                     reward / k);
