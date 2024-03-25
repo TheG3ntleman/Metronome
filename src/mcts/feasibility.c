@@ -10,11 +10,11 @@ typedef char bool;
 
 
 /* Two function need to be implemented:
-  1) findAssociatedParties: given a session this function given all the parties participating in that session in 
+  1) find_parties_from_session: given a session this function given all the parties participating in that session in 
       the partially completed time table.
-  2) findAssociatedsessions: given a party this function given all the sessions that this party is participating in
+  2) find_sessions_from_parties: given a party this function given all the sessions that this party is participating in
       the partially completed time table.
-  3) Get_tuple: implemntint a function that takes the agent and option and gives timeslot, venue*/
+  3) Get_tuple: implemntint a function that takes the agent and option and gives timeslot, venue */
 
 
 void Get_tuple(Agent *agent, TimeTableEntry *option, uint i, uint *venue_id, uint *timeslot_id) {
@@ -64,7 +64,7 @@ bool hard_constraint_max_capacity(TimeTableEntry *timetable, Agent *agent,
   uint party_id_array[specs->party_table->size];
   uint number_of_parties;
   uint strength = 0;
-  findAssociatedParties(agent->depth + 1, &number_of_parties, party_id_array, specs);
+  findAssociatedParties(agent->depth + 1, &number_of_parties, party_id_array, agent->depth, specs);
 
   for (uint j = 0; j < number_of_parties; j++) {
     strength += specs->party_table->strength[party_id_array[j]];
@@ -103,7 +103,7 @@ bool hard_constraint_max_sessions(TimeTableEntry *timetable, Agent *agent,
                                   
   uint party_id_array[specs->party_table->size];
   uint number_of_parties;
-  findAssociatedParties(agent->depth + 1, &number_of_parties, party_id_array, specs);
+  findAssociatedParties(agent->depth + 1, &number_of_parties, party_id_array, agent->depth, specs);
 
   uint day_array[6];
   for (uint j = 0; j < 6; j++) {
@@ -114,7 +114,7 @@ bool hard_constraint_max_sessions(TimeTableEntry *timetable, Agent *agent,
 
     uint session_id_array[specs->session_table->size];
     uint number_of_sessions;
-    findAssociatedSessions(party_id_array[i], &number_of_sessions, session_id_array, specs);
+    findAssociatedSessions(party_id_array[i], &number_of_sessions, session_id_array, agent->depth, specs);
 
     for (uint j = 0; j < number_of_sessions; j++) {
       uint timeslot_id, venue_id;
@@ -141,7 +141,7 @@ bool hard_constraint_party_duplicate(TimeTableEntry *timetable, Agent *agent,
 
   uint party_id_array[specs->party_table->size];
   uint number_of_parties;
-  findAssociatedParties(agent->depth + 1, &number_of_parties, party_id_array, specs);
+  findAssociatedParties(agent->depth + 1, &number_of_parties, party_id_array, agent->depth, specs);
 
   uint timeslot_array[specs->timeslot_table->size];
   for (uint i = 0; i < specs->timeslot_table->size; i++) {
@@ -153,7 +153,7 @@ bool hard_constraint_party_duplicate(TimeTableEntry *timetable, Agent *agent,
 
     uint session_id_array[specs->session_table->size];
     uint number_of_sessions;
-    findAssociatedSessions(party_id_array[i], &number_of_sessions, session_id_array, specs);
+    findAssociatedSessions(party_id_array[i], &number_of_sessions, session_id_array, agent->depth, specs);
 
     for (uint j = 0; j < number_of_sessions; j++) {
       uint timeslot_id,venue_id;
