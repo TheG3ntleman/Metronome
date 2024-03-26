@@ -128,9 +128,12 @@ Problem *make_problem() {
 
     // Randomly initializing constraint weights
     problem->constraint_weights = (float *)malloc(sizeof(float) * 15);
-    for (uint i = 0; i < 15; i++) {
+    for (uint i = 0; i < 6; i++) {
         problem->constraint_weights[i] = 1.0;
     }    
+    for (uint i = 6; i < 15; i++) {
+        problem->constraint_weights[i] = 0;
+    } 
     
     return problem;
 }

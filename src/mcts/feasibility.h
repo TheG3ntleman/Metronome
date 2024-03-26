@@ -5,9 +5,9 @@
 #include "agent.h"
 #include "state_space_tree.h"
 
-void get_feasible_actions(Agent *agent,
-                          TimeTableSpecifications *specifications,
-                          TimeTableEntry *options, uint n_options, uint *actions,
-                          uint *n_actions);
+// DONT PASS AGENT.
+void get_feasible_actions(Agent *agent, TimeTableSpecifications *specifications,
+                          TimeTableTuple *options, uint n_options,
+                          uint *actions, uint *n_actions);
 
 #endif

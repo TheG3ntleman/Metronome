@@ -1,50 +1,80 @@
 #include "agent.h"
-#include "state_space_tree.h"
+#include "src/mcts/monte_carlo_tree_search.h"
+#include "src/mcts/state_space_tree.h"
+#include <stdio.h>
 
-Agent *agent_make(uint n_sessions) {
-
+Agent *Agent_make(uint max_depth) {
   Agent *agent = (Agent *)malloc(sizeof(Agent));
 
-  agent->depth = 0;
-  agent->current_node = NULL;
-  agent->solution = (Solution *)malloc(n_sessions * sizeof(Solution));
+  agent->branch_vector = (uint *)malloc(sizeof(uint) * max_depth);
   agent->timetable =
-      (TimeTableEntry *)malloc(n_sessions * sizeof(TimeTableEntry));
+      (TimeTableTuple *)malloc(sizeof(TimeTableTuple) * max_depth);
+  agent->current_node = NULL;
+  agent->max_depth = max_depth;
+  agent->depth = 0;
 
   return agent;
 }
 
-void agent_free(Agent *agent) {
-  free(agent->solution);
+Agent *Agent_clone(Agent *agent) {
+
+  Agent *clone = (Agent *)malloc(sizeof(Agent));
+
+  clone->branch_vector = (uint *)malloc(sizeof(uint) * agent->max_depth);
+  clone->timetable =
+      (TimeTableTuple *)malloc(sizeof(TimeTableTuple) * agent->max_depth);
+  clone->current_node = agent->current_node;
+  clone->max_depth = agent->max_depth;
+  clone->depth = agent->depth;
+
+  return clone;
+}
+
+void Agent_free(Agent *agent) {
+
+  free(agent->branch_vector);
   free(agent->timetable);
   free(agent);
 }
 
-void agent_move_to_child(Agent *agent, uint child_index) {
-  agent->current_node = agent->current_node->children + child_index;
+void Agent_on_tree(Agent *agent, StateSpaceTree *tree) {
 
-  agent->timetable[agent->depth].timeslot = agent->current_node->choice.timeslot;
-  agent->timetable[agent->depth].venue = agent->current_node->choice.venue;
-  agent->solution[agent->depth] = child_index;
+  agent->current_node = tree->root;
+  agent->depth = 0;
+}
+
+void Agent_go_to(Agent *agent, uint option_index) {
+
+  printf("Agent at depth: %d\n", agent->depth);
+  printf("Most recent choice (timeslot, venue): (%d, %d)\n",
+         agent->timetable[agent->depth - 1].timeslot,
+         agent->timetable[agent->depth - 1].venue);
+  printf("Option chosen: %d\n", option_index);
+  printf("\n\n");
+
+  if (agent->depth == agent->max_depth) {
+    fprintf(stderr, "Cannot advance agent after already at maximum depth.\n");
+    exit(-1);
+  }
+
+  agent->branch_vector[agent->depth] = option_index;
+  agent->current_node = agent->current_node->children[option_index];
+
+  agent->timetable[agent->depth].timeslot =
+      agent->current_node->option_value.timeslot;
+  agent->timetable[agent->depth].venue =
+      agent->current_node->option_value.venue;
 
   agent->depth++;
 }
 
-Agent *agent_clone(Agent *agent) {
+void Agent_go_back(Agent *agent) {
 
-  Agent *clone = (Agent *)malloc(sizeof(Agent));
-
-  clone->depth = agent->depth;
-  clone->current_node = agent->current_node;
-  clone->solution = (Solution *)malloc(agent->depth * sizeof(Solution));
-  clone->timetable = (TimeTableEntry *)malloc(agent->depth * sizeof(TimeTableEntry));
-
-  for (uint i = 0; i < agent->depth; i++) {
-    clone->solution[i] = agent->solution[i];
-    clone->timetable[i].timeslot = agent->timetable[i].timeslot;
-    clone->timetable[i].venue = agent->timetable[i].venue;
+  if (agent->depth == 0) {
+    fprintf(stderr, "Cannot go back from root node.\n");
+    exit(-1);
   }
 
-  return clone;
-
+  agent->depth--;
+  agent->current_node = agent->current_node->parent;
 }

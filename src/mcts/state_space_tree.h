@@ -2,42 +2,47 @@
 #define STATE_SPACE_TREE_H
 
 #include "../timetable/utils.h"
-#include <stdlib.h>
-
-typedef uint Counter;
-
 typedef struct {
 
   uint timeslot;
   uint venue;
 
-} TimeTableEntry;
+} TimeTableTuple;
 
-typedef struct StateNode{
+typedef struct StateSpaceTreeNode{
 
-  uint option;
+  // Option/Choice related variables
+  uint option_index;
+  TimeTableTuple option_value;
 
-  Counter visits;
+  // MCTS selection criteria
+  uint n_visits;
   snumeric reward;
 
-  struct StateNode *parent;
+  // Related to Tree Structure (Parent)
+  uint depth;
+  struct StateSpaceTreeNode *parent;
 
-  char children_expanded;
-
+  char children_generated, feasible; // Fertile can be removed for n_children == 0 but that would be less readable
   uint n_children;
-  struct StateNode *children;
+  struct StateSpaceTreeNode **children;
 
-  TimeTableEntry choice;
-
-} StateNode;
+} StateSpaceTreeNode;
 
 typedef struct {
 
-  StateNode *root;  
+  // Main root node
+  StateSpaceTreeNode *root;
+  
+  // Variable to track progress
+  uint max_depth_attained;
 
 } StateSpaceTree;
 
 StateSpaceTree *StateSpaceTree_make();
 void StateSpaceTree_free(StateSpaceTree *tree);
+
+// Function to add a child nodes
+void StateSpaceTree_add_child_nodes(StateSpaceTreeNode *parent, uint n_children, TimeTableTuple *children_values);
 
 #endif

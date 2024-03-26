@@ -1,10 +1,14 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#define FALSE 0
+#define TRUE 1
+
 #include <stdlib.h>
 
 typedef long double numeric;
 typedef float snumeric;
+typedef char bool;
 typedef unsigned int uint;
 // Norm functions for fitness concatination.
 

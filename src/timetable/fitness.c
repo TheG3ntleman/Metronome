@@ -8,6 +8,8 @@ static numeric computeHardConstraint_CapacityConstraint(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
 
+  static uint t_count = 0;
+
   numeric violations = 0;
   for (uint i = 0; i < population->n_sessions; i++) {
     uint timeslot_id;
@@ -25,6 +27,9 @@ static numeric computeHardConstraint_CapacityConstraint(
     }
 
     uint capacity = specifications->venue_table->capacity[venue_id];
+
+    printf("%u. Capacity: %u, Strength: %u\n", t_count++, capacity, strength);
+
     if (strength > capacity) {
       violations++;
     }

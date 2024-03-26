@@ -1,29 +1,34 @@
 #ifndef AGENT_H
 #define AGENT_H
 
-#include <stdlib.h>
+#include "../timetable/utils.h"
 #include "state_space_tree.h"
 
-typedef uint Solution;
-typedef struct {
+typedef struct  {
+
+  // History of explored branch
+  uint *branch_vector; // Option Indices (Essentially index of child node
+                      // selected) for choices made at each level
+
+  // Connection to tree
+  StateSpaceTreeNode *current_node;
+
+  // Internal Time Table State
+  TimeTableTuple *timetable;
+
+  // Control variables
   uint depth;
-  StateNode *current_node;
-
-  Solution *solution;
-
-  TimeTableEntry *timetable;
+  uint max_depth;
 } Agent;
 
-Agent *agent_make(uint n_sessions);
-void agent_free(Agent *agent);
-Agent *agent_clone(Agent *agent);
+Agent *Agent_make(uint max_depth);
+Agent *Agent_clone(Agent *agent);
+void Agent_free(Agent *agent);
 
-// This function could take something analagous to the problem or something
-// Remember the first shitty option, it turns out that that was better.
-void agent_move_to_child(Agent *agent, uint child_index);
+// To move agent around/to a tree
+void Agent_on_tree(Agent *agent, StateSpaceTree *tree);
+void Agent_go_to(Agent *agent, uint option_index);
+void Agent_go_back(Agent *agent);
 
-  // Updates depth
-  // Update branch vector
-  // Updategs current node
 
 #endif

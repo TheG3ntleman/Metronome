@@ -17,13 +17,13 @@ metronome_library = shared_library(
   './src/testing/problem.c', 
 
   './src/mcts/agent.c',
-  './src/mcts/backpropagate.c',
   './src/mcts/feasibility.c',
   './src/mcts/monte_carlo_tree_search.c',
-  './src/mcts/optimality.c',
-  './src/mcts/selection.c',
-  './src/mcts/simulation.c',
   './src/mcts/state_space_tree.c',
+  # './src/mcts/backpropagate.c',
+  # './src/mcts/optimality.c',
+  # './src/mcts/selection.c',
+  # './src/mcts/simulation.c',
 
   link_args: '-lm'
 

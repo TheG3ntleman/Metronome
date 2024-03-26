@@ -1,0 +1,120 @@
+
+MCTS_solution *MCTS_execute(MCTS_problem *problem) {
+
+  // Making a state space tree
+  StateSpaceTree *state_space_tree = StateSpaceTree_make();
+
+  // Making an agent
+  Agent *agent = agent_make(problem->n_sessions);
+
+  // Running the MCTS algorithm
+  Solution solutions[problem->max_complete_branches][problem->n_sessions];
+
+  for (uint n_solutions = 0; n_solutions < problem->max_complete_branches;) {
+
+    // Selecting a parent node
+    select_parent_node(state_space_tree, agent);
+
+    if (agent->depth == problem->n_sessions) {
+      // If the agent has reached the end of the tree
+      // then we have a complete solution
+      for (uint i = 0; i < problem->n_sessions; i++) {
+        solutions[n_solutions][i] = agent->solution[i];
+      }
+      n_solutions++;
+      agent->current_node->visits = UINT_MAX;
+      continue;
+    }
+
+    // Check if this node has been expanded
+    if (!agent->current_node->children_expanded) {
+      uint n_feasible_children = 0;
+      uint feasible_children[problem->n_options[agent->depth - 1]];
+
+      /*StateSpaceTree *state_space_tree, Agent *agent,
+                            TimeTableSpecifications *specifications,
+                            TimeTableEntry *options, uint n_options, uint
+         *actions, uint *n_actions*/
+
+      // Extracting all possible options from the MCTS Problem
+      TimeTableEntry options[problem->n_options[agent->depth - 1]];
+      for (uint i = 0; i < problem->n_options; i++) {
+        options[i].timeslot = problem->problem[i]->timeslot;
+        options[i].venue = problem->problem[i]->venue;
+      }
+
+      get_feasible_actions(agent, problem->time_table_specifications, options,
+                           problem->n_options[agent->depth - 1], feasible_children,
+                           &n_feasible_children);
+
+      agent->current_node->n_children = n_feasible_children;
+      agent->current_node->children =
+          malloc(n_feasible_children * sizeof(StateNode));
+
+      if (n_feasible_children == 0) {
+        agent->current_node->children_expanded = 1;
+
+        // Calling soft contraint optimality functions
+        // to check if the current solution is optimal
+        // or not.
+
+        snumeric reward = get_optimality(agent->timetable, agent->depth,
+                                         problem->time_table_specifications);
+        snumeric k = ((snumeric)agent->depth / problem->n_sessions) - 1;
+        backpropagate(state_space_tree, agent->solution, agent->depth,
+                      reward * k);
+
+        continue;
+      }
+
+      for (uint i = 0; i < n_feasible_children; i++) {
+        StateNode *child = agent->current_node->children + i;
+        child->option = feasible_children[i];
+        child->visits = 0;
+        child->reward = 0;
+        child->parent = agent->current_node;
+        child->children_expanded = 0;
+        child->n_children = 0;
+        child->children = NULL;
+
+        // There is a chance of an indexing problem here,
+        // because of agent->depth + 1 may be incorrect
+        // due to 0 indexing.
+        child->choice.timeslot =
+            problem->problem[agent->depth + 1][feasible_children[i]].timeslot;
+        child->choice.venue =
+            problem->problem[agent->depth + 1][feasible_children[i]].venue;
+      }
+
+      agent->current_node->children_expanded = 1;
+    }
+
+    // Getting children for the parent node
+    uint child_index = select_child_node(state_space_tree, agent);
+    agent_move_to_child(agent, child_index);
+
+    // Simulating the child node
+    snumeric reward = simulate(state_space_tree, agent,
+                               problem->time_table_specifications, problem);
+
+    // Backpropagating the reward
+    backpropagate(state_space_tree, agent->solution, agent->depth, reward);
+  }
+
+  // Wrapping the solution in an MCTS Solution object
+  MCTS_solution *mcts_solution = malloc(sizeof(MCTS_solution));
+  mcts_solution->solution =
+      (TimeTableEntry *)malloc(problem->n_sessions * sizeof(TimeTableEntry));
+
+  mcts_solution->n_sessions = problem->n_sessions;
+  StateNode *current_node = state_space_tree->root;
+  for (uint i = 0; i < problem->n_sessions; i++) {
+    current_node = current_node->children + solutions[0][i];
+    mcts_solution->solution->timeslot =
+        problem->problem[i][current_node->option].timeslot;
+    mcts_solution->solution->venue =
+        problem->problem[i][current_node->option].venue;
+  }
+
+  return mcts_solution;
+}

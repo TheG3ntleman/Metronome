@@ -62,19 +62,26 @@ void solveTimeTablingProblem(
       .selection_size = 10,
       .minimum_timetables_per_cluster = 5,
       .similarity_threshold = 40,
-      .mutation_rate = 0.2,
-      .maximum_generations = 500,
+      .mutation_rate = 0.001,
+      .maximum_generations = 10,
   };
 
   Population *population = evolveTimeTables(specs, &gaSpecs);
 
   // Making an MCTS Problem from population
   MCTS_problem *problem = MCTS_make_problem_from_population(
-      population, OPTIONS_PER_SESSION, 1, specs);
+      population, OPTIONS_PER_SESSION, specs);
 
-    MCTS_print_problem(problem);
+  MCTS_print_problem(problem);
 
-  //MCTS_solution *solution = MCTS_execute(problem);
+  MCTS_solver_specifications mcts_specs= {
+    .n_branches_for_termination = 1,
+    .exploration_factor = 0.1
+  };
+
+  MCTS_solution *solution = MCTS_solve(problem, &mcts_specs);
+
+  MCTS_print_solution(solution);
 
   deleteTimeTableSpecifications(specs);
 }
