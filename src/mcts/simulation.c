@@ -18,7 +18,7 @@ START_SIMULATION_AGAIN:
 
     // Getting feasible actions for the current node
     uint n_feasible_children = 0;
-    uint feasible_children[problem->n_options];
+    uint feasible_children[problem->n_options[t_agent->depth - 1]];
 
     /*StateSpaceTree *state_space_tree, Agent *agent,
                           TimeTableSpecifications *specifications,
@@ -26,7 +26,7 @@ START_SIMULATION_AGAIN:
        *actions, uint *n_actions*/
 
     // Extracting all possible options from the MCTS Problem
-    TimeTableEntry options[problem->n_options];
+    TimeTableEntry options[problem->n_options[t_agent->depth - 1]];
     for (uint i = 0; i < problem->n_options; i++) {
       options[i].timeslot = problem->problem[i]->timeslot;
       options[i].venue = problem->problem[i]->venue;
@@ -43,7 +43,7 @@ START_SIMULATION_AGAIN:
       // or not.
 
       snumeric reward =
-          get_optimality(agent->timetable, problem->time_table_specifications);
+          get_optimality(agent->timetable, t_agent->depth, problem->time_table_specifications);
       snumeric k = (problem->n_sessions - agent->depth) / (t_agent->depth - agent->depth);
       backpropagate(state_space_tree, agent->solution, agent->depth,
                     reward / k);

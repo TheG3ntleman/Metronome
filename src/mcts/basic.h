@@ -13,7 +13,8 @@ typedef struct {
   uint max_complete_branches;
 
   uint n_sessions;
-  uint n_options;
+  uint max_options;
+  uint *n_options;
 
   TimeTableEntry **problem;
 

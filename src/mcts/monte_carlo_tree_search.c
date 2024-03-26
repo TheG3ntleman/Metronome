@@ -48,56 +48,94 @@ MCTS_problem *MCTS_make_problem_from_population(
   }
 
   problem->n_sessions = population->n_sessions;
-  problem->n_options = options_per_session;
+  problem->n_options = (uint*)malloc(sizeof(uint) * population->n_sessions);
   problem->max_complete_branches = max_complete_branches;
   problem->time_table_specifications = time_table_specifications;
 
-  
+  // Maintaining a frequency table
+  uint **frequency_table = malloc(sizeof(uint *) * population->n_timeslots);
+  for (uint i = 0; i < population->n_timeslots; i++) {
+    frequency_table[i] = malloc(sizeof(uint) * population->n_venues);
+  }
 
+  // Making a corresponding flag table
+  uint **flag_table = malloc(sizeof(uint *) * population->n_timeslots);
+  for (uint i = 0; i < population->n_timeslots; i++) {
+    flag_table[i] = malloc(sizeof(uint) * population->n_venues);
+  }
 
-  for(uint i = 0 ; i < population->n_sessions;i++){
-    uint *frequency_table = malloc(population->n_timeslots * population-> n_venues *sizeof(uint));
-    char *selection_flag = malloc(population->n_timeslots * population-> n_venues *sizeof(char)); 
-    for(uint ii=0;ii<population->n_timeslots * population->n_venues;ii++){
-        frequency_table[ii] = 0;
-        selection_flag[ii] = 0;
-    }
-    for(uint j = 0; j < population->n_timetables; j++){
-      uint timeslot, venue;
-      ttGetTuple(population, j, i , &timeslot, &venue);
-      frequency_table[timeslot * population->n_venues + venue]++;
-    }
-    for(uint j=0;j<options_per_session;j++){
-      uint maximum_frequency = 0;
-      uint maximum_frequency_index = 0;
-      for(uint ii=0;ii<population->n_timeslots * population->n_venues;ii++){
-        if(frequency_table[ii] > maximum_frequency && selection_flag[ii] == 0){
-          maximum_frequency = frequency_table[ii];
-          maximum_frequency_index = ii;
-        }
-      }
-      selection_flag[maximum_frequency_index] = 1;
-      problem->problem[i][j].timeslot = maximum_frequency_index / population->n_venues;
-      problem->problem[i][j].venue = maximum_frequency_index % population->n_venues;
-    }
-    printf("Frequencies for session %d\n", i);
+  for (uint i_session = 0; i_session < population->n_sessions; i_session++) {
+
+    printf("For Session %u\n", i_session);
+
+    // Initializing the frequency table and flag table
     for (uint i = 0; i < population->n_timeslots; i++) {
       for (uint j = 0; j < population->n_venues; j++) {
-        printf("\tTimeslot: %u, Venue: %u, Frequency: %u\n", i, j, frequency_table[i * population->n_venues + j]);
+        frequency_table[i][j] = 0;
+        flag_table[i][j] = 0;
       }
     }
+
+    // Iterating through the timetables in the population
+    for (uint j = 0; j < population->n_timetables; j++) {
+      uint timeslot, venue;
+      ttGetTuple(population, j, i_session, &timeslot, &venue);
+      //printf("Time Table (for_session %u): (%u, %u)\n", i_session, timeslot, venue);
+      frequency_table[timeslot][venue]++;
+    }
+
+    problem->n_options[i_session] = 0;
+
+    // Finding the maximum frequency
+    for (uint i = 0; i < options_per_session; i++) {
+      // Finding maximum in frequency table
+      uint max_frequency = 0;
+      uint max_index_timeslot = 0;
+      uint max_index_venue = 0;
+      for (uint j = 0; j < population->n_timeslots; j++) {
+        for (uint k = 0; k < population->n_venues; k++) {
+          if (flag_table[j][k] == 0) {
+            if (frequency_table[j][k] > max_frequency) {
+              max_frequency = frequency_table[j][k];
+              max_index_timeslot = j;
+              max_index_venue = k;
+            }
+          }
+        }
+      }
+
+      if (max_frequency == 0) {
+        break;
+      }
+
+      // Adding this to the problem
+      printf("\tTimeslot: %u, Venue: %u, Frequency: %u\n", max_index_timeslot, max_index_venue, max_frequency);
+      problem->problem[i_session][problem->n_options[i_session]].timeslot = max_index_timeslot;
+      problem->problem[i_session][problem->n_options[i_session]].venue = max_index_venue;
+      problem->n_options[i_session]++;
+
+      // Updating flag
+      flag_table[max_index_timeslot][max_index_venue] = 1;
+    }
+
+    // Printing the frequency table
+    // printf("For Session: %u\n", i_session);
+    // for (uint i = 0; i < population->n_timeslots; i++) {
+    //   for (uint j = 0; j < population->n_venues; j++) {
+    //     printf("\t (%u, %u): %u\n", i, j, frequency_table[i][j]);
+    //   }
+    //   printf("\n");
+    // }
+    printf("\n\n");
   }
 
-
-  for(uint i=0; i < population->n_timetables;i++){
-    uint timeslot, venue;
-    ttGetTuple(population, i, 0 , &timeslot, &venue);
-    printf("\t(%u, %u)\n", timeslot, venue);
+  // Freeing the frequency and flag tables
+  for (uint i = 0; i < population->n_timeslots; i++) {
+    free(frequency_table[i]);
+    free(flag_table[i]);
   }
-  
-
-
-
+  free(frequency_table);
+  free(flag_table);
 
   return problem;
 }
@@ -105,12 +143,12 @@ MCTS_problem *MCTS_make_problem_from_population(
 void MCTS_print_problem(MCTS_problem *problem) {
   printf("MCTS Problem:\n");
   printf("  n_sessions: %d\n", problem->n_sessions);
-  printf("  n_options: %d\n", problem->n_options);
+  printf("  max_options: %d\n", problem->max_options);
   printf("  max_complete_branches: %d\n", problem->max_complete_branches);
   printf("  problem:\n");
   for (uint i = 0; i < problem->n_sessions; i++) {
     printf("    session %d:\n", i);
-    for (uint j = 0; j < problem->n_options; j++) {
+    for (uint j = 0; j < problem->n_options[i]; j++) {
       printf("      option %d: timeslot %d, venue %d\n", j,
              problem->problem[i][j].timeslot, problem->problem[i][j].venue);
     }
@@ -149,7 +187,7 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem) {
     // Check if this node has been expanded
     if (!agent->current_node->children_expanded) {
       uint n_feasible_children = 0;
-      uint feasible_children[problem->n_options];
+      uint feasible_children[problem->n_options[agent->depth - 1]];
 
       /*StateSpaceTree *state_space_tree, Agent *agent,
                             TimeTableSpecifications *specifications,
@@ -157,14 +195,14 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem) {
          *actions, uint *n_actions*/
 
       // Extracting all possible options from the MCTS Problem
-      TimeTableEntry options[problem->n_options];
+      TimeTableEntry options[problem->n_options[agent->depth - 1]];
       for (uint i = 0; i < problem->n_options; i++) {
         options[i].timeslot = problem->problem[i]->timeslot;
         options[i].venue = problem->problem[i]->venue;
       }
 
       get_feasible_actions(agent, problem->time_table_specifications, options,
-                           problem->n_options, feasible_children,
+                           problem->n_options[agent->depth - 1], feasible_children,
                            &n_feasible_children);
 
       agent->current_node->n_children = n_feasible_children;
@@ -178,9 +216,11 @@ MCTS_solution *MCTS_execute(MCTS_problem *problem) {
         // to check if the current solution is optimal
         // or not.
 
-        snumeric reward = get_optimality(agent->timetable, problem->time_table_specifications);
+        snumeric reward = get_optimality(agent->timetable, agent->depth,
+                                         problem->time_table_specifications);
         snumeric k = ((snumeric)agent->depth / problem->n_sessions) - 1;
-        backpropagate(state_space_tree, agent->solution, agent->depth, reward * k);
+        backpropagate(state_space_tree, agent->solution, agent->depth,
+                      reward * k);
 
         continue;
       }
