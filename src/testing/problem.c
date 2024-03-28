@@ -209,16 +209,12 @@ void print_problem(Problem *problem) {
 
 void free_problem(Problem *problem) {}
 
-
-
-
-
 /*
 Problem *make_problem() {
     // Allocating memory for the problem
     Problem *problem = (Problem *)malloc(sizeof(Problem));
-
-    // Setting the number of parties
+    
+   // Setting the number of parties
     problem->p_size = 12; // Assuming 5 conferences
 
     // Allocating memory for all party arrays according to specified size
@@ -295,15 +291,15 @@ Problem *make_problem() {
     }
 
     // Sessions
-    problem->s_size = 26; 
+    problem->s_size = 30; 
     problem->s_session_id = (uint *)malloc(sizeof(uint) * problem->s_size);
     problem->s_venue_type = (uint *)malloc(sizeof(uint) * problem->s_size);
     problem->s_duration = (uint *)malloc(sizeof(uint) * problem->s_size);
     problem->s_course = (uint *)malloc(sizeof(uint) * problem->s_size);
 
-    uint manual_s_venue_type[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0};
-    uint manula_s_duration[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1};
-    uint manula_s_course[] = {0, 1, 2, 3, 1, 0, 4, 2, 0, 4, 1, 3, 3, 3, 4, 5, 6, 6, 7, 5, 6, 7, 7, 7, 7, 5}; 
+    uint manual_s_venue_type[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 2, 2, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0};
+    uint manula_s_duration[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 2, 2, 1, 1, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 1};
+    uint manula_s_course[] = {0, 1, 2, 3, 1, 0, 4, 2, 0, 4, 1, 3, 3, 3, 3, 4, 4, 5, 6, 6, 6, 7, 5, 6, 7, 7, 7, 7, 7, 5}; 
 
     // Set session data
     for (uint i = 0; i < problem->s_size; i++) {
@@ -314,18 +310,18 @@ Problem *make_problem() {
     }
 
     // Assignments
-    problem->a_size = 55; 
+    problem->a_size = 64; 
     problem->a_party_id = (uint *)malloc(sizeof(uint) * problem->a_size);
     problem->a_session_id = (uint *)malloc(sizeof(uint) * problem->a_size);
     problem->a_priority = (uint *)malloc(sizeof(uint) * problem->a_size);
 
     uint manual_a_session_id[] = {0, 0, 1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 11,
-                                 12, 12, 12, 13, 13, 13, 14, 14, 15, 15, 16, 16, 17, 18, 18, 19, 19, 20, 20, 21, 21,
-                                 22, 22, 23, 23, 24, 24, 25, 25};
+                                 12, 12, 12, 13, 13, 13, 14, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 20,
+                                 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29};
 
     uint manual_a_party_id[] = {0, 3, 0, 2, 0, 10, 0, 1, 5, 0, 2, 0, 3, 0, 4, 0, 10, 0, 3, 0, 4, 0, 2, 0, 1, 5, 
-                                0, 1, 8, 0, 1, 5, 0, 4, 1, 6, 1, 9, 1, 1, 11, 1, 6, 1, 9, 1, 7, 1, 7, 1, 7, 1, 7,
-                                1, 6};
+                                0, 1, 8, 0, 1, 8, 0, 1, 5, 0, 4, 0, 4, 1, 6, 1, 9, 1, 1, 1, 11, 1, 6, 1, 9, 1, 7, 
+                                1, 7, 1, 7, 1, 7, 1, 7, 1, 6};
 
     // Set assignment data
     for (uint i = 0; i < problem->a_size; i++) {
