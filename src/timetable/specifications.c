@@ -217,19 +217,22 @@ void locality_to_distance(uint locality_i, uint locality_j, uint *distance,
     return;
   }
 
-  uint c = 0, flag = 0;
-  ;
-  for (uint i = 0; i <= locality_i; i++) {
-    for (uint j = i + 1; j <= specs->locality_table->size; j++) {
-      if (i == locality_i && j == locality_j) {
-        break;
-        flag = 1;
-      }
-      c++;
-    }
-    if (flag)
-      break;
-  }
+  uint c = 0;
+
+  // for (uint i = 0; i <= locality_i; i++) {
+  //   for (uint j = i + 1; j <= specs->locality_table->size; j++) {
+  //     if (i == locality_i && j == locality_j) {
+  //       break;
+  //       flag = 1;
+  //     }
+  //     c++;
+  //   }
+  //   if (flag)
+  //     break;
+  // }
+  
+  uint n = specs->locality_table->size;
+  c = locality_i*n - ((locality_i-1) * locality_i)/2 + (locality_j-locality_i)+1;
 
   *distance = specs->locality_table->distance[c];
 }
