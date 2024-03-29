@@ -215,27 +215,27 @@ bool is_feasible(TimeTableTuple *time_table, Agent *agent,
                                     specs)) {
     return 0;
   }
-    printf("1234.\n");
 
-  if (!hard_constraint_party_duplicate(time_table, agent, option, n_sessions,
-                                       specs)) {
-    return 0;
-  }
+  // if (!hard_constraint_party_duplicate(time_table, agent, option, n_sessions,
+  //                                      specs)) {
+  //   return 0;
+  // }
 
   if (!hard_constraint_max_sessions(time_table, agent, option, n_sessions,
                                     specs)) {
     return 0;
   }
 
+
   if (!hard_constraint_venue_type(time_table, agent, option, n_sessions,
                                   specs)) {
     return 0;
   }
 
-  if (!hard_constraint_sufficient_timeslot(time_table, agent, option,
-                                           n_sessions, specs)) {
-    return 0;
-  }
+  // if (!hard_constraint_sufficient_timeslot(time_table, agent, option,
+  //                                          n_sessions, specs)) {
+  //   return 0;
+  // }
   // Add other hard constraint ifs
 
   return 1;

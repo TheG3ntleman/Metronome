@@ -46,9 +46,13 @@ void Agent_on_tree(Agent *agent, StateSpaceTree *tree) {
 void Agent_go_to(Agent *agent, uint option_index) {
 
   printf("Agent at depth: %d\n", agent->depth);
-  printf("Most recent choice (timeslot, venue): (%d, %d)\n",
-         agent->timetable[agent->depth - 1].timeslot,
-         agent->timetable[agent->depth - 1].venue);
+  if (agent->depth > 0) {
+    printf("Most recent choice (timeslot, venue): (%d, %d)\n",
+           agent->timetable[agent->depth - 1].timeslot,
+           agent->timetable[agent->depth - 1].venue);
+  } else {
+    printf("Most recent choice (timeslot, venue): None at depth 0.\n");
+  }
   printf("Option chosen: %d\n", option_index);
   printf("\n\n");
 
@@ -65,6 +69,7 @@ void Agent_go_to(Agent *agent, uint option_index) {
   agent->timetable[agent->depth].venue =
       agent->current_node->option_value.venue;
 
+  printf("Hello.\n");
   agent->depth++;
 }
 

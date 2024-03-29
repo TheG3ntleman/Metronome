@@ -38,8 +38,26 @@ void StateSpaceTree_add_child_nodes(StateSpaceTreeNode *parent, uint n_children,
                                     TimeTableTuple *children_values) {
 
   // Allocating memory for the children
-  parent->children_generated = TRUE;
-  parent->n_children = n_children;
+  //parent->children_generated = TRUE;
+  //parent->n_children = n_children;
 
+  parent->children = malloc(sizeof(StateSpaceTreeNode*) * n_children);
+  for (uint i = 0; i < parent->n_children; i++) {
+    parent->children[i] = malloc(sizeof(StateSpaceTreeNode));
+    parent->children[i]->option_index = i;
+
+    parent->children[i]->option_value.timeslot = children_values[i].timeslot;
+    parent->children[i]->option_value.venue = children_values[i].venue;
+
+    parent->children[i]->n_visits = 0;
+    parent->children[i]->reward = 0;
+    parent->children[i]->depth = parent->depth + 1;
+    parent->children[i]->parent = parent;
+    
+    parent->children[i]->children_generated = FALSE;
+    parent->children[i]->feasible = TRUE;
+    parent->children[i]->n_children = 0;
+    parent->children[i]->children = NULL;
+  }
 
 }

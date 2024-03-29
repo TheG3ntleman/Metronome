@@ -1,6 +1,7 @@
 #include "monte_carlo_tree_search.h"
 #include "src/mcts/agent.h"
 #include "src/mcts/feasibility.h"
+#include "src/mcts/state_space_tree.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -165,12 +166,24 @@ MCTS_solution *MCTS_solve(MCTS_problem *problem, MCTS_solver_specifications *spe
 
         printf("Number of feasible actions: %d\n", n_feasibile_actions);
 
+        // Put this entire block into the StateSpaceTree_add_child_nodes function
         if (n_feasibile_actions == 0) {
 
           agent->current_node->feasible = FALSE;
           agent->current_node->children_generated = TRUE;
           agent->current_node->n_children = 0;
 
+        } else {
+          // Adding feasible children to node
+          agent->current_node->feasible = TRUE;
+          agent->current_node->children_generated = TRUE;
+          agent->current_node->n_children = n_feasibile_actions;
+
+          TimeTableTuple children_values[n_feasibile_actions];
+          for (uint i = 0; i < n_feasibile_actions; i++) {
+            children_values[i] = problem->problem[agent->depth][feasible_actions[i]];
+          }
+          StateSpaceTree_add_child_nodes(agent->current_node, n_feasibile_actions, children_values);
         }
       }
 
