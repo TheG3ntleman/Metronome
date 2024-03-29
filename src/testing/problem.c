@@ -3,7 +3,7 @@
 
 const char *party_name_bank[7] = {"CM", "CSE", "AI", "ECM", "NT", "ME", "MT"};
 
-Problem *make_problem() {
+/*Problem *make_problem() {
   // Allocating memory for the problem
   Problem *problem = (Problem *)malloc(sizeof(Problem));
 
@@ -207,9 +207,9 @@ void print_problem(Problem *problem) {
 }
 
 
-void free_problem(Problem *problem) {}
+void free_problem(Problem *problem) {}*/
 
-/*
+
 Problem *make_problem() {
     // Allocating memory for the problem
     Problem *problem = (Problem *)malloc(sizeof(Problem));
@@ -229,7 +229,7 @@ Problem *make_problem() {
     problem->p_names = (char **)malloc(sizeof(char *) * problem->p_size);
 
     uint manual_party_strength[] = {70, 18, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-    char manual_party_names[] = {"ECM", "CM", "Gopinath", "Pooran", "Ramakant", "veeraiya", "Jayaprakash", "ravibabu", "Mahesh", "Praveen", "Pankaj", "manvi"};
+    char *manual_party_names[] = {"ECM", "CM", "Gopinath", "Pooran", "Ramakant", "veeraiya", "Jayaprakash", "ravibabu", "Mahesh", "Praveen", "Pankaj", "manvi"};
 
     // Set party data
     for (uint i = 0; i < problem->p_size; i++) {
@@ -243,7 +243,7 @@ Problem *make_problem() {
         problem->p_preferred_max_hours[i] = 6; // Prefer conferences to last for 8 hours
 
         // Set party names
-        problem->p_names[i] = manual_party_names[i];
+        problem->p_names[i] = strdup(manual_party_names[i]);
     }
 
 
@@ -414,4 +414,3 @@ void print_problem(Problem *problem) {
 
 void free_problem(Problem *problem) {}
 
-*/

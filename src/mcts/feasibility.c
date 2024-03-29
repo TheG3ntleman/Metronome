@@ -16,7 +16,7 @@
 void Get_tuple(Agent *agent, TimeTableTuple *option, uint i, uint *venue_id,
                uint *timeslot_id) {
   // implement
-  if (i < agent->depth) {
+  if (i <= agent->depth) {
     *timeslot_id = agent->timetable[i].timeslot;
     *venue_id = agent->timetable[i].venue;
     return;

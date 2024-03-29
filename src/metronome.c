@@ -62,7 +62,7 @@ void solveTimeTablingProblem(
       .selection_size = 10,
       .minimum_timetables_per_cluster = 5,
       .similarity_threshold = 40,
-      .mutation_rate = 0.001,
+      .mutation_rate = 0.2,
       .maximum_generations = 10,
   };
 
