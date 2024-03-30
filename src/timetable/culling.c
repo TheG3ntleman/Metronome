@@ -115,7 +115,7 @@ void cullPopulationViaClustering(Population *population, numeric *soft_fitness,
   // Sorting clusters based on the least number of schedules in each cluster
   for (uint i = 0; i < n_clusters; i++)
     // Sort each timetable in cluster[i] in ascending order.
-    quickSort(clusters[i].timetable_indices, 0, clusters[i].size - 1);
+    quickSort(&clusters[i], 0, clusters[i].size - 1);
 
   uint selected_count = 0;
 
