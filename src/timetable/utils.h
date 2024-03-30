@@ -8,7 +8,6 @@
 
 typedef long double numeric;
 typedef float snumeric;
-typedef char bool;
 typedef unsigned int uint;
 // Norm functions for fitness concatination.
 
