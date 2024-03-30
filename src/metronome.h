@@ -1,7 +1,7 @@
 #ifndef METRONOME_H
 #define METRONOME_H
 
-#include "timetable/config.h"
+#include "common/config.h"
 #include "timetable/evolution.h"
 #include "mcts/monte_carlo_tree_search.h"
 #include <stdlib.h>

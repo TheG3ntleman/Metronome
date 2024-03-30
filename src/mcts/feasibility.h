@@ -1,7 +1,7 @@
 #ifndef FEASIBILITY_H
 #define FEASIBILITY_H
 
-#include "../timetable/specifications.h"
+#include "../common/specifications.h"
 #include "agent.h"
 #include "state_space_tree.h"
 

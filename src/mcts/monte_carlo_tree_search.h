@@ -1,9 +1,9 @@
 #ifndef MONTE_CARLO_TREE_SEARCH_H
 #define MONTE_CARLO_TREE_SEARCH_H
 
-#include "../timetable/utils.h"
+#include "../common/utils.h"
 #include "../timetable/population.h"
-#include "../timetable/specifications.h"
+#include "../common/specifications.h"
 
 #include "state_space_tree.h"
 #include "agent.h"

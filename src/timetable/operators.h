@@ -1,9 +1,9 @@
 #ifndef OPERATORS_H
 #define OPERATORS_H
 
-#include "utils.h"
-#include "config.h"
-#include "specifications.h"
+#include "../common/utils.h"
+#include "../common/config.h"
+#include "../common/specifications.h"
 #include "population.h"
 
 // Operators are functions that act on entire populations and return

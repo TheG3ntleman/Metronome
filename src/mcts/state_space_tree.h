@@ -1,13 +1,7 @@
 #ifndef STATE_SPACE_TREE_H
 #define STATE_SPACE_TREE_H
 
-#include "../timetable/utils.h"
-typedef struct {
-
-  uint timeslot;
-  uint venue;
-
-} TimeTableTuple;
+#include "../common/utils.h"
 
 typedef struct StateSpaceTreeNode{
 

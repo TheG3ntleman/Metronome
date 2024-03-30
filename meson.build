@@ -3,10 +3,12 @@ project('Metronome', 'C')
 metronome_library = shared_library(
   'metronome',
   './src/metronome.c', 
+
+  './src/common/utils.c', 
+  './src/common/config.c', 
+  './src/common/constraint.c',
   
-  './src/timetable/config.c', 
   './src/timetable/culling.c', 
-  './src/timetable/utils.c', 
   './src/timetable/evolution.c', 
   './src/timetable/fitness.c', 
   './src/timetable/operators.c', 

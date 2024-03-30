@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "config.h"
-#include "utils.h"
+#include "../common/config.h"
+#include "../common/utils.h"
 
 /*
  * These functions do not enforce the usage of

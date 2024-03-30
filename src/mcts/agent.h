@@ -1,7 +1,7 @@
 #ifndef AGENT_H
 #define AGENT_H
 
-#include "../timetable/utils.h"
+#include "../common/utils.h"
 #include "state_space_tree.h"
 
 typedef struct  {

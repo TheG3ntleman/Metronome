@@ -1,10 +1,10 @@
 #ifndef EVOLUTION_H
 #define EVOLUTION_H
 
-#include "config.h"
-#include "utils.h"
+#include "../common/config.h"
+#include "../common/utils.h"
 #include "population.h"
-#include "specifications.h"
+#include "../common/specifications.h"
 #include "operators.h"
 #include "termination.h"
 #include "fitness.h"

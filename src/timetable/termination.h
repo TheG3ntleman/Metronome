@@ -1,8 +1,8 @@
 #ifndef TERMINATION_H
 #define TERMINATION_H
 
-#include "utils.h"
-#include "config.h"
+#include "../common/utils.h"
+#include "../common/config.h"
 
 char terminationCondition(uint generation_number, uint population_size, GeneticSpecifications *gaSpecs);
 

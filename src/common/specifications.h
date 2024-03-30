@@ -1,7 +1,7 @@
 #ifndef SPECIFICATIONS_H
 #define SPECIFICATIONS_H
 
-#include "config.h"
+#include "../common/config.h"
 
 #include <stdlib.h>
 /*

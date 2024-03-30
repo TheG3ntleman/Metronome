@@ -1,8 +1,8 @@
 #ifndef CULLING_H
 #define CULLING_H
 
-#include "utils.h"
-#include "config.h"
+#include "../common/utils.h"
+#include "../common/config.h"
 #include "population.h"
 
 typedef struct {
