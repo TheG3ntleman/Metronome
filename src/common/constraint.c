@@ -1,9 +1,9 @@
 #include "constraint.h"
 #include "src/timetable/population.h"
-#include "src/timetable/specifications.h"
+#include "specifications.h"
 #include <linux/limits.h>
 
-uint hard_party_conflict_constraint(TimeTableTuple *timetable,
+uint hard_party_conflict(TimeTableTuple *timetable,
                                     TimeTableSpecifications *specs,
                                     uint depth) {
 
@@ -46,7 +46,7 @@ uint hard_party_conflict_constraint(TimeTableTuple *timetable,
   return number_of_violations;
 }
 
-uint hard_repeated_tuple_constraint(TimeTableTuple *timetable,
+uint hard_repeated_tuple(TimeTableTuple *timetable,
                                     TimeTableSpecifications *specs,
                                     uint depth) {
 
@@ -78,7 +78,7 @@ uint hard_repeated_tuple_constraint(TimeTableTuple *timetable,
   return number_of_violations;
 }
 
-uint hard_venue_capacity_constraint(TimeTableTuple *timetable,
+uint hard_venue_capacity(TimeTableTuple *timetable,
                                     TimeTableSpecifications *specs,
                                     uint depth) {
 
@@ -104,7 +104,7 @@ uint hard_venue_capacity_constraint(TimeTableTuple *timetable,
   return number_of_violations;
 }
 
-uint hard_venue_type_constraint(TimeTableTuple *timetable,
+uint hard_venue_type(TimeTableTuple *timetable,
                                 TimeTableSpecifications *specs, uint depth) {
   uint number_of_violations = 0;
   for (uint session_id = 0; session_id < depth; session_id++) {
@@ -117,7 +117,7 @@ uint hard_venue_type_constraint(TimeTableTuple *timetable,
   return number_of_violations;
 }
 
-uint hard_max_hours_constraint(TimeTableTuple *timetable,
+uint hard_max_hours(TimeTableTuple *timetable,
                                TimeTableSpecifications *specs, uint depth) {
 
   uint number_of_violations = 0;
@@ -153,7 +153,7 @@ uint hard_max_hours_constraint(TimeTableTuple *timetable,
   return number_of_violations;
 }
 
-uint hard_multi_timeslot_constraint(TimeTableTuple *timetable,
+uint hard_multi_timeslot(TimeTableTuple *timetable,
                                     TimeTableSpecifications *specs,
                                     uint depth) {
 
