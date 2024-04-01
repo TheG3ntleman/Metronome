@@ -27,7 +27,7 @@ uint hard_multi_timeslot(TimeTableTuple *timetable,
                          TimeTableSpecifications *specs, uint depth);
 
 // SOFT CONSTRAINTS
-snumeric soft_travel_time(TimeTableTuple *timetable,
+uint soft_travel_time(TimeTableTuple *timetable,
                           TimeTableSpecifications *specs, uint depth);
 
 uint soft_chunking(TimeTableTuple *timetable, TimeTableSpecifications *specs,
