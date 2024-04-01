@@ -6,6 +6,8 @@
 
 #include "../common/config.h"
 #include "../common/utils.h"
+#include "../common/specifications.h"
+// #include "specifications.h"
 
 /*
  * These functions do not enforce the usage of
@@ -52,5 +54,10 @@ void ttSet(Population *population, uint timetable_index, uint *venue_ids, uint *
 
 // IO
 void ttPrint(Population *population, uint timetable_index);
+snumeric calculateHardFitness(TimeTableTuple *timetable, TimeTableSpecifications *specs, uint depth);
+snumeric calculateSoftFitness(TimeTableTuple *timetable, TimeTableSpecifications *specs, uint depth);
+snumeric sigmoidWithCoefficient(snumeric x, snumeric coefficient);
+
+void get_Hard_Soft_Fitness(Population *population, TimeTableSpecifications *specs, uint depth, uint *hardFitnessArray, uint *softFitnessArray);
 
 #endif
