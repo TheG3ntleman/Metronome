@@ -1,6 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include "specifications.h"
 #define FALSE 0
 #define TRUE 1
 
@@ -25,5 +26,8 @@ typedef struct {
   uint venue;
 
 } TimeTableTuple;
+
+void Wrapper_Constraints_test(uint (* function)(), TimeTableTuple *timetable,
+                              TimeTableSpecifications *specs, uint depth);
 
 #endif

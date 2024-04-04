@@ -1,5 +1,10 @@
 #include "utils.h"
-
+#include "constraint.h"
+#include "specifications.h"
+#include <math.h>
+#include <stdio.h>
+#include <type_traits>
+#define coef 0.2
 uint randint(uint lower, uint upper) {
   return lower + rand() % (upper - lower + 1);
 }
@@ -73,4 +78,14 @@ numeric norm_linfty(numeric x1, numeric x2) {
   } else {
     return x2;
   }
+}
+
+void Wrapper_Constraints_test(uint (*function)(TimeTableTuple,
+                              TimeTableSpecifications, uint),
+                              TimeTableTuple *timetable,
+                              TimeTableSpecifications *specs, uint depth) {
+
+  uint number_of_violations = function(*timetable, *specs, depth);
+  // printf("Function name: %s\n", __func__);
+  printf("The number of violations %d\n", number_of_violations);
 }
