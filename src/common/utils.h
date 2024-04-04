@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include "specifications.h"
+#include "../timetable/population.h"
 #define FALSE 0
 #define TRUE 1
 
@@ -27,7 +28,11 @@ typedef struct {
 
 } TimeTableTuple;
 
-void Wrapper_Constraints_test(uint (* function)(), TimeTableTuple *timetable,
+uint Wrapper_Constraints_test(uint (* function)(), TimeTableTuple *timetable,
                               TimeTableSpecifications *specs, uint depth);
+
+
+void Wrapper_Constraints(Population population, 
+                         TimeTableSpecifications *specs, uint depth);
 
 #endif
