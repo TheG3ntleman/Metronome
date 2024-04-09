@@ -1,7 +1,7 @@
 #include "metronome.h"
 #include "mcts/monte_carlo_tree_search.h"
 #include "src/testing/problem.h"
-#include "timetable/specifications.h"
+#include "src/common/specifications.h"
 
 #define OPTIONS_PER_SESSION 5
 

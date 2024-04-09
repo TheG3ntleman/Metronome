@@ -7,14 +7,14 @@
 
 #include <stdlib.h>
 
-// typedef long double numeric;
-// typedef float snumeric;
-// typedef unsigned int uint;
+typedef long double numeric;
+typedef float snumeric;
+typedef unsigned int uint;
 
 
-#define numeric long double
-#define snumeric float
-#define uint unsigned int
+// #define numeric long double
+// #define snumeric float
+// #define uint unsigned int
 // Norm functions for fitness concatination.
 
 uint randint(uint lower, uint upper);
