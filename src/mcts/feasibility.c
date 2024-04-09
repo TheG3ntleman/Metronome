@@ -4,7 +4,7 @@
 #include "feasibility.h"
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <stdbool.h>
 /* Two function need to be implemented:
   1) find_parties_from_session: given a session this function given all the
   parties participating in that session in the partially completed time table.

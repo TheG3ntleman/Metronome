@@ -4,7 +4,7 @@
 #include <math.h>
 #include "../common/specifications.h"
 #include "../common/constraint.h"
-#include "utils.h"
+#include "src/common/utils.h"
 #define coef 0.2
 // Constructors and destructors.
 

@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 MCTS_problem *MCTS_make_problem_from_population(
     Population *population, uint options_per_session,
