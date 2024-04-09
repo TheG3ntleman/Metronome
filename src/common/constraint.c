@@ -1,9 +1,9 @@
 #include "constraint.h"
-#include "src/timetable/population.h"
+// #include "src/timetable/population.h"
 #include "specifications.h"
-#include "src/timetable/specifications.h"
-#include <linux/limits.h>
-#include <sys/types.h>
+// #include "src/timetable/specifications.h"
+// #include <linux/limits.h>
+// #include <sys/types.h>
 
 uint hard_party_conflict(TimeTableTuple *timetable,
                                     TimeTableSpecifications *specs,

@@ -1,16 +1,20 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "specifications.h"
-#include "../timetable/population.h"
+// #include <cmath>
 #define FALSE 0
 #define TRUE 1
 
 #include <stdlib.h>
 
-typedef long double numeric;
-typedef float snumeric;
-typedef unsigned int uint;
+// typedef long double numeric;
+// typedef float snumeric;
+// typedef unsigned int uint;
+
+
+#define numeric long double
+#define snumeric float
+#define uint unsigned int
 // Norm functions for fitness concatination.
 
 uint randint(uint lower, uint upper);
@@ -28,11 +32,5 @@ typedef struct {
 
 } TimeTableTuple;
 
-uint Wrapper_Constraints_test(uint (* function)(), TimeTableTuple *timetable,
-                              TimeTableSpecifications *specs, uint depth);
-
-
-void Wrapper_Constraints(Population population, 
-                         TimeTableSpecifications *specs, uint depth);
 
 #endif

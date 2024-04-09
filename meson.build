@@ -13,7 +13,9 @@ metronome_library = shared_library(
   './src/timetable/fitness.c', 
   './src/timetable/operators.c', 
   './src/timetable/population.c', 
-  './src/timetable/specifications.c', 
+
+  
+
   './src/timetable/termination.c', 
   
   './src/testing/problem.c', 
