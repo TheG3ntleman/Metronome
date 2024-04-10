@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "../common/specifications.h"
 #include "../timetable/population.h"
+#include "src/common/utils.h"
 #define N_MINIMUM_PARTIES 10
 #define N_MAXIMUM_PARTIES 20
 
@@ -118,12 +119,12 @@ typedef struct {
 Problem *make_problem();
 void print_problem(Problem *problem);
 void free_problem(Problem *problem);
-uint Wrapper_Constraints_test(uint (* function)(), TimeTableTuple *timetable,
-                              TimeTableSpecifications *specs, uint depth);
 
-
-void Wrapper_Constraints(Population population, 
+void wrapper_constraints_mcts(Population population, 
                          TimeTableSpecifications *specs, uint depth);
+
+void wrapper_constraints_GA(Population *population, 
+                         TimeTableSpecifications *specs);
 
 
 #endif

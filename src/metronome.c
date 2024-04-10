@@ -68,6 +68,10 @@ void solveTimeTablingProblem(
 
   Population *population = evolveTimeTables(specs, &gaSpecs);
 
+  wrapper_constraints_GA(population, specs);
+  
+
+
   // Making an MCTS Problem from population
   MCTS_problem *problem = MCTS_make_problem_from_population(
       population, OPTIONS_PER_SESSION, specs);
@@ -79,7 +83,11 @@ void solveTimeTablingProblem(
     .exploration_factor = 0.1
   };
 
+  
+
   MCTS_solution *solution = MCTS_solve(problem, &mcts_specs);
+
+  
 
   MCTS_print_solution(solution);
 

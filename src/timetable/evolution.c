@@ -1,4 +1,5 @@
 #include "evolution.h"
+#include <stdio.h>
 
 Population *evolveTimeTables(TimeTableSpecifications *ttSpecs,
                              GeneticSpecifications *gaSpecs) {
@@ -63,10 +64,12 @@ Population *evolveTimeTables(TimeTableSpecifications *ttSpecs,
 
   printf("Some Time Tables:\n\n");
 
-  for (uint i = 0; i < 2; i++) {
+  for (uint i = 0; i < 3; i++) {
     ttPrint(population, i);
     printf("\n\n");
+    printf("Hello world\n");
   }
-
+  printf("\n\nAfter the for loop\n");
+  
   return population;
 }

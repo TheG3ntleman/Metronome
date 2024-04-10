@@ -4,11 +4,11 @@ typedef unsigned int uint;
 
 // Capacity constraint related fitness functions
 #ifdef HARD_CAPACITY_CONSTRAINT
-static numeric computeHardConstraint_CapacityConstraint(
+numeric computeHardConstraint_CapacityConstraint(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
-
-  static uint t_count = 0;
+  // printf("Hello world\n\n\n");
+  uint t_count = 0;
 
   numeric violations = 0;
   for (uint i = 0; i < population->n_sessions; i++) {
@@ -19,8 +19,8 @@ static numeric computeHardConstraint_CapacityConstraint(
     uint party_id_array[specifications->party_table->size];
     uint number_of_parties;
     uint strength = 0;
-    findAssociatedParties(i, &number_of_parties, party_id_array, population->n_sessions,
-                          specifications);
+    findAssociatedParties(i, &number_of_parties, party_id_array,
+                          population->n_sessions, specifications);
 
     for (uint j = 0; j < number_of_parties; j++) {
       strength += specifications->party_table->strength[party_id_array[j]];
@@ -39,7 +39,7 @@ static numeric computeHardConstraint_CapacityConstraint(
 #endif
 
 #ifdef HARD_VENUE_CONFLICT
-static numeric computeHardConstraint_VenueConflictConstraint(
+numeric computeHardConstraint_VenueConflictConstraint(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
 
@@ -62,7 +62,7 @@ static numeric computeHardConstraint_VenueConflictConstraint(
 #endif
 
 #ifdef HARD_VENUE_TYPE
-static numeric computeHardConstraint_VenueTypeConstraint(
+numeric computeHardConstraint_VenueTypeConstraint(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
 
@@ -89,7 +89,7 @@ static numeric computeHardConstraint_VenueTypeConstraint(
 #endif
 
 #ifdef HARD_MAX_SESSIONS
-static numeric computeHardConstraint_MaxSessionsConstraint(
+numeric computeHardConstraint_MaxSessionsConstraint(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
 
@@ -100,8 +100,8 @@ static numeric computeHardConstraint_MaxSessionsConstraint(
   for (uint i = 0; i < specifications->party_table->size; i++) {
     uint session_id_array[specifications->session_table->size];
     uint number_of_session;
-    findAssociatedSessions(i, &number_of_session, session_id_array, population->n_sessions,
-                           specifications);
+    findAssociatedSessions(i, &number_of_session, session_id_array,
+                           population->n_sessions, specifications);
 
     uint day_array[number_of_days];
     for (uint j = 0; j < number_of_days; j++) {
@@ -128,7 +128,7 @@ static numeric computeHardConstraint_MaxSessionsConstraint(
 #endif
 
 #ifdef HARD_PARTY_DUPLICATE
-static numeric computeHardConstraint_PartyDuplicateConstraint(
+numeric computeHardConstraint_PartyDuplicateConstraint(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
 
@@ -137,8 +137,8 @@ static numeric computeHardConstraint_PartyDuplicateConstraint(
   for (uint i = 0; i < specifications->party_table->size; i++) {
     uint session_id_array[specifications->session_table->size];
     uint number_of_session;
-    findAssociatedSessions(i, &number_of_session, session_id_array, population->n_sessions,
-                           specifications);
+    findAssociatedSessions(i, &number_of_session, session_id_array,
+                           population->n_sessions, specifications);
     uint timeslot_array[specifications->timeslot_table->size];
     uint n = 0;
     for (uint j = 0; j < number_of_session; j++) {
@@ -162,7 +162,7 @@ static numeric computeHardConstraint_PartyDuplicateConstraint(
 #endif
 
 #ifdef HARD_SUFFECIENT_TIMESLOT
-static numeric computeHardConstraint_sufficient_timeslotConstraint(
+numeric computeHardConstraint_sufficient_timeslotConstraint(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
 
@@ -200,7 +200,7 @@ static numeric computeHardConstraint_sufficient_timeslotConstraint(
 #endif
 
 #ifdef SOFT_STUDENT_TRAVELTIME
-static numeric
+numeric
 computeSoftConstraint_studenttraveltime(Population *population,
                                         TimeTableSpecifications *specifications,
                                         uint timetable_index) {
@@ -211,8 +211,8 @@ computeSoftConstraint_studenttraveltime(Population *population,
   for (uint i = 0; i < specifications->party_table->size; i++) {
     uint session_id_array[specifications->session_table->size];
     uint number_of_session;
-    findAssociatedSessions(i, &number_of_session, session_id_array, population->n_sessions,
-                           specifications);
+    findAssociatedSessions(i, &number_of_session, session_id_array,
+                           population->n_sessions, specifications);
 
     uint timeslot_array[specifications->timeslot_table->size];
     uint venue_array[specifications->venue_table->size];
@@ -265,7 +265,7 @@ computeSoftConstraint_studenttraveltime(Population *population,
 #endif
 
 #ifdef SOFT_MAXIMIZE_CHUNKING
-static numeric
+numeric
 computeSoftConstraint_maximize_chunking(Population *population,
                                         TimeTableSpecifications *specifications,
                                         uint timetable_index) {
@@ -275,8 +275,8 @@ computeSoftConstraint_maximize_chunking(Population *population,
   for (uint i = 0; i < specifications->party_table->size; i++) {
     uint session_id_array[specifications->session_table->size];
     uint number_of_session;
-    findAssociatedSessions(i, &number_of_session, session_id_array, population->n_sessions,
-                           specifications);
+    findAssociatedSessions(i, &number_of_session, session_id_array,
+                           population->n_sessions, specifications);
     uint timeslot_array[specifications->timeslot_table->size];
     for (uint j = 0; j < specifications->timeslot_table->size; j++) {
       timeslot_array[j] = 0;
@@ -302,7 +302,7 @@ computeSoftConstraint_maximize_chunking(Population *population,
 #endif
 
 #ifdef SOFT_ROOM_UTILIZATION
-static numeric
+numeric
 computeSoftConstraint_room_utilization(Population *population,
                                        TimeTableSpecifications *specifications,
                                        uint timetable_index) {
@@ -333,7 +333,7 @@ computeSoftConstraint_room_utilization(Population *population,
 #endif
 
 #ifdef SOFT_AVOID_EARLYLATE_TIME
-static numeric computeSoftConstraint_avoid_early_late_session(
+numeric computeSoftConstraint_avoid_early_late_session(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
   /* Avoid Early/Late Times Constraint: Express preferences to avoid scheduling
@@ -347,8 +347,8 @@ static numeric computeSoftConstraint_avoid_early_late_session(
   for (uint i = 0; i < specifications->party_table->size; i++) {
     uint session_id_array[specifications->session_table->size];
     uint number_of_session;
-    findAssociatedSessions(i, &number_of_session, session_id_array, population->n_sessions,
-                           specifications);
+    findAssociatedSessions(i, &number_of_session, session_id_array,
+                           population->n_sessions, specifications);
     uint preferred_start_time =
         specifications->party_table->preferred_start_time[i];
     uint preferred_end_time =
@@ -369,7 +369,7 @@ static numeric computeSoftConstraint_avoid_early_late_session(
 #endif
 
 #ifdef SOFT_ROOM_CAPACITY_UTILIZATION
-static numeric computeSoftConstraint_room_capacity_utilization(
+numeric computeSoftConstraint_room_capacity_utilization(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
   /* Avoid scheduling sessions with less strength to venues which have high
@@ -381,8 +381,8 @@ static numeric computeSoftConstraint_room_capacity_utilization(
     ttGetTuple(population, timetable_index, i, &venue_id, &timeslot_id);
     uint party_id_array[specifications->party_table->size];
     uint number_of_parties;
-    findAssociatedParties(i, &number_of_parties, party_id_array, population->n_sessions,
-                          specifications);
+    findAssociatedParties(i, &number_of_parties, party_id_array,
+                          population->n_sessions, specifications);
     uint strength = 0;
     for (uint j = 0; j < number_of_parties;
          j++) { // Corrected the loop condition
@@ -397,7 +397,7 @@ static numeric computeSoftConstraint_room_capacity_utilization(
 #endif
 
 #ifdef SOFT_COMMON_TIMSLOT_EMPTY
-static numeric computeSoftConstraint_common_timeslot_empty(
+numeric computeSoftConstraint_common_timeslot_empty(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
   /* Encourage common time slots being left empty for a particular batch,
@@ -426,7 +426,7 @@ static numeric computeSoftConstraint_common_timeslot_empty(
 #endif
 
 #ifdef SOFT_MINIMIZE_BACKTOBACK_TEACHERCLASSES
-static numeric computeSoftConstraint_backtoback_teacher_class(
+numeric computeSoftConstraint_backtoback_teacher_class(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
   /* Minimization of Back-to-Back Classes for teachers. */
@@ -443,8 +443,8 @@ static numeric computeSoftConstraint_backtoback_teacher_class(
 
       uint session_id_array[specifications->session_table->size];
       uint number_of_session;
-      findAssociatedSessions(i, &number_of_session, session_id_array, population->n_sessions,
-                             specifications);
+      findAssociatedSessions(i, &number_of_session, session_id_array,
+                             population->n_sessions, specifications);
 
       for (uint j = 0; j < number_of_session - 1; j = j + 2) {
 
@@ -468,7 +468,7 @@ static numeric computeSoftConstraint_backtoback_teacher_class(
 #endif
 
 #ifdef SOFT_MINIMIZE_SAMECOURSE_SESSION
-static numeric computeSoftConstraint_samecourse_session(
+numeric computeSoftConstraint_samecourse_session(
     Population *population, TimeTableSpecifications *specifications,
     uint timetable_index) {
   /* Discourage scheduling sessions of the same course more than once per day.
@@ -502,7 +502,7 @@ static numeric computeSoftConstraint_samecourse_session(
 #endif
 
 #ifdef SOFT_LAB_AFTER_LECTURE
-static numeric
+numeric
 computeSoftConstraint_lab_after_lecture(Population *population,
                                         TimeTableSpecifications *specifications,
                                         uint timetable_index) {
@@ -513,7 +513,7 @@ computeSoftConstraint_lab_after_lecture(Population *population,
 #endif
 
 #ifdef SOFT_SESSIONS_EVENLY_THROUGHOUT_WEEK
-static numeric
+numeric
 computeSoftConstraint_even_distribution(Population *population,
                                         TimeTableSpecifications *specifications,
                                         uint timetable_index) {
@@ -526,8 +526,8 @@ computeSoftConstraint_even_distribution(Population *population,
   for (uint i = 0; i < specifications->party_table->size; i++) {
     uint session_id_array[specifications->session_table->size];
     uint number_of_session;
-    findAssociatedSessions(i, &number_of_session, session_id_array, population->n_sessions,
-                           specifications);
+    findAssociatedSessions(i, &number_of_session, session_id_array,
+                           population->n_sessions, specifications);
 
     uint day_array[number_of_days];
     for (uint j = 0; j < number_of_days; j++) {
@@ -562,9 +562,9 @@ computeSoftConstraint_even_distribution(Population *population,
 }
 #endif
 
-static numeric computeHardFitnesses(Population *population,
-                                    TimeTableSpecifications *specifications,
-                                    uint timetable_index) {
+numeric computeHardFitnesses(Population *population,
+                             TimeTableSpecifications *specifications,
+                             uint timetable_index) {
 
   numeric fitness = 0;
 
