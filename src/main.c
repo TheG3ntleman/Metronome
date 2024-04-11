@@ -1,7 +1,5 @@
 #include "metronome.h"
 #include "testing/problem.h"
-#include "timetable/specifications.h"
-#include "common/utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

@@ -1,7 +1,7 @@
 #include "constraint.h"
 #include "src/timetable/population.h"
 #include "specifications.h"
-#include "src/timetable/specifications.h"
+#include "specifications.h"
 #include <linux/limits.h>
 #include <sys/types.h>
 
@@ -261,6 +261,8 @@ uint soft_travel_time(TimeTableTuple *timetable,
 
 uint soft_chunking(TimeTableTuple *timetable, TimeTableSpecifications *specs,
                    uint depth) {
+
+  return 0;
 
   uint aggregate_number_of_gaps = 0;
 

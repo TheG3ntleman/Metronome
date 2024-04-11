@@ -1,10 +1,6 @@
 #include "population.h"
-#include "../common/specifications.h"
-#include "../common/constraint.h"
-#include <math.h>
-#include "../common/specifications.h"
-#include "../common/constraint.h"
-#include "utils.h"
+
+
 #define coef 0.2
 // Constructors and destructors.
 
@@ -137,7 +133,7 @@ void ttPrint(Population *population, uint timetable_index) {
   }
 }
 
-
+/*
 snumeric sigmoidWithCoefficient(snumeric x, snumeric coefficient){
   return 1 / (1 + pow(exp(1), -coefficient * x));
 }
@@ -211,12 +207,4 @@ void get_Hard_Soft_Fitness(Population *population, TimeTableSpecifications *spec
     softFitnessArray[i] = calculateSoftFitness(timetableArray, specs, depth);
 
   } 
-
-
-
-
-
-
-}
-
-
+*/
