@@ -39,9 +39,16 @@ class TimeTableSpecifications:
     self.assignment_session_ids = []
     self.assignment_priorities = []
 
-    def find_associated_sessions(party_id: int, depth: int) -> List[int]:
-      sessions = []
-      for i in range(self.number_of_assignments):
-        if self.assignment_party_ids[i] == party_id and self.assignment_session_ids[i] <= depth:
-          sessions.append(self.assignment_session_ids[i])
-      return sessions
+  def find_associated_sessions(self, party_id: int, depth: int) -> List[int]:
+    sessions = []
+    for i in range(self.number_of_assignments):
+      if self.assignment_party_ids[i] == party_id and self.assignment_session_ids[i] <= depth:
+        sessions.append(self.assignment_session_ids[i])
+    return sessions
+  
+  def find_associated_parties(self, session_id: int, depth: int) -> List[int]:
+    parties = []
+    for i in range(self.number_of_assignments):
+      if self.assignment_session_ids[i] == session_id and self.assignment_session_ids[i] <= depth:
+        parties.append(self.assignment_party_ids[i])
+    return parties
