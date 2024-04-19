@@ -66,13 +66,19 @@ class ScalerGeneticOptimizer:
       self.minimum_violations.append(min(violations))
       
       # Selecting top k individuals
-      parents = sorted(range(len(violations)), key = lambda sub: violations[sub])[-self.genetic_optimizer_specifications.top_k:]
-      
+      #parents = sorted(range(len(violations)), key = lambda sub: violations[sub])[-self.genetic_optimizer_specifications.top_k:]
+      # Convert top_k to integer
+      top_k = int(self.genetic_optimizer_specifications.top_k)
+
+      # Selecting top k individuals
+      parents = sorted(range(len(violations)), key=lambda sub: violations[sub])[-top_k:]
+
+
       # Crossover
       new_population = []
       for timetable_id in range(self.genetic_optimizer_specifications.population_size):
-        parent1_id = parents[timetable_id % self.genetic_optimizer_specifications.top_k]
-        parent2_id = parents[(timetable_id + 1) % self.genetic_optimizer_specifications.top_k]
+        parent1_id = parents[timetable_id % int(self.genetic_optimizer_specifications.top_k)]
+        parent2_id = parents[(timetable_id + 1) % int(self.genetic_optimizer_specifications.top_k)]
         
         # Make sure parent1 and parent2 are different
         while parent1_id == parent2_id:
@@ -83,7 +89,7 @@ class ScalerGeneticOptimizer:
         
         child = TimeTable(self.time_table_specifications.number_of_sessions)
         for session_id in range(self.time_table_specifications.number_of_sessions):
-          uniform_sample = random.runif(0, 1)
+          uniform_sample = random.uniform(0, 1)
           if uniform_sample <= self.genetic_optimizer_specifications.crossover_rate:
             child.schedule_session(session_id, parent1.get_session_info(session_id)["timeslot_id"], parent1.get_session_info(session_id)["venue_id"])
           else:
@@ -96,7 +102,7 @@ class ScalerGeneticOptimizer:
           elif violations[parent1_id] > violations[parent2_id]:
             child = parent2
           else:
-            if random.runif(0, 1) < 0.5:
+            if random.uniform(0, 1) < 0.5:
               child = parent1
             else:
               child = parent2
@@ -107,7 +113,7 @@ class ScalerGeneticOptimizer:
       for timetable_id in range(self.genetic_optimizer_specifications.population_size):
         timetable = new_population[timetable_id]
         for session_id in range(self.time_table_specifications.number_of_sessions):
-          uniform_sample = random.runif(0, 1)
+          uniform_sample = random.uniform(0, 1)
           if uniform_sample <= self.genetic_optimizer_specifications.mutation_rate:
             timetable.schedule_session(session_id, 
                                         self.time_table_specifications.time_slot_ids[random.randint(0, self.time_table_specifications.number_of_time_slots - 1)], 
