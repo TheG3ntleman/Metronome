@@ -1,8 +1,8 @@
 from metronome.timetable import TimeTable
-from metronome.common import TimeTableSpecifications
+#from metronome.common import TimeTableSpecifications
 from matplotlib import pyplot as plt
-from metronome.common import Constraints 
-from .evolution import Violations
+#from metronome.common import Constraints 
+from .violations import Violations
 from tqdm import tqdm
 import random
 
@@ -18,12 +18,11 @@ class GeneticOptimizerSpecifications:
 
 class ScalerGeneticOptimizer:
     
-  def __init__(self, time_table_specifications : TimeTableSpecifications, genetic_optimizer_specifications : GeneticOptimizerSpecifications) -> None:
+  def __init__(self, time_table_specifications, genetic_optimizer_specifications : GeneticOptimizerSpecifications) -> None:
     # specifications and constraints
     self.time_table_specifications = time_table_specifications
     self.genetic_optimizer_specifications = genetic_optimizer_specifications
-    self.constraints = Constraints(time_table_specifications)
-    
+        
     # Other related objects
     self.violation_counter = Violations(time_table_specifications)
     
@@ -55,7 +54,8 @@ class ScalerGeneticOptimizer:
     for generation in tqdm(range(self.genetic_optimizer_specifications.number_of_generations), desc = "Running Scalable Genetic Optimizer", total = self.genetic_optimizer_specifications.number_of_generations):
       # Violation (negative fitness) Computation
       violations = [self.violation_counter.calculate_violations(timetable) for timetable in self.population]
-      
+      print("Len Violations:", len(violations))
+      print("Violations:", violations)
       # Appending average violations
       average_violations = 0
       for i in range(len(violations)):
@@ -126,11 +126,10 @@ class ScalerGeneticOptimizer:
     plt.show()
 class DifferentialEvolution:
   
-  def __init__(self, time_table_specifications : TimeTableSpecifications, genetic_optimizer_specifications : GeneticOptimizerSpecifications) -> None:
+  def __init__(self, time_table_specifications, genetic_optimizer_specifications : GeneticOptimizerSpecifications) -> None:
     self.time_table_specifications = time_table_specifications
     self.genetic_optimizer_specifications = genetic_optimizer_specifications
     
-    self.constraints = Constraints(time_table_specifications)
     
   
   

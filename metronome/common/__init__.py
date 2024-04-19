@@ -1,2 +1,2 @@
-from specifications import TimeTableSpecifications
-from constraint import Constraints
+from .specifications import TimeTableSpecifications
+from .constraint import Constraints

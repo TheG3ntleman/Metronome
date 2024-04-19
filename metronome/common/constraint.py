@@ -1,12 +1,12 @@
-from specifications import TimeTableSpecifications
-from metronome.timetable import TimeTable
+from .specifications import TimeTableSpecifications
+#from metronome.timetable import TimeTable
 
 class Constraints:
   
   def __init__(self, time_table_specifications : TimeTableSpecifications) -> None:
     self.time_table_specifications = time_table_specifications
 
-  def hard_party_conflict(self, timetable: TimeTable, depth: int) -> int:
+  def hard_party_conflict(self, timetable, depth: int) -> int:
     number_of_violations = 0
 
     for party_id in range(self.time_table_specifications.number_of_parties):
@@ -27,10 +27,10 @@ class Constraints:
     return number_of_violations
   
 
-  def hard_repeated_tuple(self, timetable: TimeTable, depth: int) -> int:
+  def hard_repeated_tuple(self, timetable, depth: int) -> int:
     number_of_violations = 0
 
-    tuple_counter = [[0] * self.time_table_specifications.number_of_venues for _ in range(self.time_table_specifications.number_of_time_slots)]
+    tuple_counter = [[0] * self.time_table_specifications.number_of_venues] * self.time_table_specifications.number_of_time_slots
 
     for session_id in range(depth):
       tuple_counter[timetable[session_id]["timeslot_id"]][timetable[session_id]["venue_id"]] += 1
@@ -43,7 +43,7 @@ class Constraints:
     return number_of_violations
 
 
-  def hard_venue_capacity(self, timetable: TimeTable, depth: int) -> int:
+  def hard_venue_capacity(self, timetable, depth: int) -> int:
     number_of_violations = 0
     
     for session_id in range(depth):
@@ -56,13 +56,12 @@ class Constraints:
         strength += self.time_table_specifications.party_strengths[party]
 
       # Checking if the strength exceeds the venue capacity
-      if strength > self.time_table_specifications.venue_capacities[timetable[session_id]["venue_id"]]:
-        number_of_violations += 1
+      number_of_violations += max(0, strength - self.time_table_specifications.venue_capacities[timetable[session_id]["venue_id"]])
 
     return number_of_violations
   
 
-  def hard_venue_type(self, timetable: TimeTable, depth: int) -> int:
+  def hard_venue_type(self, timetable, depth: int) -> int:
     number_of_violations = 0
     
     for session_id in range(depth):
@@ -72,7 +71,7 @@ class Constraints:
     return number_of_violations
   
 
-  def hard_max_hours(self, timetable: TimeTable, depth: int) -> int:
+  def hard_max_hours(self, timetable, depth: int) -> int:
     number_of_violations = 0
     
     for party_id in range(self.time_table_specifications.number_of_parties):
@@ -94,7 +93,7 @@ class Constraints:
     return number_of_violations
   
 
-  def hard_multi_timeslot(self, timetable: TimeTable, depth: int) -> int:
+  def hard_multi_timeslot(self, timetable, depth: int) -> int:
     number_of_violations = 0
     multi_time_slot_counter = 0
     bad_session = False
@@ -126,7 +125,7 @@ class Constraints:
     return number_of_violations
   
 
-  def soft_travel_time(self, timetable: TimeTable, depth: int) -> int:
+  def soft_travel_time(self, timetable, depth: int) -> int:
     aggregate_travel_time = 0
 
     for party_id in range(self.time_table_specifications.number_of_parties):
@@ -166,7 +165,7 @@ class Constraints:
     return aggregate_travel_time
   
 
-  def soft_chunking(self, timetable: TimeTable, depth: int) -> int:
+  def soft_chunking(self, timetable, depth: int) -> int:
     aggregate_number_of_gaps = 0
 
     for party_id in range(self.time_table_specifications.number_of_parties):
@@ -189,7 +188,7 @@ class Constraints:
     return aggregate_number_of_gaps
   
 
-  def soft_room_utilization(self, timetable: TimeTable, depth: int) -> int:
+  def soft_room_utilization(self, timetable, depth: int) -> int:
     number_of_underused_venues = 0
     venue_usage = [0] * self.time_table_specifications.number_of_venues
 
@@ -208,7 +207,7 @@ class Constraints:
     return number_of_underused_venues
   
 
-  def soft_extreme_time(self, timetable: TimeTable, depth: int) -> int:
+  def soft_extreme_time(self, timetable, depth: int) -> int:
     aggregate_extreme_time = 0
 
     # We iterate through sessions
@@ -230,7 +229,7 @@ class Constraints:
     return aggregate_extreme_time
   
 
-  def soft_room_capacity_utilization(self, timetable: TimeTable, depth: int) -> int:
+  def soft_room_capacity_utilization(self, timetable, depth: int) -> int:
     aggregate_capacity_gaps = 0
 
     for session_id in range(self.time_table_specifications.number_of_sessions):
@@ -246,13 +245,13 @@ class Constraints:
     return aggregate_capacity_gaps
   
 
-  def soft_common_timeslot_empty(self, timetable: TimeTable, depth: int) -> int:
+  def soft_common_timeslot_empty(self, timetable, depth: int) -> int:
     # Placeholder function
     # A more detailed discussion and implementation are needed
     return 0
 
 
-  def soft_minimize_back_to_back(self, timetable: TimeTable, depth: int) -> int:
+  def soft_minimize_back_to_back(self, timetable, depth: int) -> int:
     aggregate_back_to_back = 0
 
     # Iterating through parties
@@ -279,13 +278,13 @@ class Constraints:
     return aggregate_back_to_back
   
 
-  def soft_repeated_course_session(self, timetable: TimeTable, depth: int) -> int:
+  def soft_repeated_course_session(self, timetable, depth: int) -> int:
     # Placeholder function
     # Requires a course table for efficient implementation
     return 0
   
 
-  def soft_sessions_well_distributed(self, timetable: TimeTable, depth: int) -> int:
+  def soft_sessions_well_distributed(self, timetable, depth: int) -> int:
     aggregate_less_used_timeslots = 0
     timeslot_usage = [0] * self.time_table_specifications.number_of_time_slots
 
@@ -305,7 +304,7 @@ class Constraints:
     return aggregate_less_used_timeslots
   
 
-  def soft_lab_after_lecture(self, timetable: TimeTable, depth: int) -> int:
+  def soft_lab_after_lecture(self, timetable, depth: int) -> int:
     # Placeholder function awaiting further implementation
     aggregate_lab_after_lecture = 0
     # An efficient implementation would require access to a venue type table
