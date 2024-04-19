@@ -8,15 +8,10 @@ genetic_optimizer_specifications = GeneticOptimizerSpecifications()
 
 scaler_genetic_optimizer = ScalerGeneticOptimizer(sample_time_table_specifications, genetic_optimizer_specifications)
 
-# Running genetic optimizer 
-scaler_genetic_optimizer.optimize()
-
-# Plotting minimum violations and average violations in two seperate plots
-scaler_genetic_optimizer.plot_violations()
 
 manual_party_strength = [70, 18, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 manual_party_names = ["ECM", "CM", "Gopinath", "Pooran", "Ramakant", "veeraiya", "Jayaprakash", "ravibabu", "Mahesh", "Praveen", "Pankaj", "manvi"]
-
+sample_time_table_specifications.number_of_parties = 12
 
 # Set party data
 for i in range(sample_time_table_specifications.number_of_parties):
@@ -42,7 +37,7 @@ sample_time_table_specifications.locality_ids = [0, 1, 2]  # locality_i = 0, loc
 sample_time_table_specifications.locality_distances = [0, 10, 0]  # Distances between localities
 
 #venue table
-sample_time_table_specifications.number_of_venues = 15;
+sample_time_table_specifications.number_of_venues = 15
 manual_venue_type = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1]
 manual_venue_capacity = [80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 150, 80, 80, 80, 150]
 manual_venue_locality = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]
@@ -61,13 +56,13 @@ manual_s_course = [0, 1, 2, 3, 1, 0, 4, 2, 0, 4, 1, 3, 3, 3, 3, 4, 4, 5, 6, 6, 6
 
 # Set session data
 for i in range(sample_time_table_specifications.number_of_sessions):
-    sample_time_table_specifications.session_ids(i)
+    sample_time_table_specifications.session_ids.append(i)
     sample_time_table_specifications.session_types.append(manual_s_venue_type[i])
     sample_time_table_specifications.session_durations.append(manual_s_duration[i])
     sample_time_table_specifications.session_courses.append(manual_s_course[i])   
 
 # Assignments
-sample_time_table_specifications.number_of_assignments = 64
+sample_time_table_specifications.number_of_assignments = 63
 manual_a_session_id = [0, 0, 1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 11,
                        12, 12, 12, 13, 13, 13, 14, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 20,
                        21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29]
@@ -82,3 +77,8 @@ for i in range(sample_time_table_specifications.number_of_assignments):
     sample_time_table_specifications.assignment_session_ids.append(manual_a_session_id[i])
     sample_time_table_specifications.assignment_priorities.append(0) 
 
+# Running genetic optimizer 
+scaler_genetic_optimizer.optimize()
+
+# Plotting minimum violations and average violations in two seperate plots
+scaler_genetic_optimizer.plot_violations()
