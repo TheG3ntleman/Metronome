@@ -1,3 +1,5 @@
+import random
+from metronome.common import TimeTableSpecifications
 class TimeTable:
   
   def __init__(self, number_of_sessions):
@@ -10,6 +12,14 @@ class TimeTable:
   
   def get_session_info(self, session_id):
     return self.timetable[session_id]
+  
+  def randomly_initialize(self, time_table_specifications : TimeTableSpecifications) -> None:
+    for i in range(self.number_of_sessions):
+      self.schedule_session(
+        i, 
+        time_table_specifications.time_slot_ids[random.randint(0, time_table_specifications.number_of_time_slots - 1)], 
+        time_table_specifications.venue_ids[random.randint(0, time_table_specifications.number_of_venues - 1)]
+        )
   
   def print(self):
     print("TIME TABLE")
