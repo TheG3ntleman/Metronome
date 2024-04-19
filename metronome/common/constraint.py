@@ -7,6 +7,7 @@ class Constraints:
     self.time_table_specifications = time_table_specifications
 
   def hard_party_conflict(self, timetable, depth: int) -> int:
+    
     number_of_violations = 0
 
     for party_id in range(self.time_table_specifications.number_of_parties):
@@ -18,7 +19,7 @@ class Constraints:
       for session in sessions:
         if session > depth:
           continue
-        timeslot_counts[timetable[session]["timeslot_id"]] += 1
+        timeslot_counts[timetable.timetable[session]["timeslot_id"]] += 1
 
       for count in timeslot_counts:
         if count > 1:
@@ -31,10 +32,9 @@ class Constraints:
     number_of_violations = 0
 
     tuple_counter = [[0] * self.time_table_specifications.number_of_venues] * self.time_table_specifications.number_of_time_slots
-
     for session_id in range(depth):
-      tuple_counter[timetable[session_id]["timeslot_id"]][timetable[session_id]["venue_id"]] += 1
-
+      tuple_counter[timetable.timetable[session_id]["timeslot_id"]][timetable.timetable[session_id]["venue_id"]] += 1
+  
     for i in range(self.time_table_specifications.number_of_time_slots):
       for j in range(self.time_table_specifications.number_of_venues):
         if tuple_counter[i][j] > 1:
@@ -56,7 +56,7 @@ class Constraints:
         strength += self.time_table_specifications.party_strengths[party]
 
       # Checking if the strength exceeds the venue capacity
-      number_of_violations += max(0, strength - self.time_table_specifications.venue_capacities[timetable[session_id]["venue_id"]])
+      number_of_violations += max(0, strength - self.time_table_specifications.venue_capacities[timetable.timetable[session_id]["venue_id"]])
 
     return number_of_violations
   
@@ -65,7 +65,7 @@ class Constraints:
     number_of_violations = 0
     
     for session_id in range(depth):
-      if self.time_table_specifications.session_types[session_id] != self.time_table_specifications.venue_types[timetable[session_id]["venue_id"]]:
+      if self.time_table_specifications.session_types[session_id] != self.time_table_specifications.venue_types[timetable.timetable[session_id]["venue_id"]]:
         number_of_violations += 1
 
     return number_of_violations
@@ -81,7 +81,7 @@ class Constraints:
       sessions = self.time_table_specifications.find_associated_sessions(party_id, depth)
 
       for session in sessions:
-        timeslot_id = timetable[session]["timeslot_id"]
+        timeslot_id = timetable.timetable[session]["timeslot_id"]
         day = self.time_table_specifications.time_slot_days[timeslot_id]
         no_of_classes_per_day[day] += 1
 
@@ -109,8 +109,8 @@ class Constraints:
         if bad_session:
           number_of_violations += 1
         else:
-          previous_timeslot = timetable[session_id - 1]["timeslot_id"]
-          current_timeslot = timetable[session_id]["timeslot_id"]
+          previous_timeslot = timetable.timetable[session_id - 1]["timeslot_id"]
+          current_timeslot = timetable.timetable[session_id]["timeslot_id"]
 
           if self.time_table_specifications.time_slot_days[previous_timeslot] != self.time_table_specifications.time_slot_days[current_timeslot]:
             number_of_violations += 1
