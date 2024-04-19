@@ -102,18 +102,12 @@ class Constraints:
     for session_id in range(depth):
         
       if multi_time_slot_counter == 0:
-        # Checking if the current session is a multi timeslot session
-        # by checking if the duration is greater than 1.
+
         if self.time_table_specifications.session_durations[session_id] > 1:
             multi_time_slot_counter += self.time_table_specifications.session_durations[session_id]
       else:  # multi_time_slot_counter > 0
-        # We check if the current timeslot is on the same day as the previous timeslot
-        # if it is, then we check if the timeslot is right after the previous day's timeslot
 
         if bad_session:
-          # If the previous sessions were not consecutive, then the
-          # entire chain of sessions is treated as a sequence of violations from that 
-          # point onwards.
           number_of_violations += 1
         else:
           previous_timeslot = timetable[session_id - 1]["timeslot_id"]
@@ -132,6 +126,191 @@ class Constraints:
     return number_of_violations
   
 
+  def soft_travel_time(self, timetable: TimeTable, depth: int) -> int:
+    aggregate_travel_time = 0
+
+    for party_id in range(self.time_table_specifications.number_of_parties):
+      # Fetching the associated sessions
+      
+      sessions = self.time_table_specifications.find_associated_sessions(party_id, depth)
+
+      # Iterating through the sessions and adding the values to travel time
+      for i in range(len(sessions)):
+        # There is no need to add travel time in chronological order
+        # as the travel time is symmetric
+
+        # We find the session on the same day and the immediately next timeslot
+        # and add the distance between their venue locality's to the 
+        # aggregate travel time.
+        current_timeslot_id = timetable[sessions[i]]["timeslot_id"]
+        current_timeslot_day = self.time_table_specifications.time_slot_days[current_timeslot_id]
+
+        # We check if there is another session immediately after the current session
+        # and if it is on the same day
+        for j in range(i + 1, len(sessions)):
+          next_timeslot_id = timetable[sessions[j]]["timeslot_id"]
+          next_timeslot_day = self.time_table_specifications.time_slot_days[next_timeslot_id]
+
+          if (current_timeslot_day == next_timeslot_day and
+                  self.time_table_specifications.time_slot_ids[current_timeslot_id] + 1 ==
+                  self.time_table_specifications.time_slot_ids[next_timeslot_id]):
+            first_venue_id = timetable[sessions[i]]["venue_id"]
+            second_venue_id = timetable[sessions[j]]["venue_id"]
+            if first_venue_id != second_venue_id:
+              # Find corresponding locality
+              first_locality_id = self.time_table_specifications.venue_locality[first_venue_id]
+              second_locality_id = self.time_table_specifications.venue_locality[second_venue_id]
+              distance = self.time_table_specifications.locality_distances[first_locality_id][second_locality_id]
+              aggregate_travel_time += distance
+
+    return aggregate_travel_time
+  
+
+  def soft_chunking(self, timetable: TimeTable, depth: int) -> int:
+    aggregate_number_of_gaps = 0
+
+    for party_id in range(self.time_table_specifications.number_of_parties):
+        
+      sessions = self.time_table_specifications.find_associated_sessions(party_id, depth)
+      
+      # Sort sessions by timeslot id
+      sessions.sort(key=lambda x: timetable[x]["timeslot_id"])
+
+      # Now we iterate through the sorted sessions and check if there are any gaps
+      for i in range(len(sessions) - 1):
+        # Checking if the current session and the next are on the same day
+        current_timeslot_id = timetable[sessions[i]]["timeslot_id"]
+        next_timeslot_id = timetable[sessions[i + 1]]["timeslot_id"]
+
+        # Checking if they are on the same day
+        if self.time_table_specifications.time_slot_days[current_timeslot_id] == self.time_table_specifications.time_slot_days[next_timeslot_id]:
+          aggregate_number_of_gaps += self.time_table_specifications.time_slot_ids[next_timeslot_id] - (self.time_table_specifications.time_slot_ids[current_timeslot_id] - 1)
+
+    return aggregate_number_of_gaps
+  
+
+  def soft_room_utilization(self, timetable: TimeTable, depth: int) -> int:
+    number_of_underused_venues = 0
+    venue_usage = [0] * self.time_table_specifications.number_of_venues
+
+    for session_id in range(self.time_table_specifications.number_of_sessions):
+      venue_usage[timetable[session_id]["venue_id"]] = 1
+
+    # Calculating the mean and standard deviation of the venue usage
+    mean = sum(venue_usage) / len(venue_usage)
+    standard_deviation = (sum((x - mean) ** 2 for x in venue_usage) / len(venue_usage)) ** 0.5
+
+    # If the usage is 2 stddev below the mean, add to the number of underused venues
+    for usage in venue_usage:
+      if usage < mean - 2 * standard_deviation:
+        number_of_underused_venues += 1
+
+    return number_of_underused_venues
+  
+
+  def soft_extreme_time(self, timetable: TimeTable, depth: int) -> int:
+    aggregate_extreme_time = 0
+
+    # We iterate through sessions
+    for session_id in range(self.time_table_specifications.number_of_sessions):
+      # We find the associated parties
+      
+      parties = self.time_table_specifications.find_associated_parties(session_id, depth)
+
+      # We find the day and id of the session
+      current_timeslot_id = timetable[session_id]["timeslot_id"] % 7  # 7 is the number of timeslots per day
+
+      # Iterating through the appropriate parties and checking if this does not lie in 
+      # preferred start time and preferred end time
+      for party_id in parties:
+        if current_timeslot_id < self.time_table_specifications.party_preferred_start_time[party_id] or \
+          current_timeslot_id > self.time_table_specifications.party_preferred_end_time[party_id]:
+          aggregate_extreme_time += 1
+
+    return aggregate_extreme_time
+  
+
+  def soft_room_capacity_utilization(self, timetable: TimeTable, depth: int) -> int:
+    aggregate_capacity_gaps = 0
+
+    for session_id in range(self.time_table_specifications.number_of_sessions):
+        
+      parties = self.time_table_specifications.find_associated_parties(session_id, depth)
+      
+      combined_strength = sum(self.time_table_specifications.party_strengths[party_id] for party_id in parties)
+
+      # We do not want this to work against the hard constraint
+      if combined_strength < self.time_table_specifications.venue_capacities[timetable[session_id].venue]:
+        aggregate_capacity_gaps += self.time_table_specifications.venue_capacities[timetable[session_id].venue] - combined_strength
+      
+    return aggregate_capacity_gaps
+  
+
+  def soft_common_timeslot_empty(self, timetable: TimeTable, depth: int) -> int:
+    # Placeholder function
+    # A more detailed discussion and implementation are needed
+    return 0
+
+
+  def soft_minimize_back_to_back(self, timetable: TimeTable, depth: int) -> int:
+    aggregate_back_to_back = 0
+
+    # Iterating through parties
+    for party_id in range(self.time_table_specifications.number_of_parties):
+      # Checking if the party is a professor
+      if self.time_table_specifications.party_type[party_id] != 1:
+        continue
+
+      sessions = self.time_table_specifications.find_associated_sessions(party_id, depth)
+      
+      # We sort the sessions by timeslot id
+      sessions.sort(key=lambda x: timetable[x]["timeslot_id"])
+
+      # Now we iterate through the sorted sessions and check if there are any back to back
+      for i in range(len(sessions) - 1):
+        current_timeslot_id = timetable[sessions[i]]["timeslot_id"]
+        next_timeslot_id = timetable[sessions[i + 1]]["timeslot_id"]
+
+        # Checking if they are on the same day
+        if self.time_table_specifications.time_slot_days[current_timeslot_id] == self.time_table_specifications.time_slot_days[next_timeslot_id]:
+          if self.time_table_specifications.time_slot_ids[next_timeslot_id] == self.time_table_specifications.time_slot_ids[current_timeslot_id] + 1:
+            aggregate_back_to_back += 1
+
+    return aggregate_back_to_back
+  
+
+  def soft_repeated_course_session(self, timetable: TimeTable, depth: int) -> int:
+    # Placeholder function
+    # Requires a course table for efficient implementation
+    return 0
+  
+
+  def soft_sessions_well_distributed(self, timetable: TimeTable, depth: int) -> int:
+    aggregate_less_used_timeslots = 0
+    timeslot_usage = [0] * self.time_table_specifications.number_of_time_slots
+
+    # Iterating through sessions and counting the number of sessions in each timeslot
+    for i in range(depth):
+      timeslot_usage[timetable[i]["timeslot_id"]] += 1
+
+    # Calculating the mean and standard deviation of the timeslot usage
+    mean = sum(timeslot_usage) / len(timeslot_usage)
+    standard_deviation = sum((count - mean) ** 2 for count in timeslot_usage) / len(timeslot_usage)
+
+    # If the usage is 2 stddev below the mean, add to the number of underused venues
+    for count in timeslot_usage:
+      if count < mean - 2 * standard_deviation:
+        aggregate_less_used_timeslots += 1
+
+    return aggregate_less_used_timeslots
+  
+
+  def soft_lab_after_lecture(self, timetable: TimeTable, depth: int) -> int:
+    # Placeholder function awaiting further implementation
+    aggregate_lab_after_lecture = 0
+    # An efficient implementation would require access to a venue type table
+    return aggregate_lab_after_lecture
+  
   
   #@staticmethod
   
