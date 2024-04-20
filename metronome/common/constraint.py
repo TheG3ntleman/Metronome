@@ -117,8 +117,9 @@ class Constraints:
             if timetable.timetable[session_id]["venue_id"] != timetable.timetable[j]["venue_id"]:
               number_of_violations += 1
 
-          session_id += duration
-        
+        session_id += duration
+      session_id += 1  
+
     return number_of_violations
     """
    
@@ -161,25 +162,29 @@ class Constraints:
         # We find the session on the same day and the immediately next timeslot
         # and add the distance between their venue locality's to the 
         # aggregate travel time.
-        current_timeslot_id = timetable[sessions[i]]["timeslot_id"]
+        current_timeslot_id = timetable.timetable[sessions[i]]["timeslot_id"]
         current_timeslot_day = self.time_table_specifications.time_slot_days[current_timeslot_id]
 
         # We check if there is another session immediately after the current session
         # and if it is on the same day
         for j in range(i + 1, len(sessions)):
-          next_timeslot_id = timetable[sessions[j]]["timeslot_id"]
+          next_timeslot_id = timetable.timetable[sessions[j]]["timeslot_id"]
           next_timeslot_day = self.time_table_specifications.time_slot_days[next_timeslot_id]
 
           if (current_timeslot_day == next_timeslot_day and
                   self.time_table_specifications.time_slot_ids[current_timeslot_id] + 1 ==
                   self.time_table_specifications.time_slot_ids[next_timeslot_id]):
-            first_venue_id = timetable[sessions[i]]["venue_id"]
-            second_venue_id = timetable[sessions[j]]["venue_id"]
+            first_venue_id = timetable.timetable[sessions[i]]["venue_id"]
+            second_venue_id = timetable.timetable[sessions[j]]["venue_id"]
             if first_venue_id != second_venue_id:
               # Find corresponding locality
               first_locality_id = self.time_table_specifications.venue_locality[first_venue_id]
               second_locality_id = self.time_table_specifications.venue_locality[second_venue_id]
-              distance = self.time_table_specifications.locality_distances[first_locality_id][second_locality_id]
+              x = first_locality_id
+              y = second_locality_id
+              n = self.time_table_specifications.number_of_localities
+              result = int(x*n - (x*(x-1)/2) + (y-x+1))
+              distance = self.time_table_specifications.locality_distances[result - 1]
               aggregate_travel_time += distance
 
     return aggregate_travel_time
@@ -193,13 +198,13 @@ class Constraints:
       sessions = self.time_table_specifications.find_associated_sessions(party_id, depth)
       
       # Sort sessions by timeslot id
-      sessions.sort(key=lambda x: timetable[x]["timeslot_id"])
+      sessions.sort(key=lambda x: timetable.timetable[x]["timeslot_id"])
 
       # Now we iterate through the sorted sessions and check if there are any gaps
       for i in range(len(sessions) - 1):
         # Checking if the current session and the next are on the same day
-        current_timeslot_id = timetable[sessions[i]]["timeslot_id"]
-        next_timeslot_id = timetable[sessions[i + 1]]["timeslot_id"]
+        current_timeslot_id = timetable.timetable[sessions[i]]["timeslot_id"]
+        next_timeslot_id = timetable.timetable[sessions[i + 1]]["timeslot_id"]
 
         # Checking if they are on the same day
         if self.time_table_specifications.time_slot_days[current_timeslot_id] == self.time_table_specifications.time_slot_days[next_timeslot_id]:
@@ -213,7 +218,7 @@ class Constraints:
     venue_usage = [0] * self.time_table_specifications.number_of_venues
 
     for session_id in range(self.time_table_specifications.number_of_sessions):
-      venue_usage[timetable[session_id]["venue_id"]] = 1
+      venue_usage[timetable.timetable[session_id]["venue_id"]] = 1
 
     # Calculating the mean and standard deviation of the venue usage
     mean = sum(venue_usage) / len(venue_usage)
@@ -237,13 +242,13 @@ class Constraints:
       parties = self.time_table_specifications.find_associated_parties(session_id, depth)
 
       # We find the day and id of the session
-      current_timeslot_id = timetable[session_id]["timeslot_id"] % 7  # 7 is the number of timeslots per day
+      current_timeslot_id = timetable.timetable[session_id]["timeslot_id"] % 7  # 7 is the number of timeslots per day
 
       # Iterating through the appropriate parties and checking if this does not lie in 
       # preferred start time and preferred end time
       for party_id in parties:
-        if current_timeslot_id < self.time_table_specifications.party_preferred_start_time[party_id] or \
-          current_timeslot_id > self.time_table_specifications.party_preferred_end_time[party_id]:
+        if current_timeslot_id < self.time_table_specifications.party_preffered_start_time[party_id] or \
+          current_timeslot_id > self.time_table_specifications.party_preffered_end_time[party_id]:
           aggregate_extreme_time += 1
 
     return aggregate_extreme_time
@@ -259,8 +264,8 @@ class Constraints:
       combined_strength = sum(self.time_table_specifications.party_strengths[party_id] for party_id in parties)
 
       # We do not want this to work against the hard constraint
-      if combined_strength < self.time_table_specifications.venue_capacities[timetable[session_id].venue]:
-        aggregate_capacity_gaps += self.time_table_specifications.venue_capacities[timetable[session_id].venue] - combined_strength
+      if combined_strength < self.time_table_specifications.venue_capacities[timetable.timetable[session_id]["venue_id"]]:
+        aggregate_capacity_gaps += self.time_table_specifications.venue_capacities[timetable.timetable[session_id]["venue_id"]] - combined_strength
       
     return aggregate_capacity_gaps
   
@@ -283,12 +288,12 @@ class Constraints:
       sessions = self.time_table_specifications.find_associated_sessions(party_id, depth)
       
       # We sort the sessions by timeslot id
-      sessions.sort(key=lambda x: timetable[x]["timeslot_id"])
+      sessions.sort(key=lambda x: timetable.timetable[x]["timeslot_id"])
 
       # Now we iterate through the sorted sessions and check if there are any back to back
       for i in range(len(sessions) - 1):
-        current_timeslot_id = timetable[sessions[i]]["timeslot_id"]
-        next_timeslot_id = timetable[sessions[i + 1]]["timeslot_id"]
+        current_timeslot_id = timetable.timetable[sessions[i]]["timeslot_id"]
+        next_timeslot_id = timetable.timetable[sessions[i + 1]]["timeslot_id"]
 
         # Checking if they are on the same day
         if self.time_table_specifications.time_slot_days[current_timeslot_id] == self.time_table_specifications.time_slot_days[next_timeslot_id]:
@@ -310,7 +315,7 @@ class Constraints:
 
     # Iterating through sessions and counting the number of sessions in each timeslot
     for i in range(depth):
-      timeslot_usage[timetable[i]["timeslot_id"]] += 1
+      timeslot_usage[timetable.timetable[i]["timeslot_id"]] += 1
 
     # Calculating the mean and standard deviation of the timeslot usage
     mean = sum(timeslot_usage) / len(timeslot_usage)
