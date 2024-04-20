@@ -81,7 +81,7 @@ class Constraints:
     
     for party_id in range(self.time_table_specifications.number_of_parties):
       
-      if self.time_table_specifications.party_type == 0:
+      if self.time_table_specifications.party_type[party_id] == 0:
         continue
 
       no_of_classes_per_day = [0] * 5  # Initialize the no_of_classes_per_day array to 0
