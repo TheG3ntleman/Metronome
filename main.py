@@ -90,4 +90,10 @@ print("\n\nMost fit timetable:")
 most_fit_timetable.print()
 
 # Repeated tuples violations
-print("\n\nRepeated tuples violations:", scaler_genetic_optimizer.violation_counter.constraints.hard_repeated_tuple(most_fit_timetable, sample_time_table_specifications.number_of_sessions))
+violation_count_for_most_fit_timetable = scaler_genetic_optimizer.violation_counter.calculate_violations(most_fit_timetable)
+# Printing out violation counts for the most fit timetable
+print("\n\nViolation counts for the most fit timetable:")
+
+for i in range(len(violation_count_for_most_fit_timetable[1:])):
+    print(scaler_genetic_optimizer.violation_counter.get_violation_list()[i], ":", violation_count_for_most_fit_timetable[i + 1])
+    

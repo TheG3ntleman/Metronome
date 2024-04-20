@@ -10,18 +10,18 @@ import math
 class GeneticOptimizerSpecifications:
   
   def __init__(self):
-    self.number_of_generations = 50
-    self.population_size = 1000
-    self.top_k = self.population_size / 100
+    self.number_of_generations = 100
+    self.population_size = 3000
+    self.top_k = int(self.population_size / 70)
     self.crossover_rate = 0.5
     
     self.constant_mutation_rate = 0.01
-    self.constant_mutation_region = 35
+    self.constant_mutation_region = 70
     
     self.minimum_mutation_rate = 0.01
-    self.maximum_mutation_rate = 0.1
+    self.maximum_mutation_rate = 0.5
     
-    self.ratio_of_chaos = 0.01
+    self.ratio_of_chaos = 0.001
     self.spike_constrast = 8.5
     
     self.periodic_phase = 6
@@ -60,7 +60,6 @@ class ScalerGeneticOptimizer:
       self.population.append(timetable)
     
     self.initialized = True
-    
   
   def get_mutation_rate(self, generation):
     if generation < self.genetic_optimizer_specifications.constant_mutation_region:

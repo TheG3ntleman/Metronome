@@ -27,5 +27,8 @@ class TimeTable:
     print("\nTuples:")
     for session_id in range(self.number_of_sessions):
       print("\t" + str(self.timetable[session_id]["timeslot_id"]), " - ", self.timetable[session_id]["venue_id"])
+  
+  def __getitem__(self, key):
+    return self.timetable[key]
     
   
