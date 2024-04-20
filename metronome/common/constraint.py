@@ -81,6 +81,9 @@ class Constraints:
     
     for party_id in range(self.time_table_specifications.number_of_parties):
       
+      if self.time_table_specifications.party_type == 0:
+        continue
+
       no_of_classes_per_day = [0] * 5  # Initialize the no_of_classes_per_day array to 0
 
       sessions = self.time_table_specifications.find_associated_sessions(party_id, depth)
@@ -99,7 +102,9 @@ class Constraints:
   
 
   def hard_multi_timeslot(self, timetable, depth: int) -> int:
+   
     number_of_violations = 0
+    '''
     multi_time_slot_counter = 0
     bad_session = False
 
@@ -126,7 +131,23 @@ class Constraints:
             bad_session = True
 
         multi_time_slot_counter -= 1
+    '''
+    
+    for session_id in range(depth):
 
+      if self.time_table_specifications.session_durations[session_id] > 1:
+        duration = self.time_table_specifications.session_durations[session_id]
+
+        for j in range(session_id + 1, session_id + duration):
+          
+          if timetable.timetable[session_id]["timeslot_id"] + j - session_id != timetable.timetable[j]["timeslot_id"]:
+            number_of_violations += 1
+          else:
+            if timetable.timetable[session_id]["venue_id"] == timetable.timetable[j]["venue_id"]:
+              number_of_violations += 1
+
+          session_id += duration
+        
     return number_of_violations
   
 
