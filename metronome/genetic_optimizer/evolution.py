@@ -5,15 +5,16 @@ from matplotlib import pyplot as plt
 from .violations import Violations
 from tqdm import tqdm
 import random
+import numpy as np
 
 
 class GeneticOptimizerSpecifications:
   
   def __init__(self):
-    self.number_of_generations = 10
+    self.number_of_generations = 50
     self.population_size = 1000
     self.top_k = self.population_size / 100
-    self.crossover_rate = 0.3
+    self.crossover_rate = 0.4
     self.mutation_rate = 0.01
 
 class ScalerGeneticOptimizer:
@@ -35,6 +36,7 @@ class ScalerGeneticOptimizer:
     # Debug/Recording/Convergence Testing variables
     self.average_violations = []
     self.minimum_violations = []
+    self.compartmental_violations = np.zeros((self.genetic_optimizer_specifications.number_of_generations, 6))
   
   def initialize(self) -> None:
     # Initializing Population Randomly.
@@ -53,9 +55,14 @@ class ScalerGeneticOptimizer:
     # Evolutionary Optimization
     for generation in tqdm(range(self.genetic_optimizer_specifications.number_of_generations), desc = "Running Scalable Genetic Optimizer", total = self.genetic_optimizer_specifications.number_of_generations):
       # Violation (negative fitness) Computation
-      violations = [self.violation_counter.calculate_violations(timetable) for timetable in self.population]
-      print("Len Violations:", len(violations))
-      print("Violations:", violations)
+      violations = []
+      
+      for timetable in self.population:
+        violations_per_table = self.violation_counter.calculate_violations(timetable)
+        violations.append(violations_per_table[0])
+        
+      #print("Len Violations:", len(violations))
+      #print("Violations:", violations)
       # Appending average violations
       average_violations = 0
       for i in range(len(violations)):
@@ -66,12 +73,12 @@ class ScalerGeneticOptimizer:
       self.minimum_violations.append(min(violations))
       
       # Selecting top k individuals
-      #parents = sorted(range(len(violations)), key = lambda sub: violations[sub])[-self.genetic_optimizer_specifications.top_k:]
+
       # Convert top_k to integer
       top_k = int(self.genetic_optimizer_specifications.top_k)
 
       # Selecting top k individuals
-      parents = sorted(range(len(violations)), key=lambda sub: violations[sub])[-top_k:]
+      parents = sorted(range(len(violations)), key=lambda i: violations[i])[:top_k]
 
 
       # Crossover
@@ -96,7 +103,7 @@ class ScalerGeneticOptimizer:
             child.schedule_session(session_id, parent2.get_session_info(session_id)["timeslot_id"], parent2.get_session_info(session_id)["venue_id"])
         
         # If number of violations of child is greater than parents then choose the parent with minimum violations or randomly if both have same violations
-        if self.violation_counter.calculate_violations(child) > min(violations[parent1_id], violations[parent2_id]):
+        if self.violation_counter.calculate_violations(child)[0] > min(violations[parent1_id], violations[parent2_id]):
           if violations[parent1_id] < violations[parent2_id]:
             child = parent1
           elif violations[parent1_id] > violations[parent2_id]:
@@ -122,6 +129,12 @@ class ScalerGeneticOptimizer:
       # Setting the new population
       self.population = new_population
   
+    # Converting compartmental violations to matrix of appropriate size
+    #self.compartmental_violations = self.compartmental_violations.T
+    self.average_violations  = np.array(self.average_violations)
+    self.minimum_violations = np.array(self.minimum_violations)
+
+  
   def plot_violations(self) -> None:
     plt.plot(self.average_violations)
     plt.title("Average Violations")
@@ -130,6 +143,27 @@ class ScalerGeneticOptimizer:
     plt.plot(self.minimum_violations)
     plt.title("Minimum Violations")
     plt.show()
+    
+    # Plotting compartmental violations
+    # Define curve names
+    curve_names = [
+        "Party Violations",
+        "Repeat Violations",
+        "Venue Capacity Violations",
+        "Venue Type Violations",
+        "Max Hours Violations",
+        "Multi Timeslot Violations"
+    ]
+
+    # Plot all curves with their names as labels
+
+  
+  def save_violations(self, path) -> None:
+    # Save arrays as formatted text
+    np.savetxt(path + "average_violations.txt", self.average_violations)
+    np.savetxt(path + "minimum_violations.txt", self.minimum_violations)
+    np.savetxt(path + "compartmental_violations.txt", self.compartmental_violations)
+    
 class DifferentialEvolution:
   
   def __init__(self, time_table_specifications, genetic_optimizer_specifications : GeneticOptimizerSpecifications) -> None:

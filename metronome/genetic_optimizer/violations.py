@@ -10,11 +10,23 @@ class Violations:
   def calculate_violations(self, time_table):
     violations = 0
     
-    violations += self.constraints.hard_party_conflict(time_table, self.time_table_specifications.number_of_sessions)
-    violations += self.constraints.hard_repeated_tuple(time_table, self.time_table_specifications.number_of_sessions)
-    violations += self.constraints.hard_venue_capacity(time_table, self.time_table_specifications.number_of_sessions)
-    violations += self.constraints.hard_venue_type(time_table, self.time_table_specifications.number_of_sessions)
-    violations += self.constraints.hard_max_hours(time_table, self.time_table_specifications.number_of_sessions)
-    violations += self.constraints.hard_multi_timeslot(time_table, self.time_table_specifications.number_of_sessions)
     
-    return violations
+    hard_party_violations = self.constraints.hard_party_conflict(time_table, self.time_table_specifications.number_of_sessions)
+    violations += hard_party_violations
+    
+    hard_repeat_violations = self.constraints.hard_repeated_tuple(time_table, self.time_table_specifications.number_of_sessions)
+    violations += hard_repeat_violations
+    
+    hard_venue_capacity_violations = self.constraints.hard_venue_capacity(time_table, self.time_table_specifications.number_of_sessions)
+    violations += hard_venue_capacity_violations
+    
+    hard_venue_type_violations = self.constraints.hard_venue_type(time_table, self.time_table_specifications.number_of_sessions)
+    violations += hard_venue_type_violations
+    
+    hard_max_hours_violations = self.constraints.hard_max_hours(time_table, self.time_table_specifications.number_of_sessions)
+    violations += hard_max_hours_violations
+    
+    hard_multi_timeslot_violations = self.constraints.hard_multi_timeslot(time_table, self.time_table_specifications.number_of_sessions)
+    violations += hard_multi_timeslot_violations
+    
+    return [violations, hard_party_violations, hard_repeat_violations, hard_venue_capacity_violations, hard_venue_type_violations, hard_max_hours_violations, hard_multi_timeslot_violations]

@@ -82,3 +82,4 @@ scaler_genetic_optimizer.optimize()
 
 # Plotting minimum violations and average violations in two seperate plots
 scaler_genetic_optimizer.plot_violations()
+scaler_genetic_optimizer.save_violations("output/violations.txt")
