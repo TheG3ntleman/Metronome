@@ -102,9 +102,38 @@ class Constraints:
   
 
   def hard_multi_timeslot(self, timetable, depth: int) -> int:
-     
-    """
+   
+    number_of_violations = 0
+    '''
+    multi_time_slot_counter = 0
+    bad_session = False
+
     for session_id in range(depth):
+        
+      if multi_time_slot_counter == 0:
+
+        if self.time_table_specifications.session_durations[session_id] > 1:
+            multi_time_slot_counter += self.time_table_specifications.session_durations[session_id]
+      else:  # multi_time_slot_counter > 0
+
+        if bad_session:
+          number_of_violations += 1
+        else:
+          previous_timeslot = timetable.timetable[session_id - 1]["timeslot_id"]
+          current_timeslot = timetable.timetable[session_id]["timeslot_id"]
+
+          if self.time_table_specifications.time_slot_days[previous_timeslot] != self.time_table_specifications.time_slot_days[current_timeslot]:
+            number_of_violations += 1
+            bad_session = True
+
+          if self.time_table_specifications.time_slot_ids[previous_timeslot] + 1 != self.time_table_specifications.time_slot_ids[current_timeslot]:
+            number_of_violations += 1
+            bad_session = True
+
+        multi_time_slot_counter -= 1
+    '''
+    session_id = 0
+    while session_id < depth:
 
       if self.time_table_specifications.session_durations[session_id] > 1:
         duration = self.time_table_specifications.session_durations[session_id]
@@ -121,31 +150,8 @@ class Constraints:
       session_id += 1  
 
     return number_of_violations
-    """
-   
-    number_of_violations = 0
-    duration = 0
-    
-    for session_id in range(depth):
-      
-      if self.time_table_specifications.session_durations[session_id] > 1 and duration == 0:
-        duration = self.time_table_specifications.session_durations[session_id] - 1
-        continue
-        
-      if duration > 0:
-        # Comparing previous timeslot with the current
-        if timetable.timetable[session_id - 1]["timeslot_id"] + 1 != timetable.timetable[session_id]["timeslot_id"]:
-          number_of_violations += 1
-        
-        # Comparing previous venue with the current
-        if timetable.timetable[session_id - 1]["venue_id"] != timetable.timetable[session_id]["venue_id"]:
-          number_of_violations += 1
-          
-        duration -= 1
-        
-    return number_of_violations #+ duration
-        
-      
+  
+
   def soft_travel_time(self, timetable, depth: int) -> int:
     aggregate_travel_time = 0
 
