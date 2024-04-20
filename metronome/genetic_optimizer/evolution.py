@@ -4,6 +4,7 @@ from .violations import Violations
 from tqdm import tqdm
 import random
 import numpy as np
+import math
 
 
 class GeneticOptimizerSpecifications:
@@ -12,8 +13,20 @@ class GeneticOptimizerSpecifications:
     self.number_of_generations = 50
     self.population_size = 1000
     self.top_k = self.population_size / 100
-    self.crossover_rate = 0.4
-    self.mutation_rate = 0.01
+    self.crossover_rate = 0.5
+    
+    self.constant_mutation_rate = 0.01
+    self.constant_mutation_region = 35
+    
+    self.minimum_mutation_rate = 0.01
+    self.maximum_mutation_rate = 0.1
+    
+    self.ratio_of_chaos = 0.01
+    self.spike_constrast = 8.5
+    
+    self.periodic_phase = 6
+    self.periodic_frequency = 0.7
+    
 
 class ScalerGeneticOptimizer:
     
@@ -31,6 +44,7 @@ class ScalerGeneticOptimizer:
     
     # State Variables
     self.population = None
+    self.current_mutation_rate = 0
     
     # Debug/Recording/Convergence Testing variables
     self.average_violations = []
@@ -47,6 +61,13 @@ class ScalerGeneticOptimizer:
     
     self.initialized = True
     
+  
+  def get_mutation_rate(self, generation):
+    if generation < self.genetic_optimizer_specifications.constant_mutation_region:
+      return  min(self.genetic_optimizer_specifications.ratio_of_chaos * math.exp(self.genetic_optimizer_specifications.spike_constrast * math.sin(self.genetic_optimizer_specifications.periodic_frequency * generation + self.genetic_optimizer_specifications.periodic_phase)), self.genetic_optimizer_specifications.maximum_mutation_rate) +  self.genetic_optimizer_specifications.minimum_mutation_rate
+    else:
+      return self.genetic_optimizer_specifications.constant_mutation_rate
+  
   def optimize(self) -> None:
     if not self.initialized:
       self.initialize()
@@ -122,11 +143,13 @@ class ScalerGeneticOptimizer:
         new_population.append(child)
       
       # Mutating the population
+      self.current_mutation_rate = self.get_mutation_rate(generation)
+      print("Mutation Rate:", self.current_mutation_rate)
       for timetable_id in range(self.genetic_optimizer_specifications.population_size):
         timetable = new_population[timetable_id]
         for session_id in range(self.time_table_specifications.number_of_sessions):
           uniform_sample = random.uniform(0, 1)
-          if uniform_sample <= self.genetic_optimizer_specifications.mutation_rate:
+          if uniform_sample <= self.current_mutation_rate:
             timetable.schedule_session(session_id, 
                                         self.time_table_specifications.time_slot_ids[random.randint(0, self.time_table_specifications.number_of_time_slots - 1)], 
                                         self.time_table_specifications.venue_ids[random.randint(0, self.time_table_specifications.number_of_venues - 1)])
