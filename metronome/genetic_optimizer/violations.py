@@ -30,3 +30,9 @@ class Violations:
     violations += hard_multi_timeslot_violations
     
     return [violations, hard_party_violations, hard_repeat_violations, hard_venue_capacity_violations, hard_venue_type_violations, hard_max_hours_violations, hard_multi_timeslot_violations]
+  
+  def get_violation_list(self):
+    return ["Party Violations", "Repeat Violations", "Venue Capacity Violations", "Venue Type Violations", "Max Hours Violations", "Multi Timeslot Violations"]
+
+  def get_number_of_violations(self):
+    return 6

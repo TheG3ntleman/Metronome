@@ -1,4 +1,5 @@
 from .specifications import TimeTableSpecifications
+import numpy as np
 #from metronome.timetable import TimeTable
 
 class Constraints:
@@ -31,7 +32,7 @@ class Constraints:
   def hard_repeated_tuple(self, timetable, depth: int) -> int:
     number_of_violations = 0
 
-    tuple_counter = [[0] * self.time_table_specifications.number_of_venues] * self.time_table_specifications.number_of_time_slots
+    tuple_counter = np.zeros((self.time_table_specifications.number_of_time_slots, self.time_table_specifications.number_of_venues))
     for session_id in range(depth):
       tuple_counter[timetable.timetable[session_id]["timeslot_id"]][timetable.timetable[session_id]["venue_id"]] += 1
   
@@ -39,6 +40,10 @@ class Constraints:
       for j in range(self.time_table_specifications.number_of_venues):
         if tuple_counter[i][j] > 1:
           number_of_violations += tuple_counter[i][j] - 1
+
+    #print(tuple_counter)
+    #print(number_of_violations)
+    #exit()
 
     return number_of_violations
 

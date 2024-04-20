@@ -1,7 +1,5 @@
 from metronome.timetable import TimeTable
-#from metronome.common import TimeTableSpecifications
 from matplotlib import pyplot as plt
-#from metronome.common import Constraints 
 from .violations import Violations
 from tqdm import tqdm
 import random
@@ -26,6 +24,7 @@ class ScalerGeneticOptimizer:
         
     # Other related objects
     self.violation_counter = Violations(time_table_specifications)
+    self.most_fit_timetable_id = 0
     
     # Control Variables
     self.initialized = False
@@ -36,7 +35,7 @@ class ScalerGeneticOptimizer:
     # Debug/Recording/Convergence Testing variables
     self.average_violations = []
     self.minimum_violations = []
-    self.compartmental_violations = np.zeros((self.genetic_optimizer_specifications.number_of_generations, 6))
+    self.compartmental_violations = np.zeros((self.genetic_optimizer_specifications.number_of_generations, self.violation_counter.get_number_of_violations()))
   
   def initialize(self) -> None:
     # Initializing Population Randomly.
@@ -57,9 +56,12 @@ class ScalerGeneticOptimizer:
       # Violation (negative fitness) Computation
       violations = []
       
+      average_compartmental_violations = np.zeros(self.violation_counter.get_number_of_violations())
       for timetable in self.population:
         violations_per_table = self.violation_counter.calculate_violations(timetable)
+        average_compartmental_violations += violations_per_table[1:]
         violations.append(violations_per_table[0])
+      self.compartmental_violations[generation] = average_compartmental_violations / self.genetic_optimizer_specifications.population_size
         
       #print("Len Violations:", len(violations))
       #print("Violations:", violations)
@@ -79,6 +81,9 @@ class ScalerGeneticOptimizer:
 
       # Selecting top k individuals
       parents = sorted(range(len(violations)), key=lambda i: violations[i])[:top_k]
+      self.most_fit_timetable_id = parents[0]
+      print("Parents of generation", generation + 1, ":", parents, " | Most fit timetable:", self.most_fit_timetable_id)
+
 
 
       # Crossover
@@ -136,6 +141,12 @@ class ScalerGeneticOptimizer:
 
   
   def plot_violations(self) -> None:
+    print("SUMMARY:")
+    print("\tNumber of Generations:", self.genetic_optimizer_specifications.number_of_generations)
+    print("\tPopulation Size:", self.genetic_optimizer_specifications.population_size)
+    print("\tMinimum Violations:", self.minimum_violations[-1])
+    print("\tIndex of most fit timetable:", self.most_fit_timetable_id)
+    
     plt.plot(self.average_violations)
     plt.title("Average Violations")
     plt.show()
@@ -146,16 +157,13 @@ class ScalerGeneticOptimizer:
     
     # Plotting compartmental violations
     # Define curve names
-    curve_names = [
-        "Party Violations",
-        "Repeat Violations",
-        "Venue Capacity Violations",
-        "Venue Type Violations",
-        "Max Hours Violations",
-        "Multi Timeslot Violations"
-    ]
-
-    # Plot all curves with their names as labels
+    curve_names = self.violation_counter.get_violation_list()
+    for i in range(self.violation_counter.get_number_of_violations()):
+      plt.plot(self.compartmental_violations[:, i], label = curve_names[i])
+    plt.legend()
+    plt.title("Compartmental Violations")
+    plt.show()
+    
 
   
   def save_violations(self, path) -> None:
@@ -163,6 +171,9 @@ class ScalerGeneticOptimizer:
     np.savetxt(path + "average_violations.txt", self.average_violations)
     np.savetxt(path + "minimum_violations.txt", self.minimum_violations)
     np.savetxt(path + "compartmental_violations.txt", self.compartmental_violations)
+  
+  def get_most_fit_timetable(self):
+    return self.population[self.most_fit_timetable_id]
     
 class DifferentialEvolution:
   

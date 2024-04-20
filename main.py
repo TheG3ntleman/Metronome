@@ -83,3 +83,11 @@ scaler_genetic_optimizer.optimize()
 # Plotting minimum violations and average violations in two seperate plots
 scaler_genetic_optimizer.plot_violations()
 scaler_genetic_optimizer.save_violations("output/violations.txt")
+
+most_fit_timetable = scaler_genetic_optimizer.get_most_fit_timetable()
+
+print("\n\nMost fit timetable:")
+most_fit_timetable.print()
+
+# Repeated tuples violations
+print("\n\nRepeated tuples violations:", scaler_genetic_optimizer.violation_counter.constraints.hard_repeated_tuple(most_fit_timetable, sample_time_table_specifications.number_of_sessions))
