@@ -33,8 +33,8 @@ sample_time_table_specifications.time_slot_days = [i // 7 for i in range(sample_
 
 #locality table
 sample_time_table_specifications.number_of_localities = 3
-sample_time_table_specifications.locality_ids = [0, 1, 2]  # locality_i = 0, locality_j = 0, locality_i = 0, locality_j = 1, locality_i = 1, locality_j = 1
-sample_time_table_specifications.locality_distances = [0, 10, 0]  # Distances between localities
+sample_time_table_specifications.locality_ids = [0, 1, 2, 3]  # locality_i = 0, locality_j = 0, locality_i = 0, locality_j = 1, locality_i = 1, locality_j = 1
+sample_time_table_specifications.locality_distances = [0, 10, 10, 0]  # Distances between localities
 
 #venue table
 sample_time_table_specifications.number_of_venues = 15
@@ -90,10 +90,4 @@ print("\n\nMost fit timetable:")
 most_fit_timetable.print()
 
 # Repeated tuples violations
-violation_count_for_most_fit_timetable = scaler_genetic_optimizer.violation_counter.calculate_violations(most_fit_timetable)
-# Printing out violation counts for the most fit timetable
-print("\n\nViolation counts for the most fit timetable:")
-
-for i in range(len(violation_count_for_most_fit_timetable[1:])):
-    print(scaler_genetic_optimizer.violation_counter.get_violation_list()[i], ":", violation_count_for_most_fit_timetable[i + 1])
-    
+print("\n\nRepeated tuples violations:", scaler_genetic_optimizer.violation_counter.constraints.hard_repeated_tuple(most_fit_timetable, sample_time_table_specifications.number_of_sessions))
