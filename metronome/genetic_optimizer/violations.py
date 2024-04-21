@@ -32,6 +32,9 @@ class Violations:
     hard_multi_timeslot_violations = 5 * self.constraints.hard_multi_timeslot(time_table, self.time_table_specifications.number_of_sessions)
     violations += hard_multi_timeslot_violations
     
+    if not soft_constraint_enable:
+      return [violations, hard_party_violations, hard_repeat_violations, hard_venue_capacity_violations, hard_venue_type_violations, hard_max_hours_violations, hard_multi_timeslot_violations]
+    
     if soft_constraint_enable:
       soft_travel_time_violations = self.constraints.soft_travel_time(time_table, self.time_table_specifications.number_of_sessions)
       soft_violations += soft_travel_time_violations
@@ -62,12 +65,14 @@ class Violations:
 
       soft_lab_after_lecture_violations = self.constraints.soft_lab_after_lecture(time_table, self.time_table_specifications.number_of_sessions)
       soft_violations += soft_lab_after_lecture_violations
-
     
-    return [10*violations + soft_violations, hard_party_violations, hard_repeat_violations, hard_venue_capacity_violations, hard_venue_type_violations, hard_max_hours_violations, hard_multi_timeslot_violations]
+      return [10*violations + soft_violations, hard_party_violations, hard_repeat_violations, hard_venue_capacity_violations, hard_venue_type_violations, hard_max_hours_violations, hard_multi_timeslot_violations, soft_travel_time_violations, soft_chunking_violations, soft_room_utilization_violations, soft_extreme_time_violations, soft_room_capacity_violations, soft_coommon_timeslot_empty_violations, soft_minimize_back_to_back_violations, soft_repeated_course_sessions_violations, soft_sessions_well_distributed_violations, soft_lab_after_lecture_violations]
   
   def get_violation_list(self):
-    return ["Party Violations", "Repeat Violations", "Venue Capacity Violations", "Venue Type Violations", "Max Hours Violations", "Multi Timeslot Violations"]
+    if soft_constraint_enable:
+      return ["Party Violations (Hard)", "Repeat Violations (Hard)", "Venue Capacity Violations (Hard)", "Venue Type Violations (Hard)", "Max Hours Violations (Hard)", "Multi Timeslot Violations (Hard)", "Travel Time Violations (Soft)", "Chunking Violations (Soft)", "Room Utilization Violations (Soft)", "Extreme Time Violations (Soft)", "Room Capacity Violations (Soft)", "Common Timeslot Empty Violations (Soft)", "Minimize Back to Back Violations (Soft)", "Repeated Course Sessions Violations (Soft)", "Sessions Well Distributed Violations (Soft)", "Lab After Lecture Violations (Soft)"]
+    else:
+      return ["Party Violations", "Repeat Violations", "Venue Capacity Violations", "Venue Type Violations", "Max Hours Violations", "Multi Timeslot Violations"]
 
   def get_number_of_violations(self):
-    return 6
+    return 16 if soft_constraint_enable else 6

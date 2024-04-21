@@ -10,8 +10,8 @@ import math
 class GeneticOptimizerSpecifications:
   
   def __init__(self):
-    self.number_of_generations = 100
-    self.population_size = 3000
+    self.number_of_generations = 150
+    self.population_size = 1000
     self.top_k = int(self.population_size / 70)
     self.crossover_rate = 0.5
     

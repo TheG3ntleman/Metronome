@@ -2,6 +2,7 @@ from metronome import TimeTable
 from metronome.genetic_optimizer import GeneticOptimizerSpecifications
 from metronome.genetic_optimizer import ScalerGeneticOptimizer
 from metronome.common import TimeTableSpecifications
+from metronome.mcts.problem import MCTSTupleFrequencyProblem, MCTSElementFrequencyProblem
 
 sample_time_table_specifications = TimeTableSpecifications()
 genetic_optimizer_specifications = GeneticOptimizerSpecifications()
@@ -89,5 +90,16 @@ most_fit_timetable = scaler_genetic_optimizer.get_most_fit_timetable()
 print("\n\nMost fit timetable:")
 most_fit_timetable.print()
 
-# Repeated tuples violations
-print("\n\nRepeated tuples violations:", scaler_genetic_optimizer.violation_counter.constraints.hard_repeated_tuple(most_fit_timetable, sample_time_table_specifications.number_of_sessions))
+# Printing out individual violation counts of all the constraints for the fit timetable
+print("\n\nViolations:")
+
+violations = scaler_genetic_optimizer.violation_counter.calculate_violations(most_fit_timetable)
+for i in range(scaler_genetic_optimizer.violation_counter.get_number_of_violations()):
+    print("\t", scaler_genetic_optimizer.violation_counter.get_violation_list()[i], ":", violations[i + 1])
+    
+# Converting the last generation to MCTS problems of both types 
+mcts_tuple_frequency_problem = MCTSTupleFrequencyProblem(scaler_genetic_optimizer.population, sample_time_table_specifications.number_of_time_slots, sample_time_table_specifications.number_of_venues)
+mcts_element_frequency_problem = MCTSElementFrequencyProblem(scaler_genetic_optimizer.population, sample_time_table_specifications.number_of_time_slots, sample_time_table_specifications.number_of_venues)
+
+mcts_tuple_frequency_problem.print()
+mcts_element_frequency_problem.print()
