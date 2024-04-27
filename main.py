@@ -3,6 +3,7 @@ from metronome.genetic_optimizer import GeneticOptimizerSpecifications
 from metronome.genetic_optimizer import ScalerGeneticOptimizer
 from metronome.common import TimeTableSpecifications
 from metronome.mcts.problem import MCTSTupleFrequencyProblem, MCTSElementFrequencyProblem
+from metronome.mcts.mcts_solve import MCTS_solver
 
 sample_time_table_specifications = TimeTableSpecifications()
 genetic_optimizer_specifications = GeneticOptimizerSpecifications()
@@ -81,9 +82,11 @@ for i in range(sample_time_table_specifications.number_of_assignments):
 # Running genetic optimizer 
 scaler_genetic_optimizer.optimize()
 
+'''
 # Plotting minimum violations and average violations in two seperate plots
 scaler_genetic_optimizer.plot_violations()
 scaler_genetic_optimizer.save_violations("output/violations.txt")
+'''
 
 most_fit_timetable = scaler_genetic_optimizer.get_most_fit_timetable()
 
@@ -103,3 +106,25 @@ mcts_element_frequency_problem = MCTSElementFrequencyProblem(scaler_genetic_opti
 
 mcts_tuple_frequency_problem.print()
 mcts_element_frequency_problem.print()
+
+
+mcts_solve = MCTS_solver(5, sample_time_table_specifications, mcts_tuple_frequency_problem)
+mcts_solve.run_MCTS()
+
+
+print("\n\nViolations MCTS:")
+
+violations = scaler_genetic_optimizer.violation_counter.calculate_violations(mcts_solve.partial_timetable)
+for i in range(scaler_genetic_optimizer.violation_counter.get_number_of_violations()):
+    print("\t", scaler_genetic_optimizer.violation_counter.get_violation_list()[i], ":", violations[i + 1])
+
+
+print("\n\nMost fit from genetic algorithm timetable:")
+most_fit_timetable.print()
+
+# Printing out individual violation counts of all the constraints for the fit timetable
+print("\n\nViolations:")
+
+violations = scaler_genetic_optimizer.violation_counter.calculate_violations(most_fit_timetable)
+for i in range(scaler_genetic_optimizer.violation_counter.get_number_of_violations()):
+    print("\t", scaler_genetic_optimizer.violation_counter.get_violation_list()[i], ":", violations[i + 1])

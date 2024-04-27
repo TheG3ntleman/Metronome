@@ -18,7 +18,7 @@ class Constraints:
       timeslot_counts = [0] * self.time_table_specifications.number_of_time_slots
 
       for session in sessions:
-        if session > depth:
+        if session >= depth:
           continue
         timeslot_counts[timetable.timetable[session]["timeslot_id"]] += 1
 
@@ -89,6 +89,8 @@ class Constraints:
       sessions = self.time_table_specifications.find_associated_sessions(party_id, depth)
 
       for session in sessions:
+        if session > depth:
+          continue
         timeslot_id = timetable.timetable[session]["timeslot_id"]
         day = self.time_table_specifications.time_slot_days[timeslot_id]
         no_of_classes_per_day[day] += 1
@@ -273,7 +275,7 @@ class Constraints:
       if combined_strength < self.time_table_specifications.venue_capacities[timetable.timetable[session_id]["venue_id"]]:
         aggregate_capacity_gaps += self.time_table_specifications.venue_capacities[timetable.timetable[session_id]["venue_id"]] - combined_strength
       
-    return aggregate_capacity_gaps
+    return aggregate_capacity_gaps/(depth+1)
   
 
   def soft_common_timeslot_empty(self, timetable, depth: int) -> int:
@@ -341,6 +343,31 @@ class Constraints:
     # An efficient implementation would require access to a venue type table
     return aggregate_lab_after_lecture
   
+  def is_feasible(self, timetable, depth):
+    # Check if the assignment satisfies all hard constraints
+    if (self.hard_party_conflict(timetable, depth) == 0 and
+        self.hard_repeated_tuple(timetable, depth) == 0 and
+        self.hard_venue_capacity(timetable, depth) == 0 and
+        self.hard_venue_type(timetable, depth) == 0 and
+        self.hard_max_hours(timetable, depth) == 0 and
+        self.hard_multi_timeslot(timetable, depth) == 0):
+      return True
+    return False
   
+  def evaluate_soft_constraints(self, timetable, depth):
+    # Calculate the total number of violations for the session assignment based on soft constraints
+    violations = (
+      self.soft_travel_time(timetable, depth) +
+      self.soft_chunking(timetable, depth) +
+      self.soft_room_utilization(timetable, depth) +
+      self.soft_extreme_time(timetable, depth) +
+      self.soft_room_capacity_utilization(timetable, depth) +
+      self.soft_common_timeslot_empty(timetable, depth) +
+      self.soft_minimize_back_to_back(timetable, depth) +
+      self.soft_repeated_course_session(timetable, depth) +
+      self.soft_sessions_well_distributed(timetable, depth) +
+      self.soft_lab_after_lecture(timetable, depth)
+    )
+    return violations
   #@staticmethod
   

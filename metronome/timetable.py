@@ -9,6 +9,11 @@ class TimeTable:
   def schedule_session(self, session_id, timeslot_id, venue_id):
     self.timetable[session_id]["timeslot_id"] = timeslot_id
     self.timetable[session_id]["venue_id"] = venue_id
+
+  def set_session_info(self, session_id, timeslot_id, venue_id):
+    # This method allows for item assignment
+    self.timetable[session_id] = {"timeslot_id": timeslot_id, "venue_id": venue_id}
+        
   
   def get_session_info(self, session_id):
     return self.timetable[session_id]

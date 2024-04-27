@@ -66,7 +66,7 @@ class Violations:
       soft_lab_after_lecture_violations = self.constraints.soft_lab_after_lecture(time_table, self.time_table_specifications.number_of_sessions)
       soft_violations += soft_lab_after_lecture_violations
     
-      return [10*violations + soft_violations, hard_party_violations, hard_repeat_violations, hard_venue_capacity_violations, hard_venue_type_violations, hard_max_hours_violations, hard_multi_timeslot_violations, soft_travel_time_violations, soft_chunking_violations, soft_room_utilization_violations, soft_extreme_time_violations, soft_room_capacity_violations, soft_coommon_timeslot_empty_violations, soft_minimize_back_to_back_violations, soft_repeated_course_sessions_violations, soft_sessions_well_distributed_violations, soft_lab_after_lecture_violations]
+      return [3*violations + soft_violations, hard_party_violations, hard_repeat_violations, hard_venue_capacity_violations, hard_venue_type_violations, hard_max_hours_violations, hard_multi_timeslot_violations, soft_travel_time_violations, soft_chunking_violations, soft_room_utilization_violations, soft_extreme_time_violations, soft_room_capacity_violations, soft_coommon_timeslot_empty_violations, soft_minimize_back_to_back_violations, soft_repeated_course_sessions_violations, soft_sessions_well_distributed_violations, soft_lab_after_lecture_violations]
   
   def get_violation_list(self):
     if soft_constraint_enable:
