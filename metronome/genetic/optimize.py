@@ -38,7 +38,8 @@ class ScalerGeneticOptimizer:
     self.average_violations = []
     self.minimum_violations = []  
     self.compartmental_violations = np.zeros((self.genetic_optimizer_specifications.max_generations, 
-                                              self.violation_counter.get_number_of_violations()))  
+                                              self.violation_counter.get_number_of_violations()))
+    self.index_of_best_timetable = 0
     
     
   def initialize_population(self, number_of_sessions : int, number_of_timetables : int) -> List[TimeTable]:
@@ -59,13 +60,16 @@ class ScalerGeneticOptimizer:
       # STEP 0 - Calculate the violations of the population
       violations_per_timetable = np.zeros(self.genetic_optimizer_specifications.population_size)
       average_violation = 0
-      minimum_violation = 0
+      minimum_violation = math.inf
       for i, timetable in enumerate(self.population):
         violations  = self.violation_counter.calculate_weighted_violations(timetable)
         
         # Appending average and min violations
         average_violation += violations[0]
-        minimum_violation = min(minimum_violation, violations[0])
+        
+        if (violations[0] < minimum_violation):
+          minimum_violation = violations[0]
+          self.index_of_best_timetable = i
         
         # Adding compartmental violations
         self.compartmental_violations[gen_i] = violations[1:]
@@ -87,7 +91,7 @@ class ScalerGeneticOptimizer:
       
       if (gen_i % self.printstep == 0 or gen_i == self.genetic_optimizer_specifications.max_generations - 1):
         # Printing the average and min violations in a formatted and justified way.
-        print(f"Generation {gen_i} - Average Violations: {np.mean(violations_per_timetable):5.2f} - Min Violations: {np.min(violations_per_timetable):5.2f}")
+        print(f"Generation {gen_i:4d} - Average Violations: {np.mean(violations_per_timetable):6.2f} - Min Violations: {np.min(violations_per_timetable):6.2f}")
         #print(f"Generation {gen_i} - Average Violations: {np.mean(violations_per_timetable)} - Min Violations: {np.min(violations_per_timetable)}")      
   
   def optimize(self):
@@ -119,4 +123,10 @@ class ScalerGeneticOptimizer:
       plt.plot(self.compartmental_violations[:, i], label=label_for_violations[i])
     plt.legend()
     plt.show()
+  
+  def get_best_timetable(self) -> TimeTable:
+    return self.population[self.index_of_best_timetable]
+  
+  def get_population(self) -> List[TimeTable]:
+    return self.population
     

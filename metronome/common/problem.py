@@ -27,14 +27,11 @@ class MetaSpecifications:
     min_lab_capacity = 10
     max_lab_capacity = 30
 
-    capacity_list = [{"min": min_lecture_hall_capacity, "max": max_lecture_hall_capacity},
-                     {"min": min_class_room_capacity,
-                         "max": max_class_room_capacity},
-                     {"min": min_tutorial_room_capacity,
-                         "max": max_tutorial_room_capacity},
-                     {"min": min_auditorium_capacity,
-                         "max": max_auditorium_capacity},
-                     {"min": min_lab_capacity, "max": max_lab_capacity}]
+    capacity_list = [{'min': min_lecture_hall_capacity, 'max': max_lecture_hall_capacity}, 
+                    {'min': min_class_room_capacity, 'max': max_class_room_capacity}, 
+                    {'min': min_tutorial_room_capacity, 'max': max_tutorial_room_capacity}, 
+                    {'min': min_auditorium_capacity, 'max': max_auditorium_capacity}, 
+                    {'min': min_lab_capacity, 'max': max_lab_capacity}]
 
     number_of_student_parties = 30
     number_of_professor_parties = 40
@@ -55,10 +52,28 @@ class MetaSpecifications:
     preferred_back_to_back_upper_bound = 3
 
 
+    min_student_party_strength = 20
+    max_student_party_strength = 80
+
+    preferred_start_time_lower_bound = 0  # 8:30 - 9:30
+    preferred_start_time_upper_bound = 2  # 10:30 - 11:30
+
+    preferred_end_time_lower_bound = 4  # 3:30 - 4:30
+    preferred_end_time_upper_bound = 6  # 5:30 - 6:30
+
+    preferred_max_hours_lower_bound = 2
+    preferred_max_hours_upper_bound = 6
+
+    preferred_back_to_back_lower_bound = 2
+    preferred_back_to_back_upper_bound = 3
+
 class SyntheticProblemGenerator:
+
     @staticmethod
     def generate_feasible_specifications() -> TimeTableSpecifications:
 
+        # Making an empty specification object
+        specifications = TimeTableSpecifications()
         # Making an empty specification object
         specifications = TimeTableSpecifications()
 

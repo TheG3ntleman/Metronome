@@ -31,7 +31,7 @@ class TimeTable:
     print("Number of sessions: ", self.size)
     print("=====================================")
     for i in range(self.size):
-      print(f"{self.timetable[i]['timeslot_id']}, {self.timetable[i]['venue_id']}")
+      print(f"{self.timetable[i]['timeslot_id']:3d}, {self.timetable[i]['venue_id']:3d}")
     
   def __getitem__(self, session_id : int) -> dict:
     return self.timetable[session_id]
