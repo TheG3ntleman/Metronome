@@ -6,10 +6,10 @@ class GeneticOptimizerSpecifications:
     self.population_size = 1000
     
     # Optimizer terminates after this
-    self.max_generations = 200
+    self.max_generations = 10
     
     # Number of top timetables to select
-    self.parent_window = 10 # Indicative of percentage of population
+    self.parent_window = 5 # Indicative of percentage of population
     self.primary_parent_window = 2 # Indicative of percentage of population
     
     # Mutation Rate related stuff

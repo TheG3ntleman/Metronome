@@ -5,49 +5,49 @@ class TimeTableSpecifications:
   def __init__(self):
     self.locality_table = {
       "size" : int(),
-      "id": List[int],
-      "distance": List[float],
+      "id": [], #List[int],
+      "distance": [], #List[float],
     }
     
     self.venue_table = {
       "size" : int(),
-      "id": List[int],
-      "type": List[str],
-      "capacity": List[int],
-      "locality_id": List[int],
+      "id": [], #List[int],
+      "type": [], #List[str],
+      "capacity": [], #List[int],
+      "locality_id": [], #List[int],
     }
     
     self.timeslot_table = {
       "size" : int(),
-      "id": List[int],
-      "day": List[int]
+      "id": [], #List[int],
+      "day": [], #List[int]
     }
     
     self.party_table = {
       "size" : int(),
-      "id": List[int],
-      "strength": List[int],
-      "max_hour": List[int],
-      "type": List[int],
-      "preffered_start_time": List[int],
-      "preffered_end_time": List[int],
-      "preffered_back_to_back": List[int],
-      "preffered_max_hours": List[int]
+      "id": [], #List[int],
+      "strength": [], #List[int],
+      "max_hour": [], #List[int],
+      "type": [], #List[int],
+      "preffered_start_time": [], #List[int],
+      "preffered_end_time": [], #List[int],
+      "preffered_back_to_back": [], #List[int],
+      "preffered_max_hours": [], #List[int]
     }
     
     self.sessions_table = {
       "size": int(),
-      "id": List[int],
-      "type": List[str],
-      "duration": List[int],
-      "course": List[int], # Not associated to its own table.
+      "id": [], #List[int],
+      "type": [], #List[str],
+      "duration": [], #List[int],
+      "course": [], #List[int], # Not associated to its own table.
     }
     
     self.assignment_table = {
       "size": int(),
-      "party_id": List[int],
-      "session_id": List[int],
-      "priority": List[int],
+      "party_id": [], #List[int],
+      "session_id": [], #List[int],
+      "priority": [], #List[int],
     }
     
   def find_associated_sessions(self, party_id : int, depth : int) -> List[int]:
@@ -118,7 +118,5 @@ class TimeTableSpecifications:
     print("Party ID: ", self.assignment_table["party_id"])
     print("Session ID: ", self.assignment_table["session_id"])
     print("Priority: ", self.assignment_table["priority"])
-    print()
-  
-  
+    print()    
     

@@ -1,9 +1,15 @@
 from metronome.common.timetable import TimeTable
+from metronome.common.specifications import TimeTableSpecifications
 from metronome.common.problem import SyntheticProblemGenerator
 from metronome.common.violations import Violations
+from metronome.common.reduced_problem import MCTSTupleFrequencyProblem
 
 from metronome.genetic.optimize import ScalerGeneticOptimizer
 from metronome.genetic.specifications import GeneticOptimizerSpecifications
+
+# Making empty specifications
+empty_specifications = TimeTableSpecifications()
+empty_specifications.venue_table['size']
 
 # Generating a sample timetable specification
 sample_time_table_specifications = SyntheticProblemGenerator.generate_feasible_specifications()
@@ -29,3 +35,9 @@ violation_labels = genetic_optimizer.violation_counter.get_violation_list()
 #printing violations with formatting and justifications
 for i, violation in enumerate(violations[1:]):
   print(f"{i:3d}. {violation_labels[i]:50s}: {violation:.4f}")
+
+# Printing out reduced problem from best population
+reduced_problem = MCTSTupleFrequencyProblem(genetic_optimizer.population, 
+                                            sample_time_table_specifications.timeslot_table['size'], 
+                                            sample_time_table_specifications.venue_table['size'])
+reduced_problem.print()
