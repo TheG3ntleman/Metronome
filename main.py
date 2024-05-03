@@ -2,7 +2,8 @@ from metronome.common.timetable import TimeTable
 from metronome.common.specifications import TimeTableSpecifications
 from metronome.common.problem import SyntheticProblemGenerator
 from metronome.common.violations import Violations
-from metronome.common.reduced_problem import MCTSTupleFrequencyProblem
+from metronome.common.reduced_problem import MCTSTupleFrequencyProblem, Problem
+from metronome.neural.string_gen import StringGenerator
 
 from metronome.genetic.optimize import ScalerGeneticOptimizer
 from metronome.genetic.specifications import GeneticOptimizerSpecifications
@@ -41,3 +42,12 @@ reduced_problem = MCTSTupleFrequencyProblem(genetic_optimizer.population,
                                             sample_time_table_specifications.timeslot_table['size'], 
                                             sample_time_table_specifications.venue_table['size'])
 reduced_problem.print()
+
+# Create an instance of Problem using the information from MCTSTupleFrequencyProblem
+problem_instance = Problem(reduced_problem.number_of_sessions, reduced_problem.options)
+
+# generating the string
+string_generator = StringGenerator()
+
+generated_string = string_generator.generate_string(sample_time_table_specifications, problem_instance, best_timetable, sample_time_table_specifications.sessions_table['size'] - 5)
+string_generator.print(generated_string)

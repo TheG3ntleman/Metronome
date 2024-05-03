@@ -2,6 +2,7 @@ from metronome.common.specifications import TimeTableSpecifications
 
 import random
 import copy
+
 class TimeTable:
   
   def __init__(self, number_of_sessions : int) -> None:
