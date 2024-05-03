@@ -1,6 +1,7 @@
-import random
 from metronome.common.specifications import TimeTableSpecifications
 
+import random
+import copy
 class TimeTable:
   
   def __init__(self, number_of_sessions : int) -> None:
@@ -20,8 +21,8 @@ class TimeTable:
       random_venue_index = random.randint(0, time_table_specifications.venue_table['size'] - 1)
       self.schedule_session(
         i,
-        self.time_table_specifications.timeslot_table['id'][random_timetable_index],
-        self.time_table_specifications.venue_table['id'][random_venue_index]
+        time_table_specifications.timeslot_table['id'][random_timetable_index],
+        time_table_specifications.venue_table['id'][random_venue_index]
       )
   
   def print(self):
@@ -34,3 +35,8 @@ class TimeTable:
     
   def __getitem__(self, session_id : int) -> dict:
     return self.timetable[session_id]
+  
+  def copy(self):
+    new_timetable = TimeTable(self.size)
+    new_timetable.timetable = copy.deepcopy(self.timetable)
+    return new_timetable

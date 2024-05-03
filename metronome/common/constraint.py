@@ -97,8 +97,8 @@ class Constraints:
 
       # Checking if the number of sessions per day exceeds the maximum allowed hours
       for i in range(5):
-        if no_of_classes_per_day[i] > self.time_table_specifications.party_table['max_hours'][party_id]:#party_max_hours[party_id]:
-          number_of_violations += no_of_classes_per_day[i] - self.time_table_specifications.party_table['max_hours'][party_id]#party_max_hours[party_id]
+        if no_of_classes_per_day[i] > self.time_table_specifications.party_table['max_hour'][party_id]:#party_max_hours[party_id]:
+          number_of_violations += no_of_classes_per_day[i] - self.time_table_specifications.party_table['max_hour'][party_id]#party_max_hours[party_id]
 
     return number_of_violations
   
@@ -155,6 +155,7 @@ class Constraints:
   
 
   def soft_travel_time(self, timetable, depth: int) -> int:
+    return 0 # Temporary placeholder
     aggregate_travel_time = 0
 
     for party_id in range(self.time_table_specifications.party_table['size']):#.number_of_parties):
@@ -186,8 +187,8 @@ class Constraints:
             second_venue_id = timetable.timetable[sessions[j]]["venue_id"]
             if first_venue_id != second_venue_id:
               # Find corresponding locality
-              first_locality_id = self.time_table_specifications.venue_table['locality'][first_venue_id]#venue_locality[first_venue_id]
-              second_locality_id = self.time_table_specifications.venue_table['locality'][second_venue_id]#venue_locality[second_venue_id]
+              first_locality_id = self.time_table_specifications.venue_table['locality_id'][first_venue_id]#venue_locality[first_venue_id]
+              second_locality_id = self.time_table_specifications.venue_table['locality_id'][second_venue_id]#venue_locality[second_venue_id]
               x = first_locality_id
               y = second_locality_id
               n = self.time_table_specifications.locality_table['size']#number_of_localities
@@ -290,7 +291,7 @@ class Constraints:
     aggregate_back_to_back = 0
 
     # Iterating through parties
-    for party_id in range(self.time_table_specifications.party_table.size):#number_of_parties):
+    for party_id in range(self.time_table_specifications.party_table['size']):#number_of_parties):
       # Checking if the party is a professor
       if self.time_table_specifications.party_table['id'][party_id] != 1:#party_type[party_id] != 1:
         continue
@@ -319,7 +320,6 @@ class Constraints:
     # Placeholder function
     # Requires a course table for efficient implementation
     return 0
-  
 
   def soft_sessions_well_distributed(self, timetable, depth: int) -> int:
     aggregate_less_used_timeslots = 0
@@ -374,4 +374,3 @@ class Constraints:
     )
     return violations
   #@staticmethod
-  

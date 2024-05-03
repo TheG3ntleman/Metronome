@@ -54,21 +54,24 @@ class TimeTableSpecifications:
     associated_sessions = []
     for i in range(self.assignment_table['size']):
       # Searching for the sessions that this party must attend.
-      if self.assignment_table[i]['party_id'] == party_id:
+      if self.assignment_table['party_id'][i] == party_id:
         # Searching for the sessions which are less than the current depth.
-        if self.assignment_table[i]['session_id'] < depth:
-          associated_sessions.append(self.assignment_table[i]['session_id'])
+        if self.assignment_table['session_id'][i] < depth:
+          associated_sessions.append(self.assignment_table['session_id'][i])
     return associated_sessions
   
-  def find_associated_parties(self, session_id : int)  -> List[int]:
+  def find_associated_parties(self, session_id : int, depth)  -> List[int]:
     associated_parties = []
     for i in range(self.assignment_table['size']):
       # Searching for the parties that must attend this session.
-      if self.assignment_table[i]['session_id'] == session_id:
-        associated_parties.append(self.assignment_table[i]['party_id'])
+      if self.assignment_table['session_id'][i] == session_id:
+        associated_parties.append(self.assignment_table['party_id'][i])
     return associated_parties
   
   def print(self):
+    # Some new lines
+    print("\n\n")
+    
     # Neatly print the specifications
     print("Locality Table")
     print("Size: ", self.locality_table["size"])
@@ -116,5 +119,6 @@ class TimeTableSpecifications:
     print("Session ID: ", self.assignment_table["session_id"])
     print("Priority: ", self.assignment_table["priority"])
     print()
-    
+  
+  
     
