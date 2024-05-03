@@ -24,8 +24,8 @@ class MetaSpecifications:
     min_auditorium_capacity = 150
     max_auditorium_capacity = 300
 
-    min_lab_capacity = 10
-    max_lab_capacity = 30
+    min_lab_capacity = 150 # Changed from 10 to 150
+    max_lab_capacity = 300 # Changed from 30 to 300
 
     capacity_list = [{'min': min_lecture_hall_capacity, 'max': max_lecture_hall_capacity}, 
                     {'min': min_class_room_capacity, 'max': max_class_room_capacity}, 
@@ -189,11 +189,11 @@ class SyntheticProblemGenerator:
                             number_of_sessions_set.add(matrix[i][j][k])
                             corresponding_venues.append(j)
                             number_of_sessions += 1
-                        # this has to be changed, not possibly correct
-                        if i+1 < matrix.shape[0] and matrix[i][j][k] == matrix[i+1][j][k] and j % 7 == (j+1) % 7:
-                            session_durations.append(2)  # if it's a lab
-                        else:
-                            session_durations.append(1)  # if it's a lecture
+                        # this has to be changed, not possibly correct -> done
+                            if i+1 < matrix.shape[0] and matrix[i][j][k] < 0 and matrix[i][j][k] == matrix[i+1][j][k]: # need to change this -> done
+                                session_durations.append(2)  # if it's a lab
+                            else:
+                                session_durations.append(1)  # if it's a lecture
 
         # number_of_sessions = len(number_of_sessions)
 
@@ -299,6 +299,7 @@ class EclairField:
         number_of_blocks = len(blocks)
         timeslot_flag: int = number_of_timeslots
         session_id: int = 1
+        possible_session_is_lab: int = -1 # for a lab session, we are using negative values to make it consider as a single session
 
         # total number of parties in the blocks
         # set
@@ -357,23 +358,32 @@ class EclairField:
 
                     timeslot_choosen: int = -1
 
+                    print()
+                    print("Possible Timeslots: ", possible_timeslot)
+                    print()
+
                     for timeslots in possible_timeslot:
-                        if timeslots in possible_timeslot and (timeslots + 1) in possible_timeslot and timeslots % 7 == (timeslots + 1) % 7:
+                        print()
+                        print("Timeslots: ", timeslots)
+                        print()
+                        if timeslots in possible_timeslot and (timeslots + 1) in possible_timeslot and timeslots // 7 == (timeslots + 1) // 7:
                             timeslot_choosen = timeslots
+                            print("Timeslot Choosen of type Lab: ", timeslot_choosen)
                             break
                     if timeslot_choosen == -1:  # no possible timeslot for a lab
+                        print("No Possible Timeslot for a Lab")
                         break
-
+                    
                     for party in blocks[j]:
-                        self.matrix[timeslot_choosen][venue_id][party] = session_id
+                        self.matrix[timeslot_choosen][venue_id][party] = possible_session_is_lab
                         self.matrix[timeslot_choosen +
-                                    1][venue_id][party] = session_id + 1
+                                    1][venue_id][party] = possible_session_is_lab
                         is_the_timeslot_there_or_not[party].add(
                             timeslot_choosen)
                         is_the_timeslot_there_or_not[party].add(
                             timeslot_choosen + 1)
 
-                    session_id += 2
+                    session_id -= 2
 
 
                 else:
@@ -412,15 +422,22 @@ class EclairField:
 
     def find_the_venue(self, capacity) -> list:
         venue_table = self.TimeTableSpecifications.venue_table
-        for i in range(venue_table["size"]):
-            if venue_table["capacity"][i] >= capacity:
-                # print("Venue ID: ", venue_table["id"][i])
-                return [venue_table["id"][i], venue_table["type"][i]]
+        if random.random() < 0.8:
+            for i in range(venue_table["size"]):
+                if venue_table["capacity"][i] >= capacity:
+                    # print("Venue ID: ", venue_table["id"][i])
+                    return [venue_table["id"][i], venue_table["type"][i]]
+        else:
+            # In reverse direction
+            for i in range(venue_table["size"]-1, -1, -1):
+                if venue_table["capacity"][i] >= capacity:
+                    # print("Venue ID: ", venue_table["id"][i])
+                    return [venue_table["id"][i], venue_table["type"][i]]
 
         return [-1, -1]
         # We basically have to find a venue for the party blocks and then assign all the parties to that venue at a timeslot
 
-"""
+""""
 if __name__ == "__main__":
 
     # TimeTableSpecifications object
