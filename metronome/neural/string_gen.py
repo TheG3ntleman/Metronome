@@ -124,7 +124,9 @@ class StringGenerator:
 
         string.append(self.symbol_dictionary["<SIZE>"])
         # Insert the actual values here
-        string.append(time_table_specifications.locality_table['size'])  
+        size_str = str(time_table_specifications.locality_table['size'])
+        for digit in size_str:
+            string.append(int(digit))
 
         string.append(self.symbol_dictionary["<ID>"])
         # Insert the actual values here 
@@ -150,7 +152,9 @@ class StringGenerator:
         
         string.append(self.symbol_dictionary["<SIZE>"])
         # Insert the actual value for venue table size here
-        string.append(time_table_specifications.venue_table['size'])
+        size_str = str(time_table_specifications.venue_table['size'])
+        for digit in size_str:
+            string.append(int(digit))
         
         string.append(self.symbol_dictionary["<ID>"])
         # insert the actual values here
@@ -192,7 +196,9 @@ class StringGenerator:
         
         string.append(self.symbol_dictionary["<SIZE>"])
         # Insert the actual value for party table size here
-        string.append(time_table_specifications.party_table['size'])
+        size_str = str(time_table_specifications.party_table['size'])
+        for digit in size_str:
+            string.append(int(digit))
         
         string.append(self.symbol_dictionary["<ID>"])
         # insert the actual value here
@@ -308,7 +314,9 @@ class StringGenerator:
         
         string.append(self.symbol_dictionary["<SIZE>"])
         # Insert the actual value for assignment table size here
-        string.append(time_table_specifications.assignment_table['size'])
+        size_str = str(time_table_specifications.assignment_table['size'])
+        for digit in size_str:
+            string.append(int(digit))
         
         string.append(self.symbol_dictionary["<PARTY_ID>"])
         # insert the actual value here
@@ -401,6 +409,7 @@ class StringGenerator:
         string.append(self.symbol_dictionary["<END_OPTIONS>"])
 
         return string
+
   
     def generate_pretty_string(self, time_table_specifications : TimeTableSpecifications, problem : Problem, timetable : TimeTable, depth : int) -> str:
         numeric_string = self.generate_string(time_table_specifications, problem, timetable, depth)
