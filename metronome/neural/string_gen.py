@@ -308,7 +308,6 @@ class StringGenerator:
         
         string.append(self.symbol_dictionary["<END_TABLE>"])
         
-        
         # Adding assignment table to the string
         string.append(self.symbol_dictionary["<ASSIGNMENT_TABLE>"])
         

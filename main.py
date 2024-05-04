@@ -51,3 +51,4 @@ string_generator = StringGenerator()
 
 generated_string = string_generator.generate_pretty_string(sample_time_table_specifications, problem_instance, best_timetable, sample_time_table_specifications.sessions_table['size'] - 5)
 print("Pretty String:\n", generated_string)
+
