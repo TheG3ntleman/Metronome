@@ -97,7 +97,9 @@ class StringGenerator:
     
     string.append(self.symbol_dictionary["<SIZE>"])
     #Insert the actual values here
-    string.append(time_table_specifications.timeslot_table['size'])
+    size_str = str(time_table_specifications.timeslot_table['size'])
+    for digit in size_str:
+       string.append(int(digit))
     
     string.append(self.symbol_dictionary["<ID>"])
     # Insert the actual values here
@@ -125,7 +127,9 @@ class StringGenerator:
 
     string.append(self.symbol_dictionary["<SIZE>"])
     # Insert the actual values here
-    string.append(time_table_specifications.locality_table['size'])  
+    size_str = str(time_table_specifications.locality_table['size'])
+    for digit in size_str:
+       string.append(int(digit))
 
     string.append(self.symbol_dictionary["<ID>"])
     # Insert the actual values here 
@@ -151,7 +155,9 @@ class StringGenerator:
     
     string.append(self.symbol_dictionary["<SIZE>"])
     # Insert the actual value for venue table size here
-    string.append(time_table_specifications.venue_table['size'])
+    size_str = str(time_table_specifications.venue_table['size'])
+    for digit in size_str:
+       string.append(int(digit))
     
     string.append(self.symbol_dictionary["<ID>"])
     # insert the actual values here
@@ -193,7 +199,9 @@ class StringGenerator:
     
     string.append(self.symbol_dictionary["<SIZE>"])
     # Insert the actual value for party table size here
-    string.append(time_table_specifications.party_table['size'])
+    size_str = str(time_table_specifications.party_table['size'])
+    for digit in size_str:
+       string.append(int(digit))
     
     string.append(self.symbol_dictionary["<ID>"])
     # insert the actual value here
@@ -267,7 +275,9 @@ class StringGenerator:
     
     string.append(self.symbol_dictionary["<SIZE>"])
     # Insert the actual value for session table size here
-    string.append(time_table_specifications.sessions_table['size'])
+    size_str = str(time_table_specifications.sessions_table['size'])
+    for digit in size_str:
+       string.append(int(digit))
     
     string.append(self.symbol_dictionary["<ID>"])
     # insert the actual value here
@@ -309,7 +319,9 @@ class StringGenerator:
     
     string.append(self.symbol_dictionary["<SIZE>"])
     # Insert the actual value for assignment table size here
-    string.append(time_table_specifications.assignment_table['size'])
+    size_str = str(time_table_specifications.assignment_table['size'])
+    for digit in size_str:
+       string.append(int(digit))
     
     string.append(self.symbol_dictionary["<PARTY_ID>"])
     # insert the actual value here
