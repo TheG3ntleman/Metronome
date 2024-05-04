@@ -5,6 +5,7 @@ from metronome.genetic.specifications import GeneticOptimizerSpecifications
 import math
 import random
 from typing import List
+import numpy as np
 
 class MutationRateV1:
   
@@ -22,7 +23,6 @@ class MutationRateV1:
               math.exp(self.genetic_optimizer_specifications.spike_contrast *
                        math.sin(self.genetic_optimizer_specifications.periodic_frequency * generation + self.phase))) + \
             self.genetic_optimizer_specifications.min_mutation_rate
-
 
 class MutationOperator:
     def __init__(self, time_table_specifications: TimeTableSpecifications) -> None:
@@ -53,4 +53,3 @@ class MutationOperator:
         new_population.append(self.mutate(timetable, venue_mutation_rate, timeslot_mutation_rate))
         
       return new_population
-    

@@ -404,9 +404,38 @@ class StringGenerator:
     return string
 
   
-  def generate_pretty_string(self, time_table_specifications : TimeTableSpecifications, problem : Problem, timetable : TimeTable) -> str:
-    pass
-  
-  def print(self, string):
-    print("the string is: \n")
-    print(string)
+  def generate_pretty_string(self, time_table_specifications : TimeTableSpecifications, problem : Problem, timetable : TimeTable, depth : int) -> str:
+    numeric_string = self.generate_string(time_table_specifications, problem, timetable, depth)
+    
+    newline_step = 10
+    counter = 0
+    pretty_string = ""
+    previous_number = False
+    
+    for i, symbol in enumerate(numeric_string):
+        counter += 1
+        if (counter >= newline_step or i == len(numeric_string) - 1) and not previous_number:
+            pretty_string += "\n"
+            counter = 0
+        
+        if symbol < 10:
+            if not previous_number:
+                pretty_string += " "
+            pretty_string += str(symbol)
+            previous_number = True
+            continue
+            
+        if symbol - 10 < len(self.symbols):
+            if symbol - 10 < 31:
+                pretty_string += "\n" + self.symbols[symbol - 10] + "\n" 
+                counter = 0
+            else:
+                pretty_string += "" + self.symbols[symbol - 10] 
+
+        else:
+            print(f"Something went wrong! Symbol ({symbol - 10}) not found in the symbol dictionary (of length: {len(self.symbols)}).")
+            pretty_string += " <UNKNOWN>"
+        
+        previous_number = False
+    
+    return pretty_string

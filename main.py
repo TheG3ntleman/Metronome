@@ -21,7 +21,7 @@ genetic_optimizer_specifications = GeneticOptimizerSpecifications()
 genetic_optimizer = ScalerGeneticOptimizer(sample_time_table_specifications, genetic_optimizer_specifications)
 
 genetic_optimizer.optimize()
-genetic_optimizer.plot_statistics()
+#genetic_optimizer.plot_statistics()
 
 # Getting the best timetable and its violations
 best_timetable = genetic_optimizer.get_best_timetable()
@@ -49,5 +49,5 @@ problem_instance = Problem(reduced_problem.number_of_sessions, reduced_problem.o
 # generating the string
 string_generator = StringGenerator()
 
-generated_string = string_generator.generate_string(sample_time_table_specifications, problem_instance, best_timetable, sample_time_table_specifications.sessions_table['size'] - 5)
-string_generator.print(generated_string)
+generated_string = string_generator.generate_pretty_string(sample_time_table_specifications, problem_instance, best_timetable, sample_time_table_specifications.sessions_table['size'] - 5)
+print("Pretty String:\n", generated_string)
