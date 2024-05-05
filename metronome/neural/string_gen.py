@@ -74,6 +74,7 @@ class StringGenerator:
             ",",
             "|",
             "~",
+            # "<OVER>", padding tokens are inherently present in the model
         ]
 
         for i, symbol in enumerate(self.symbols):
@@ -85,7 +86,7 @@ class StringGenerator:
             print(f"Symbol: {symbol}, Value: {value}")
 
 
-    def generate_string(self, time_table_specifications : TimeTableSpecifications, problem : Problem, timetable : TimeTable, depth : int) -> List[int]:
+    def tokenize(self, time_table_specifications : TimeTableSpecifications, problem : Problem, timetable : TimeTable, depth : int) -> List[int]:
         string = []
         
         # Adding time table specifications to the string
@@ -411,10 +412,8 @@ class StringGenerator:
 
   
     def generate_pretty_string(self, time_table_specifications : TimeTableSpecifications, problem : Problem, timetable : TimeTable, depth : int) -> str:
-        numeric_string = self.generate_string(time_table_specifications, problem, timetable, depth)
+        numeric_string = self.tokenize(time_table_specifications, problem, timetable, depth)
         return self.find_corresponding_pretty_string(numeric_string)    
-        
-        
 
     def find_corresponding_pretty_string(self, numeric_string: List[int]) -> str:
         newline_step = 10

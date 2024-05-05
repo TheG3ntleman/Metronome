@@ -79,7 +79,7 @@ class SyntheticProblemGenerator:
 
         # Generting locality table, this is fixed for all specifications
         specifications.locality_table["size"] = 2
-        specifications.locality_table["id"] = [0, 1, 2]
+        specifications.locality_table["id"] = [0, 1]
         specifications.locality_table["distance"] = [0, 10, 0]
 
         # Generating venue table

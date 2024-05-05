@@ -142,6 +142,9 @@ class Constraints:
 
         for j in range(session_id + 1, session_id + duration):
           
+          if session_id + duration >= depth:
+            break
+          
           if timetable.timetable[session_id]["timeslot_id"] + j - session_id != timetable.timetable[j]["timeslot_id"]:
             number_of_violations += 1
           else:
@@ -155,7 +158,7 @@ class Constraints:
   
 
   def soft_travel_time(self, timetable, depth: int) -> int:
-    return 0 # Temporary placeholder
+    #return 0 # Temporary placeholder
     aggregate_travel_time = 0
 
     for party_id in range(self.time_table_specifications.party_table['size']):#.number_of_parties):
