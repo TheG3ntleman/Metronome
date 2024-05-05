@@ -273,7 +273,11 @@ class StringGenerator:
         
         string.append(self.symbol_dictionary["<SIZE>"])
         # Insert the actual value for session table size here
-        string.append(time_table_specifications.sessions_table['size'])
+        size_str = str(time_table_specifications.sessions_table['size'])
+        for digit in size_str:
+            string.append(int(digit))
+
+        #string.append(time_table_specifications.sessions_table['size'])
         
         string.append(self.symbol_dictionary["<ID>"])
         # insert the actual value here

@@ -69,7 +69,7 @@ class ControlNetwork(nn.Module):
         nn.GELU(),
         nn.Linear(256, 128),
         nn.GELU(),
-        nn.Linear(128, 101)
+        nn.Linear(128, 11)
     )
 
   def string_formater(self, string, eos = 2, bos = 1, pad = 0, sep = 3):
