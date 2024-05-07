@@ -38,7 +38,7 @@ class Node:
       if (child.is_feasible):
         if (child.number_of_visits == 0):
           return child
-        ucb = child.value / child.number_of_visits + exploration_parameter * math.sqrt(math.log(self.parent.number_of_visits, math.e) / child.number_of_visits)
+        ucb = child.value / child.number_of_visits + exploration_parameter * math.sqrt(math.log(self.number_of_visits, math.e) / child.number_of_visits)
         if (ucb > maximum_ucb):
           maximum_ucb = ucb
           selected_child = child
@@ -51,9 +51,14 @@ class Node:
     # Upon encountering a feasible child we add it to the
     # list of children.
     
+    print("My options are", options)
+    
     for option in options:
       # Adding option to timetable at this depth
+      print("\nTesting option: ", option)
       timetable.schedule_session(self.depth + 1, option[0], option[1])
+      timetable.print()
+      print("\n")
       
       # Checking if the timetable is feasible
       if constraints.is_feasible(timetable, self.depth + 1):
@@ -66,6 +71,7 @@ class Node:
     current_node = self
     while (not current_node.is_fundamental):
       current_node.number_of_violations = (current_node.number_of_violations * current_node.number_of_visits + violations) / (current_node.number_of_visits + 1)
+      current_node.number_of_visits += 1
       current_node.value = current_node.value_policy(current_node.number_of_violations)
       current_node = current_node.parent
       

@@ -17,20 +17,25 @@ class CSMCTS:
     
     # Control Variables and hyper-parameters of the csmcts algorithm
     self.max_iterations = max_iterations
-    self.number_of_simulations = 100
+    self.number_of_simulations = 25
   
   def run(self):
     
     # We begin by defining the fundamental root at which no choice has yet been made. It 
     # denotes an empty timetable.
     fundamental_root : Node = Node(0, 0, None, True) 
+    fundamental_root.number_of_visits = 1 # As we are visiting it.
     
     # Actually running the algorithm now
     for step in range(self.max_iterations):
       # STEP - 0 : Initializing this iteration
-      current_node : Node = fundamental_root; current_node.number_of_visits += 1 # as we are visiting it.
+      current_node : Node = fundamental_root; #current_node.number_of_visits += 1 # as we are visiting it.
       depth : int  = 0
       timetable : TimeTable = TimeTable(self.specifications.sessions_table['size'])
+      
+      if not current_node.is_feasible:
+        print("Fundamental root is infeasible.")
+        exit()
       
       # STEP - 1 : Repeated Selection
       
@@ -93,7 +98,7 @@ class CSMCTS:
         current_node = current_node.select()
         print("Selecting a node, currently choosing: ", current_node.timeslot_id, current_node.venue_id, "at depth: ", current_node.depth)
         
-        timetable.schedule_session(current_depth, current_node.timeslot_id, current_node.venue_id)
+        timetable.schedule_session(current_node.depth, current_node.timeslot_id, current_node.venue_id)
         current_depth += 1
       
       # STEP - 2 : Expansion
@@ -121,7 +126,7 @@ class CSMCTS:
         number_of_violations = self.constraints.evaluate_soft_constraints(timetable, child.depth)
         
         #  Backpropagating violations
-        current_node.backpropagate_violations()
+        current_node.backpropagate_violations(number_of_violations)
         child.number_of_visits += 1
 
     # Now cleaning up all other nodes.

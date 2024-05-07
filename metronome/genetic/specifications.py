@@ -6,15 +6,15 @@ class GeneticOptimizerSpecifications:
     self.population_size = 200
     
     # Optimizer terminates after this
-    self.max_generations = 150
+    self.max_generations = 200
     
     # Number of top timetables to select
-    self.parent_window = 5 # Indicative of percentage of population
+    self.parent_window = 10 # Indicative of percentage of population
     self.primary_parent_window = 2 # Indicative of percentage of population
     
     # Mutation Rate related stuff
     self.terminal_mutation_rate = 0.01
-    self.terminal_region_generation = 100
+    self.terminal_region_generation = 140
     
     self.min_mutation_rate = 0.01
     self.max_mutation_rate = 0.5
@@ -22,4 +22,4 @@ class GeneticOptimizerSpecifications:
     self.ratio_of_chaos = 0.001
     self.spike_contrast = 8.5
     
-    self.periodic_frequency = 0.0001
+    self.periodic_frequency = 1
