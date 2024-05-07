@@ -350,6 +350,8 @@ class Constraints:
     # An efficient implementation would require access to a venue type table
     return aggregate_lab_after_lecture
   
+  
+  #@staticmethod
   def is_feasible(self, timetable, depth):
     # Check if the assignment satisfies all hard constraints
     if (self.hard_party_conflict(timetable, depth) == 0 and
@@ -360,7 +362,7 @@ class Constraints:
         self.hard_multi_timeslot(timetable, depth) == 0):
       return True
     return False
-  
+
   def evaluate_soft_constraints(self, timetable, depth):
     # Calculate the total number of violations for the session assignment based on soft constraints
     violations = (
@@ -376,4 +378,3 @@ class Constraints:
       self.soft_lab_after_lecture(timetable, depth)
     )
     return violations
-  #@staticmethod

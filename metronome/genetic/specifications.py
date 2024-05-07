@@ -3,10 +3,10 @@ class GeneticOptimizerSpecifications:
   def __init__(self):
     
     # Number of timetables in the population
-    self.population_size = 1000
+    self.population_size = 200
     
     # Optimizer terminates after this
-    self.max_generations = 3
+    self.max_generations = 150
     
     # Number of top timetables to select
     self.parent_window = 5 # Indicative of percentage of population

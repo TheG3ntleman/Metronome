@@ -3,7 +3,6 @@ from metronome.common.specifications import TimeTableSpecifications
 
 #boolean variables to enable soft constraints
 soft_constraint_enable = True
-
 class Violations:
 
   def __init__(self, time_table_specifications : TimeTableSpecifications) -> None:
@@ -183,3 +182,5 @@ class WeightedViolations:
 
   def get_number_of_violations(self):
     return 16 if self.enable_soft_contraints else 6
+
+

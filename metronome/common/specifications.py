@@ -119,4 +119,7 @@ class TimeTableSpecifications:
     print("Session ID: ", self.assignment_table["session_id"])
     print("Priority: ", self.assignment_table["priority"])
     print()    
-    
+  
+  # The stuff below is for MCTS. 
+
+  

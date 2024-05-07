@@ -56,7 +56,21 @@ print("Pretty String:\n", generated_string)
 
 # Making a model instance
 
-from metronome.neural.model import ControlNetwork
+"""from metronome.neural.model import ControlNetwork
 
 control_network = ControlNetwork().to("cuda:0")
-print("output for the given input is: ", control_network(control_network.string_formater(tokenized_string)))
+print("output for the given input is: ", control_network(control_network.string_formater(tokenized_string)))"""
+
+from metronome.csmcts.csmcts import CSMCTS
+
+csmcts_solver = CSMCTS(problem_instance, sample_time_table_specifications)
+solution_time_table = csmcts_solver.run()
+solution_time_table.print()
+
+violations = genetic_optimizer.violation_counter.calculate_weighted_violations(solution_time_table)
+
+print("\nViolations")
+violation_labels = genetic_optimizer.violation_counter.get_violation_list()
+#printing violations with formatting and justifications
+for i, violation in enumerate(violations[1:]):
+  print(f"{i:3d}. {violation_labels[i]:50s}: {violation:.4f}")

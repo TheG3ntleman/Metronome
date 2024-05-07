@@ -7,7 +7,7 @@ class TimeTable:
   
   def __init__(self, number_of_sessions : int) -> None:
     self.size = number_of_sessions
-    self.timetable = [None for i in range(number_of_sessions)]
+    self.timetable = [{"timeslot_id": 0, "venue_id": 0} for i in range(number_of_sessions)]
     
   def schedule_session(self, session_id : int, timeslot_id : int, venue_id : int) -> None:
     self.timetable[session_id] = {"timeslot_id": timeslot_id, "venue_id": venue_id}
