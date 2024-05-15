@@ -1,76 +1,13 @@
-from metronome.common.timetable import TimeTable
-from metronome.common.specifications import TimeTableSpecifications
-from metronome.common.problem import SyntheticProblemGenerator
-from metronome.common.violations import Violations
-from metronome.common.reduced_problem import MCTSTupleFrequencyProblem, Problem
-from metronome.neural.string_gen import StringGenerator
+from src.sudoku import SudokuNoGuarantee
+from src.tree_search import TreeSearch
 
-from metronome.genetic.optimize import ScalerGeneticOptimizer
-from metronome.genetic.specifications import GeneticOptimizerSpecifications
+# Example usage:
 
-# Making empty specifications
-empty_specifications = TimeTableSpecifications()
-empty_specifications.venue_table['size']
+sudoku3 = SudokuNoGuarantee(2)
+sudoku3.print_puzzle()
 
-# Generating a sample timetable specification
-sample_time_table_specifications = SyntheticProblemGenerator.generate_feasible_specifications()
-sample_time_table_specifications.print()
-
-# Running the genetic optimizer on this specification
-genetic_optimizer_specifications = GeneticOptimizerSpecifications()
-genetic_optimizer = ScalerGeneticOptimizer(sample_time_table_specifications, genetic_optimizer_specifications)
-
-genetic_optimizer.optimize()
-#genetic_optimizer.plot_statistics()
-
-# Getting the best timetable and its violations
-best_timetable = genetic_optimizer.get_best_timetable()
-violations = genetic_optimizer.violation_counter.calculate_weighted_violations(best_timetable)
-
-# Printing out the best timetable and its violations
-print("Best Timetable")
-best_timetable.print()
-
-print("\nViolations")
-violation_labels = genetic_optimizer.violation_counter.get_violation_list()
-#printing violations with formatting and justifications
-for i, violation in enumerate(violations[1:]):
-  print(f"{i:3d}. {violation_labels[i]:50s}: {violation:.4f}")
-
-# Printing out reduced problem from best population
-reduced_problem = MCTSTupleFrequencyProblem(genetic_optimizer.population, 
-                                            sample_time_table_specifications.timeslot_table['size'], 
-                                            sample_time_table_specifications.venue_table['size'])
-reduced_problem.print()
-
-# Create an instance of Problem using the information from MCTSTupleFrequencyProblem
-problem_instance = Problem(reduced_problem.number_of_sessions, reduced_problem.options)
-
-# generating the string
-string_generator = StringGenerator()
-
-tokenized_string = string_generator.tokenize(sample_time_table_specifications, problem_instance, best_timetable, sample_time_table_specifications.sessions_table['size'] - 1)
-print(tokenized_string)
-generated_string = string_generator.generate_pretty_string(sample_time_table_specifications, problem_instance, best_timetable, sample_time_table_specifications.sessions_table['size'] - 5)
-print("Pretty String:\n", generated_string)
-
-# Making a model instance
-
-"""from metronome.neural.model import ControlNetwork
-
-control_network = ControlNetwork().to("cuda:0")
-print("output for the given input is: ", control_network(control_network.string_formater(tokenized_string)))"""
-
-from metronome.csmcts.csmcts import CSMCTS
-
-csmcts_solver = CSMCTS(problem_instance, sample_time_table_specifications)
-solution_time_table = csmcts_solver.run()
-solution_time_table.print()
-
-violations = genetic_optimizer.violation_counter.calculate_weighted_violations(solution_time_table)
-
-print("\nViolations")
-violation_labels = genetic_optimizer.violation_counter.get_violation_list()
-#printing violations with formatting and justifications
-for i, violation in enumerate(violations[1:]):
-  print(f"{i:3d}. {violation_labels[i]:50s}: {violation:.4f}")
+tree_search = TreeSearch(sudoku3)
+tree_search.bfs(700)
+tree_search.root_node.print()#.plot()
+tree_search.root_node.plot()
+sudoku3.print_puzzle()

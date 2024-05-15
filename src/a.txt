@@ -1,0 +1,26 @@
+def to_networkx(self):
+            # Create a networkx graph considering this
+            # node to be the root. All feasible children
+            # must be in blue and all infeasible children
+            # must be in black.
+            
+            node_colors = []
+            G = nx.DiGraph()
+            
+            self.add_networkx_node(G, node_colors, self)
+            self.add_networkx_info(G)
+        
+        def add_networkx_info(self, G, node_colors):            
+            for child in self.children:
+                self.add_networkx_
+                    
+                G.add_edge(self.action, child.action)
+                child.add_networkx_info(G)
+                
+        def add_networkx_node(self, G, node_colors, node):
+            G.add_node(node.action)
+            if node.feasible:
+                node_colors.append('blue')
+            else:
+                node_colors.append('black')
+            
