@@ -54,6 +54,14 @@ class Sudoku:
                 print("{:3}".format(self.grid[i][j]), end=" ")
             print()
     
+    def from_string(self, puzzle_string):
+        count = 0
+        for row in range(self.puzzle_size):
+            for col in range(self.puzzle_size):
+                self.grid[row][col] = puzzle_string[count]
+                count += 1
+                
+    
 
 class SudokuFeasible(Sudoku):
     """

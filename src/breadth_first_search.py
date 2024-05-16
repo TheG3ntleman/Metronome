@@ -10,9 +10,11 @@ class SudokuSolverBFS:
         self.root_node = Node(0, 0, 0, None)
 
         
-    def run(self, number_of_expansions = 50):
+    def run(self, number_of_expansions = 50, single_solution = True):
         
         # Some helper functions and variables, main bfs starts below
+        no_solutions = False
+        solutions = []
         number_of_possible_actions = self.puzzle.puzzle_size
         
         def apply_branch_to_grid(node, grid):
@@ -39,10 +41,11 @@ class SudokuSolverBFS:
         queue = deque([self.root_node])
         
         # STEP - 1: Start the BFS
-        for _ in range(number_of_expansions): # Run as long as computational budget is not exceeded
+        for i_expansion in range(number_of_expansions): # Run as long as computational budget is not exceeded
             
             # STEP - 1:0 : Check if the queue is empty (TERMINATION CRITERIA)
             if len(queue) == 0:
+                no_solutions = True
                 break
             
             # STEP - 1:1 : Pop the first node from the queue
@@ -50,10 +53,10 @@ class SudokuSolverBFS:
             
             # STEP - 1:2 : Checking if the node is a leaf node 
             
-            # Feasible leaf node implies solution (ANOTHER TERMINATION CRITERIA)
+            # Feasible leaf node implies solution but the solution should have already been stored when the 
+            # solution child was expaneded (done below). So we skip this node.
             if (current_node.depth == len(points_of_actions)):
-                # A Solution has been found.
-                return apply_branch_to_grid(current_node, deepcopy(self.puzzle.grid))
+                continue
             
             # Continue if infeasible
             if not current_node.feasible:
@@ -69,18 +72,35 @@ class SudokuSolverBFS:
                 
                 # Check if the action is feasible
                 grid_of_actions_till_parent = apply_branch_to_grid(current_node, deepcopy(self.puzzle.grid))
-                print(f"Trying action at row: {row} and col: {col} with action: {action}")
-                print(f"Grid is:\n", grid_of_actions_till_parent)
+                #print(f"Trying action at row: {row} and col: {col} with action: {action}")
+                #print(f"Grid is:\n", grid_of_actions_till_parent)
                 
                 if not SudokuRules.is_valid(grid_of_actions_till_parent, self.puzzle.size, row, col, action):
-                    print("Infeasible action")
+                    #print("Infeasible action")
                     current_node.children[-1].feasible = False
                     continue
-                print("Feasible action")
+                #print("Feasible action")
+                
+                # Although the "another termination criteria" above is correct, adding it to the queue and waiting may take too long
+                # so we check the child depth here too once.
+                if current_node.children[-1].depth == len(points_of_actions):
+                    print(f"Solution found after {i_expansion} expansions.")
+                    solution = apply_branch_to_grid(current_node.children[-1], deepcopy(self.puzzle.grid))
+                    if single_solution:
+                        return solution
+                    else:
+                        solutions.append(solution)
                 
                 # If the action is feasible, add it to the queue
                 queue.append(current_node.children[-1])
                 
         # If the loop terminates without finding a solution
-        print("No solution found")
+        if single_solution and no_solutions:   
+            print("No solution found")
+        elif len(solutions) > 0:
+            print(f"Found {len(solutions)} solutions")
+            return solutions
+        else:
+            print("Exceeded computational budget")
+            
         return None
