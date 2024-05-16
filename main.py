@@ -1,13 +1,13 @@
 from src.sudoku import SudokuNoGuarantee
-from src.tree_search import TreeSearch
+from src.breadth_first_search import SudokuSolverBFS
+from src.node import Node
 
-# Example usage:
 
-sudoku3 = SudokuNoGuarantee(2)
-sudoku3.print_puzzle()
+# Instantiate the puzzle
+sudoku3 = SudokuNoGuarantee(3)
 
-tree_search = TreeSearch(sudoku3)
-tree_search.bfs(700)
-tree_search.root_node.print()#.plot()
-tree_search.root_node.plot()
+# Instantiate the solver
+solver = SudokuSolverBFS(sudoku3)
+solver.run()
+solver.root_node.plot()
 sudoku3.print_puzzle()

@@ -2,31 +2,35 @@ import random
 import numpy as np
 
 class SudokuRules:
-    def __init__(self, grid, size):
-        self.grid = grid
-        self.size = size
-        
-    def hard_is_row_valid(self, row, number):
-        if (number in self.grid[row]):
+
+    @staticmethod
+    def hard_is_row_valid(grid, row, number):
+        if (number in grid[row]):
             return False
         return True
-        
-    def hard_is_column_valid(self, col, number):
-        if (number in self.grid[:, col]):
+    
+    @staticmethod
+    def hard_is_column_valid(grid, col, number):
+        if (number in grid[:, col]):
             return False
         return True
    
-    def hard_is_subgrid_valid(self, row, col, number):
-        size = self.size
+    @staticmethod
+    def hard_is_subgrid_valid(grid, size, row, col, number):
         
         start_row = row - row % size
         start_col = col - col % size
         
-        subgrid = self.grid[start_row:start_row+size, start_col:start_col+size]       
+        subgrid = grid[start_row:start_row+size, start_col:start_col+size]
+        #print(f"Checking for number {number} in subgrid near row {row} and column {col}")
+        #print(subgrid)    
         return not np.any(subgrid == number)
 
-    def is_valid(self, row, col, number):
-        return self.hard_is_row_valid(row, number) and self.hard_is_column_valid(col, number) and self.hard_is_subgrid_valid(row, col, number)
+    @staticmethod
+    def is_valid(grid, size, row, col, number):
+        return SudokuRules.hard_is_row_valid(grid, row, number) and \
+               SudokuRules.hard_is_column_valid(grid, col, number) and \
+               SudokuRules.hard_is_subgrid_valid(grid, size, row, col, number)
 
 class Sudoku:
     """
@@ -38,9 +42,6 @@ class Sudoku:
         self.size = size
         self.puzzle_size = size * size
         self.grid = np.zeros((self.puzzle_size, self.puzzle_size), dtype=int)
-        
-        # Making an instance of sudoku rules.
-        self.rules = SudokuRules(self.grid, self.size)
     
     def print_puzzle(self):
         print("\nSudoku Puzzle of size", self.size)
@@ -72,7 +73,7 @@ class SudokuNoGuarantee(Sudoku):
         super().__init__(size)
         self.make_puzzle()
 
-    def make_puzzle(self, prefill_percentage = 0.33):
+    def make_puzzle(self, prefill_percentage = 0.6):
       tosses = np.random.rand(self.puzzle_size, self.puzzle_size)
       for i in range(self.puzzle_size):
         for j in range(self.puzzle_size):
@@ -92,7 +93,7 @@ class SudokuNoGuarantee(Sudoku):
                 selected_option = random.choice(options)
                 
                 # Checking if this option is a valid choice
-                if self.rules.is_valid(i, j, selected_option):
+                if SudokuRules.is_valid(self.grid, self.size, i, j, selected_option):
                     # Adding th selected option to the grid
                     self.grid[i][j] = selected_option
                     break

@@ -99,7 +99,7 @@ class TreeSearch:
             self.print_children_recursive(self)
         
         def print_children_recursive(self, node):
-            print(f"Node Id: {node.node_id:3d}, row: {node.row}, column: {node.col}, Action: {node.action:3d}, Ids of child nodes: {[child.node_id for child in node.children]}")
+            print(f"Node Id: {node.node_id:3d}, row: {node.row : 3d}, column: {node.col : 3d}, Action: {node.action:3d}, Ids of child nodes: {[child.node_id for child in node.children]}")
             for child in node.children:
                 self.print_children_recursive(child)
                 
@@ -227,7 +227,7 @@ class TreeSearch:
         queue.append(self.root_node)
         
         # Running the main loop for BFS
-        for _ in tqdm(range(number_of_nodes_explored), total=number_of_nodes_explored, desc="Number of Nodes currently explored"):
+        for num_node in tqdm(range(number_of_nodes_explored), total=number_of_nodes_explored, desc="Number of Nodes currently explored"):
             
             # Breaking algorithm if the queue is empty
             if len(queue) == 0:
@@ -236,7 +236,8 @@ class TreeSearch:
             
             # Pop the first element from the queue
             node = queue.popleft()
-            row, col = node.row, node.col
+            if num_node > 0:
+                row, col = node.row, node.col
             
             # Adding children to the node
             for action in range(1, self.puzzle.puzzle_size + 1):
