@@ -1,5 +1,6 @@
 from src.sudoku import SudokuNoGuarantee
 from src.breadth_first_search import SudokuSolverBFS, Sudoku
+from src.MultiArmBanditSolver import MultiArmBanditSolver
 from src.node import Node
 
 
@@ -9,7 +10,16 @@ sudoku_correct = Sudoku(3)
 sudoku_correct.from_string("007009050040000930059740080000016790083000002710000000830060020000395018605020070")#"048301560360008090910670003020000935509010200670020010004002107090100008150834029")#"301086504046521070500000001400800002080347900009050038004090200008734090007208103")#"070000043040009610800634900094052000358460020000800530080070091902100005007040802")
 
 # Instantiate the solver
-solver = SudokuSolverBFS(sudoku_correct)#3)
-print("Solution:\n", solver.run(1000, single_solution=False))
+#solver = SudokuSolverBFS(sudoku3)#sudoku_correct)#3)
+#print("Solution:\n", solver.run(1000, single_solution=False))
+#sudoku3.print_puzzle()
+#solver.root_node.plot()
+
+# Instantiate the solver
+print("Original puzzle")
 sudoku3.print_puzzle()
-solver.root_node.plot()
+solver = MultiArmBanditSolver(sudoku3)
+success, number_of_actions = solver.run(10, exploration_parameter=2)
+
+print("Success: ", success, "Number of actions: ", number_of_actions)
+sudoku3.print_puzzle()

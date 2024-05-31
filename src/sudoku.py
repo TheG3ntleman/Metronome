@@ -81,7 +81,7 @@ class SudokuNoGuarantee(Sudoku):
         super().__init__(size)
         self.make_puzzle()
 
-    def make_puzzle(self, prefill_percentage = 0.6):
+    def make_puzzle(self, prefill_percentage = 0.1):
       tosses = np.random.rand(self.puzzle_size, self.puzzle_size)
       for i in range(self.puzzle_size):
         for j in range(self.puzzle_size):

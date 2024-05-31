@@ -68,5 +68,3 @@ class Node:
         pos = graphviz_layout(tree, prog='dot')
         nx.draw(tree, pos, with_labels=False, arrows=True, node_color=node_colors, font_color='red')
         plt.show()
-    
-    

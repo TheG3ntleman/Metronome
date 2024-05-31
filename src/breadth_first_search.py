@@ -2,6 +2,7 @@ from src.node import Node
 from collections import deque
 from copy import deepcopy
 from src.sudoku import Sudoku, SudokuRules
+from tqdm import tqdm
 
 class SudokuSolverBFS:
     
@@ -41,7 +42,7 @@ class SudokuSolverBFS:
         queue = deque([self.root_node])
         
         # STEP - 1: Start the BFS
-        for i_expansion in range(number_of_expansions): # Run as long as computational budget is not exceeded
+        for i_expansion in tqdm(range(number_of_expansions), total = number_of_expansions, desc = "Number of Expansions"): # Run as long as computational budget is not exceeded
             
             # STEP - 1:0 : Check if the queue is empty (TERMINATION CRITERIA)
             if len(queue) == 0:
