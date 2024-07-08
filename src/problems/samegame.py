@@ -1,5 +1,4 @@
-from src.primitives.problem import Problem
-from matplotlib import pyplot as plt
+from mcts.primitives.problem import Problem
 import numpy as np
 
 
@@ -12,7 +11,3 @@ class SameGame(Problem):
         self.board = np.random.randint(
             low=1, high=self.number_of_colors, size=[self.board_size, self.board_size]
         )
-    
-    def plot(self):
-        plt.imshow(self.board, cmap="tab20")
-        plt.show()

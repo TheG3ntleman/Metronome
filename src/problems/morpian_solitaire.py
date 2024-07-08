@@ -12,8 +12,25 @@
 # Another way to do it is to maintain a 2D array
 # and resize it whenever necessary.
 
-from src.primitives.problem import Problem
+"""
+getActionSize
+getValidMoves
+getGameEnded
+%getGameStringRepresentation
+getScore % Probably only works on terminal states.
+getPenalty % When the game is not over, but the player can't take
+            % any more moves.
+"""
 
-class MorpianSolitaire5D(Problem):
+from src.primitives.problem import Problem
+from src.problems.morpian_solitaire_logic import Board, Line, Move
+
+class MorpionSolitaire5D(Problem):
+    
     def __init__(self):
         pass
+
+    def plot(self):
+        pass
+
+

@@ -5,6 +5,15 @@ Constraint Satisfaction Problems.
 
 """
 
+"""
+getActionSize
+getValidMoves
+getGameEnded
+%getGameStringRepresentation
+getScore % Probably only works on terminal states.
+getPenalty % When the game is not over, but the player can't take
+            % any more moves.
+"""
 
 class Problem:
     # The functions in this class can be put into
@@ -18,30 +27,15 @@ class Problem:
         pass
 
     # COMMON - IMPLEMENTED Functions (operate on action_id even though specified otherwise)
-    # These will be used by the solvers
 
     # play action functions
 
-    def play_action(self, action_id):
-        action = self.action_id_to_action(action_id)
+    def play_action(self, action):
         self.apply_action(action)
 
-    def play_actions(self, action_ids):
-        for action_id in action_ids:
-            self.play_action(action_id)
-
-    # This function doesn't make a lot of sense
-    # as how can he solver know what actions it
-    # can possibly make without consulting the actual
-    # problem class.
-    # Not Recommended using this.
-    def play_actions_from_scratch(self, action_ids):
-        self.clear()
-        self.play_actions(action_ids)
-        
-    # info functions
-    def get_number_of_actions(self):
-        pass
+    def play_actions(self, actions):
+        for action in actions:
+            self.apply_action(action)
 
     # USER - IMPLEMENTABLE Functions
 
@@ -51,9 +45,24 @@ class Problem:
     def apply_action(self):
         pass
 
-    # converter functions
-    def action_id_to_action(self, action_id):
+    def get_valid_moves(self):
         pass
 
-    def action_to_action_id(self, action):
+    def get_score(self):
         pass
+
+    def get_penalty(self):
+        return 0
+
+    def is_game_finished(self):
+        pass
+
+    def get_game_state(self):
+        pass # Must return some "state"
+
+    def load_game_from_state(self, state):
+        pass
+
+    def pprint(self):
+        pass
+
