@@ -1,6 +1,11 @@
 import copy
 import random
 
+"""
+Things to do:
+    - Add optional print and plot support.
+"""
+
 class Solver:
 
     def __init__(self):

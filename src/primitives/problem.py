@@ -13,6 +13,10 @@ getGameEnded
 getScore % Probably only works on terminal states.
 getPenalty % When the game is not over, but the player can't take
             % any more moves.
+
+Some Problems to resolve:
+    - Must decide on whether we are using the term 'action' or 'move'.
+    - Must return state of the game in functions, i.e the internal state of a game should not be maintained in the class.
 """
 
 class Problem:

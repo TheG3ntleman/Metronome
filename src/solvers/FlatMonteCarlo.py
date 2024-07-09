@@ -13,6 +13,7 @@ class FlatMonteCarloSolver(Solver):
         # Initializing the state space tree
         root = StateSpaceTreeNode(None)
         current_node = root 
+        actions_played = 0
         
         while not problem.is_game_finished():
 
@@ -62,7 +63,9 @@ class FlatMonteCarloSolver(Solver):
 
             # STEP 6: Applying the action
             problem.play_action(current_node.action)
-            problem.pprint()
+            #problem.pprint()
+            actions_played += 1
+            print("Actions played:", actions_played)
         
         return {"success": True, "solution": current_node.get_actions(), "state_space_tree": root}
 

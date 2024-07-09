@@ -21,6 +21,7 @@ class UCB1Solver(Solver):
         root.properties["reward"] = 0
 
         current_node = root 
+        moves_played = 0
         
         while not problem.is_game_finished():
 
@@ -68,25 +69,39 @@ class UCB1Solver(Solver):
 
             # STEP 5: Choosing some policy by using methods proposed by Chaslot.
 
-            for child in current_node.children:
-                print(f"Action: {child.action} Reward: {child.properties['reward']} Visits: {child.properties['visits']}")
+            for i, child in enumerate(current_node.children):
+                print(f"{i}. Action: {child.action} Reward: {child.properties['reward']} Visits: {child.properties['visits']}")
                 
+            # if selection_policy == "max_q_value_child":
+            #     q_values = [child.properties["reward"] / child.properties["visits"] for child in current_node.children]
+            #     current_node = current_node.children[q_values.index(max(q_values))]
+            # elif selection_policy == "max_child":
+            #     rewards = [child.properties["reward"] for child in current_node.children]
+            #     current_node = current_node.children[rewards.index(max(rewards))]
+            # elif selection_policy == "robust_child":
+            #     visits = [child.properties["visits"] for child in current_node.children]
+            #     current_node = current_node.children[visits.index(max(visits))]
+
+            selection_index = 0
             if selection_policy == "max_q_value_child":
                 q_values = [child.properties["reward"] / child.properties["visits"] for child in current_node.children]
-                current_node = current_node.children[q_values.index(max(q_values))]
+                selection_index = q_values.index(max(q_values))
             elif selection_policy == "max_child":
                 rewards = [child.properties["reward"] for child in current_node.children]
-                current_node = current_node.children[rewards.index(max(rewards))]
+                selection_index = rewards.index(max(rewards))
             elif selection_policy == "robust_child":
                 visits = [child.properties["visits"] for child in current_node.children]
-                current_node = current_node.children[visits.index(max(visits))]
+                selection_index = visits.index(max(visits))
+            current_node = current_node.children[selection_index]
             
             # TODO: Add support for max_robust_child
 
             # STEP 6: Applying the action
             current_node.properties["visits"] = 0
             problem.play_action(current_node.action)
-            problem.pprint()
+            moves_played += 1
+            print("Playing action number:", moves_played, "whose index is:", selection_index)
+            #problem.pprint()
         
         return {"success": True, "solution": current_node.get_actions(), "state_space_tree": root}
 
