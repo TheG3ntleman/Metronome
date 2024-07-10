@@ -18,9 +18,9 @@ class Solver:
             valid_moves = problem_copy.get_valid_moves()
             if len(valid_moves) == 0:
                 return problem_copy.get_penalty() + problem_copy.get_score()
-            problem_copy.play_action(random.choice(valid_moves))
+            move = random.choice(valid_moves)
+            problem_copy.play_action(move)
 
-        
         return problem_copy.get_score()
         
     def __str__(self):
