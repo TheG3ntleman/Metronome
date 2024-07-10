@@ -14,7 +14,8 @@ class Solver:
     def solve(self, problem):
         pass # Must return dictionary with {"success" : True/False, "solution" : "some solution", state_space_tree: root}
 
-    def rollout(self, problem, node):
+    @staticmethod
+    def rollout(problem, node):
         # Can actually write a default
         # flat rollout mechanism here.
         problem_copy = copy.deepcopy(problem)
