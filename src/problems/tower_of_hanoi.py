@@ -9,11 +9,14 @@ class TowerOfHanoi(Problem):
         self.pegs = [[i for i in range(number_of_disks, 0, -1)]] + [[] for _ in range(number_of_pegs - 1)]
 
         self.goal_state = [[] for _ in range(number_of_pegs - 1)] + [[i for i in range(number_of_disks, 0, -1)]]
+
+        self.moves_made = 0
     
     def apply_action(self, action):
         from_peg, to_peg = action
         disk = self.pegs[from_peg].pop()
         self.pegs[to_peg].append(disk)
+        self.moves_made += 1
 
     def get_valid_moves(self):
         valid_actions = []
@@ -29,16 +32,17 @@ class TowerOfHanoi(Problem):
         penalty = 0
         for i in range(self.number_of_pegs - 1):
             penalty += len(self.pegs[i]) ** 2
+        penalty += self.moves_made ** 4
         return len(self.pegs[-1]) - penalty
     
     def is_game_finished(self):
         return self.pegs == self.goal_state
 
     def get_game_state(self):
-        return self.pegs
+        return (self.pegs, self.moves_made)
 
     def load_game_from_state(self, state):
-        self.pegs = state
+        self.pegs, self.moves_made = state
 
     def pprint(self):
         for peg in self.pegs:

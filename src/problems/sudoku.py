@@ -2,9 +2,8 @@ from src.primitives.problem import Problem
 
 class Sudoku(Problem):
     
-    def __init__(self, board, goal_state):
+    def __init__(self, board):
         self.board = board
-        self.goal_state = goal_state
         
         
     def apply_action(self, action):
@@ -38,48 +37,59 @@ class Sudoku(Problem):
         for i in range(9):
             for j in range(9):
                 if self.board[i][j] == 0:
+                    check = True
                     for value in range(1, 10):
                         if self.is_valid_move(i, j, value):
                             valid_actions.append((i, j, value))
-                            check = True
-                        
-                        if check:
-                            break   
+                            
                 if check:
                     break
             if check:
                 break
-        
-        # print(len(valid_actions))
-        # print("Valid actions: ", valid_actions)
+            
         return valid_actions
     
     def get_score(self):
         score = 0
-        
-        # Check rows
+        # Check rows and columns
         for i in range(9):
-            row = set(self.board[i])
-            if len(row) == 9:
-                score += 9
-        
-        # Check columns
-        for j in range(9):
-            column = set(self.board[i][j] for i in range(9))
-            if len(column) == 9:
-                score += 9
-        
-        # Check 3x3 grids
-        for i in range(0, 9, 3):
-            for j in range(0, 9, 3):
-                grid = set(self.board[x][y] for x in range(i, i+3) for y in range(j, j+3))
-                if len(grid) == 9:
-                    score += 9
-        
+            row_set = set()
+            col_set = set()
+            for j in range(9):
+                if self.board[i][j] != 0:
+                    row_set.add(self.board[i][j])
+                if self.board[j][i] != 0:
+                    col_set.add(self.board[j][i])
+            score += len(row_set) + len(col_set)
+
+        # Check 3x3 subgrids
+        for x in range(0, 9, 3):
+            for y in range(0, 9, 3):
+                subgrid_set = set()
+                for i in range(3):
+                    for j in range(3):
+                        if self.board[x+i][y+j] != 0:
+                            subgrid_set.add(self.board[x+i][y+j])
+                score += len(subgrid_set)
+
         return score
+        
     
     def is_game_finished(self):
-        return self.board == self.goal_state
+        # Check if the board is filled
+        for i in range(9):
+            for j in range(9):
+                if self.board[i][j] == 0:
+                    return False
+        
+        # Check if the board is valid
+        for i in range(9):
+            for j in range(9):
+                value = self.board[i][j]
+                if not self.is_valid_move(i, j, value):
+                    return False
+        
+        return True
     
     def get_game_state(self):
         return self.board

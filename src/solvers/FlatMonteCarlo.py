@@ -13,6 +13,7 @@ class FlatMonteCarloSolver(Solver):
         # Initializing the state space tree
         root = StateSpaceTreeNode(None)
         current_node = root 
+        actions_played = 0
         
         while not problem.is_game_finished():
 
@@ -49,6 +50,7 @@ class FlatMonteCarloSolver(Solver):
             
             # printing final rewarsd anf visits
             if selection_policy == "max_q_value_child":
+                print("Length of children: ", len(current_node.children))
                 q_values = [child.properties["reward"] / child.properties["visits"] for child in current_node.children]
                 current_node = current_node.children[q_values.index(max(q_values))]
             elif selection_policy == "max_child":
@@ -63,6 +65,8 @@ class FlatMonteCarloSolver(Solver):
             # STEP 6: Applying the action
             problem.play_action(current_node.action)
             problem.pprint()
+            actions_played += 1
+            print("Actions played:", actions_played)
         
         return {"success": True, "solution": current_node.get_actions(), "state_space_tree": root}
 
