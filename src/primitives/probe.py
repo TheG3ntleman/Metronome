@@ -13,7 +13,7 @@ import warnings
 
 """
 
-1. We have no tree but we have aprobe_lists problem. And we have a selection mechanism for sampling from that problem. Then the question is, should this be the main object on which the probe acts, i.e, should it act on the problem according to some selection policy.
+1. We have no tree but we have a probe_lists problem. And we have a selection mechanism for sampling from that problem. Then the question is, should this be the main object on which the probe acts, i.e, should it act on the problem according to some selection policy.
 
 0 - Probe
 
@@ -107,9 +107,9 @@ class Probe:
                 compute_statistics(i, sample_number)
 
     def scatter_plot_rewards(self, save_path = None):
-        # TODO: this.
+        # TODO: this. -> Done
         for i in range(self.node.get_number_of_children()):
-            plt.scatter(range(len(self.probe_lists[i])), self.probe_lists[i], label=f"Child {i}")
+            plt.scatter(range(self.number_of_probes), self.reward_samples[i, :], label=f"Child {i}")
             plt.xlabel("Probe Number")
             plt.ylabel("Reward")
             plt.title(f"Reward Distribution for Child {i}")
