@@ -1,0 +1,6 @@
+# Ignore all the pycache files and directories
+*.pyc
+__pycache__/
+
+# Ignore all the eps files
+*.eps
