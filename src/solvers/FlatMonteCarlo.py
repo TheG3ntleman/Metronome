@@ -8,6 +8,12 @@ class FlatMonteCarloSolver(Solver):
     def __init__(self):
         super().__init__() 
     
+    def initialize_node(self, node : StateSpaceTreeNode):
+        pass # Override this.
+
+    def select_node(self, node : StateSpaceTreeNode):
+        return random.choice(node.children)
+
     def solve(self, problem, number_of_rollouts_per_decision = 1000, selection_policy = "max_q_value_child"):
         problem.pprint()
         # Initializing the state space tree

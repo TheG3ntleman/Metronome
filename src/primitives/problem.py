@@ -61,10 +61,10 @@ class Problem:
     def is_game_finished(self):
         pass
 
-    def get_game_state(self):
+    def save_state(self):
         pass # Must return some "state"
 
-    def load_game_from_state(self, state):
+    def load_state(self, state):
         pass
 
     def pprint(self):

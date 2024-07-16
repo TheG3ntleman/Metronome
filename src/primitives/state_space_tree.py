@@ -33,9 +33,9 @@ class StateSpaceTreeNode:
     def add_child(self, child):
         self.children.append(child)
 
-    def number_of_children(self):
+    def get_number_of_children(self):
         return len(self.children)
-    
+
     def get_actions(self):
         # Will be stored in order of oldest action to most
         # recent.
@@ -52,6 +52,12 @@ class StateSpaceTreeNode:
         get_action_recursively(self)
 
         return actions
+        
+
+    def is_leaf(self):
+        return len(self.children) == 0
+    
+    # Everything below is for plotting
     
     def to_networkx(self):
         # Generate this tree as a networkx digraph with this as the root node

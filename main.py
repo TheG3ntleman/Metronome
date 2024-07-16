@@ -11,13 +11,17 @@ sudoku_3x3 = Sudoku([[0, 0, 0, 0, 0, 0, 9, 8, 4], [0, 1, 5, 0, 9, 4, 0, 0, 0], [
 
 # morpion_solitaire_5d = MorpionSolitaire5D(5)
 
-# fmc_solver = FlatMonteCarloSolver()
-fmc_solver = FlatMonteCarloAgain()
+fmc_solver = FlatMonteCarloSolver()
+mab_solver = UCB1Solver(exploration_parameter=1.5)
 
-print(fmc_solver.solve(sudoku_3x3,selection_policy="max_q_value_child", number_of_rollouts_per_decision=10000))
+output = fmc_solver.solve(
+        morpion_solitaire,
+        selection_policy="robust_child",
+        number_of_rollouts_per_decision=20,
+)
 
-# print(fmc_solver.solve(morpion_solitaire_5d, selection_policy="max_q_value_child", number_of_rollouts_per_decision=1000))
+morpion_solitaire.plot()
+print(morpion_solitaire.get_score())
+output["state_space_tree"].plot()
 
-# output = fmc_solver.solve(sudoku_3x3, number_of_rollouts_per_decision=1000, selection_policy="max_q_value_child")
-# print(output.keys())
-# output["state_space_tree"].plot()
+
