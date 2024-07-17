@@ -35,6 +35,17 @@ class UCB1Solver(Solver):
                 # becomes a failed run. However, instead of returning no 
                 # solution we return what we ended up choosing at each step.
                 return {"success": False, "solution": current_node.get_actions(), "state_space_tree": root}
+            
+            # If there is only one valid move why perform the rollouts?
+            if len(valid_moves) == 1:
+                current_node = StateSpaceTreeNode(valid_moves[0], current_node)
+                current_node.properties["visits"] = 0
+                current_node.properties["reward"] = 0
+                problem.play_action(current_node.action)
+                moves_played += 1
+                print("Playing action number:", moves_played)
+                problem.pprint()
+                continue
 
             # STEP 3 : Expanding node
             for move in valid_moves:
@@ -43,7 +54,7 @@ class UCB1Solver(Solver):
                 child.properties["reward"] = 0
                 current_node.add_child(child)
 
-            # STEP 4: Performing rollouts to make decision
+            # STEP 4: Performing rollouts to make decisions
             for _ in tqdm(range(number_of_rollouts_per_decision)):
                 # Choosing a random child
                 #child = current_node.children[random.randint(0, len(current_node.children) - 1)]

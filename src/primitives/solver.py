@@ -19,6 +19,7 @@ class Solver:
         pass # Override this.
 
     def solve(self, problem):
+        # TODO: Right this with existing functions and nothing more.
         pass # Must return dictionary with {"success" : True/False, "solution" : "some solution", state_space_tree: root}
 
     @staticmethod

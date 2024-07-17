@@ -9,8 +9,9 @@ class FlatMonteCarloSolver(Solver):
         super().__init__() 
     
     def initialize_node(self, node : StateSpaceTreeNode):
-        pass # Override this.
-
+        node.properties["visits"] = 0
+        node.properties["reward"] = 0  
+        
     def select_node(self, node : StateSpaceTreeNode):
         return random.choice(node.children)
 

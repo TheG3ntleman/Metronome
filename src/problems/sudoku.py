@@ -1,91 +1,166 @@
 from src.primitives.problem import Problem
+from random import sample
+from numba import njit
+import numpy as np
+from math import sqrt
+
+@njit
+def sudoku_is_valid_move(board, i, j, value):
+    side = np.shape(board)[0]
+    base = int(sqrt(side))
+    assert base == sqrt(side), "Board size must be a perfect square"
+
+    # Check if the value is not in the row
+    for column in range(side):
+        if board[i][column] == value:
+            return False
+
+    # Check if the value is not in the column
+    for row in range(side):
+        if board[row][j] == value:
+            return False
+
+    # Check if the value is not in the 3x3 grid
+    startRow, startCol = base * (i // base), base * (j // base)
+    for row in range(startRow, startRow + base):
+        for col in range(startCol, startCol + base):
+            if board[row][col] == value:
+                return False
+
+    return True
+
+@njit
+def sudoku_get_valid_moves(board):
+    side = np.shape(board)[0]
+    assert int(sqrt(side)) == sqrt(side), "Board size must be a perfect square"
+
+    valid_actions = []
+    for i in range(side):
+        for j in range(side):
+            if board[i][j] == 0:
+                for value in range(1, side + 1):
+                    if sudoku_is_valid_move(board, i, j, value):
+                        valid_actions.append((i, j, value))
+    return valid_actions
+
+@njit
+def sudoku_get_valid_split_moves(board):
+    # Moves are split by only finding the valid moves of a
+    # particular empty cell (the one that occurs first
+    # while scanning the board in row major order) and then
+    # returning all the valid moves for that cell
+
+    side = np.shape(board)[0]
+    assert int(sqrt(side)) == sqrt(side), "Board size must be a perfect square"
+
+    for i in range(side):
+        for j in range(side):
+            if board[i][j] == 0:
+                valid_moves = []
+                for value in range(1, side + 1):
+                    if sudoku_is_valid_move(board, i, j, value):
+                        valid_moves.append((i, j, value))
+                return valid_moves
+
+@njit
+def sudoku_get_score(board):
+    side = np.shape(board)[0]
+    base = int(sqrt(side))
+    assert base == sqrt(side), "Board size must be a perfect square"
+
+    score = 0
+    # Check rows and columns
+    for i in range(side):
+        row_set = set()
+        col_set = set()
+        for j in range(side):
+            if board[i][j] != 0:
+                row_set.add(board[i][j])
+            if board[j][i] != 0:
+                col_set.add(board[j][i])
+        score += len(row_set) + len(col_set)
+
+    # Check 3x3 subgrids
+    for x in range(0, side, base):
+        for y in range(0, side, base):
+            subgrid_set = set()
+            for i in range(base):
+                for j in range(base):
+                    if board[x+i][y+j] != 0:
+                        subgrid_set.add(board[x+i][y+j])
+            score += len(subgrid_set)
+            
+    # Penality for each empty cell
+    for i in range(side):
+        for j in range(side):
+            if board[i][j] == 0:
+                # Check if there are any valid moves for this cell
+                if len([1 for value in range(1, side + 1) if sudoku_is_valid_move(board, i, j, value)]) == 0:
+                    score -= 100
+                else: 
+                    score -= 1
+
+    return score
+
+
+def sudoku_generate_NxN(base, fraction_of_empties=0.5):
+    side = base**2
+
+    # pattern for a baseline valid solution
+    def pattern(r, c):
+        return (base * (r % base) + r // base + c) % side
+
+    # randomize rows, columns and numbers (of valid base pattern)
+    def shuffle(s):
+        return sample(s, len(s))
+
+    rBase = range(base)
+    rows = [g * base + r for g in shuffle(rBase) for r in shuffle(rBase)]
+    cols = [g * base + c for g in shuffle(rBase) for c in shuffle(rBase)]
+    nums = shuffle(range(1, base * base + 1))
+
+    # produce board using randomized baseline pattern
+    board = [[nums[pattern(r, c)] for c in cols] for r in rows]
+
+    squares = side * side
+    empties = int(squares * fraction_of_empties)
+    print(empties)
+    for p in sample(range(squares), empties):
+        board[p // side][p % side] = 0
+
+    return np.asarray(board, dtype=np.int32)
+
 
 class Sudoku(Problem):
     
-    def __init__(self, board):
-        self.board = board
-
+    def __init__(self, base, board = None, fraction_of_empty_cells = 0.3, use_split_moves = False):
+        self.board = board if board is not None else sudoku_generate_NxN(base, fraction_of_empties = fraction_of_empty_cells)
+        self.base = base
+        self.side = base**2
+        self.use_split_moves = use_split_moves
+    
     def clear(self):
-        self.board = [[0] * 9 for _ in range(9)]
+        self.board = np.zeros((self.side, self.side), dtype=np.int32)
         
     def apply_action(self, action):
         i, j, value = action
         self.board[i][j] = value
-
-    def is_valid_move(self, i, j, value):
-        # Check if the value is not in the row
-        for column in range(9):
-            if self.board[i][column] == value:
-                return False
-
-        # Check if the value is not in the column
-        for row in range(9):
-            if self.board[row][j] == value:
-                return False
-
-        # Check if the value is not in the 3x3 grid
-        startRow, startCol = 3 * (i // 3), 3 * (j // 3)
-        for row in range(startRow, startRow + 3):
-            for col in range(startCol, startCol + 3):
-                if self.board[row][col] == value:
-                    return False
-
-        return True
-
-    def get_valid_moves(self):
-        valid_actions = []
-        for i in range(9):
-            for j in range(9):
-                if self.board[i][j] == 0:
-                    for value in range(1, 10):
-                        if self.is_valid_move(i, j, value):
-                            valid_actions.append((i, j, value))
-        return valid_actions
     
+    def get_valid_moves(self):
+        return sudoku_get_valid_split_moves(self.board) if self.use_split_moves else sudoku_get_valid_moves(self.board)    
+
     def get_score(self):
-        score = 0
-        # Check rows and columns
-        for i in range(9):
-            row_set = set()
-            col_set = set()
-            for j in range(9):
-                if self.board[i][j] != 0:
-                    row_set.add(self.board[i][j])
-                if self.board[j][i] != 0:
-                    col_set.add(self.board[j][i])
-            score += len(row_set) + len(col_set)
-
-        # Check 3x3 subgrids
-        for x in range(0, 9, 3):
-            for y in range(0, 9, 3):
-                subgrid_set = set()
-                for i in range(3):
-                    for j in range(3):
-                        if self.board[x+i][y+j] != 0:
-                            subgrid_set.add(self.board[x+i][y+j])
-                score += len(subgrid_set)
-                
-        # Penality for each empty cell
-        for i in range(9):
-            for j in range(9):
-                if self.board[i][j] == 0:
-                    # Check if there are any valid moves for this cell
-                    if len([1 for value in range(1, 10) if self.is_valid_move(i, j, value)]) == 0:
-                        score -= 100
-                    else: 
-                        score -= 1
-
-        return score
+        return sudoku_get_score(self.board)
 
     def get_penalty(self):
-        if self.is_game_finished():
-            return 10000
+        # if self.is_game_finished():
+        #     return 10000
         return -100  # Penalty if the game is not finished but no moves are possible
     
     def is_game_finished(self):
         # Check if the board is filled
-        for i in range(9):
-            for j in range(9):
+        for i in range(self.side):
+            for j in range(self.side):
                 if self.board[i][j] == 0:
                     return False
 

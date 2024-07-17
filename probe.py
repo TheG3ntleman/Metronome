@@ -1,38 +1,27 @@
+from src.problems.tower_of_hanoi import TowerOfHanoi
 from src.problems.morpian_solitaire import MorpionSolitaire5D
+from src.problems.sudoku import Sudoku
+
+from src.solvers.FlatMonteCarlo import FlatMonteCarloSolver
+from src.solvers.MultiArmBanditSolver import UCB1Solver
+
 from src.primitives.state_space_tree import StateSpaceTreeNode
-from src.probes.LegacyProbe import LegacyProbe
 from src.primitives.probe import Probe
-# We now see the evolution of the mean, variance, skewness and kurtosis of the rewards of each child node
 
-# Setting up the problem
-morpion_solitaire = MorpionSolitaire5D(20)
+import numpy as np
+import random
 
-# Setting up the state space tree
-# root = StateSpaceTreeNode(None)
+# Setting the seed for reproducibility
+random.seed(10)
 
-# # We perform an expansion to get the children
-# valid_moves = morpion_solitaire.get_valid_moves()
-# for move in valid_moves:
-#     child = StateSpaceTreeNode(move, root)
-#     child.properties["visits"] = 0
-#     child.properties["reward"] = 0
-#     root.add_child(child)
+sudoku_3x3 = Sudoku(3, use_split_moves=True)
+# tower_of_hanoi_3x3 = TowerOfHanoi(3, 3)
+# morpion_solitaire_5d = MorpionSolitaire5D(5)
 
-# # We now probe the state space tree
-# dataframes = LegacyProbe.probe(root, morpion_solitaire, 1000)
-# for dataframe in dataframes:
-#     print(dataframe)
-#     print("\n\n")
+fmc_solver = FlatMonteCarloSolver()
+mab_solver = UCB1Solver(exploration_parameter=100)
 
-
-probe_instance = Probe(morpion_solitaire, 100)
-dataframe = probe_instance.probe()
-stats = probe_instance.compute_statistics() # This will compute the statistics for the probe
-print("Statistics: ", stats)
-probe_instance.scatter_plot_rewards()
-# probes = probe_instance.get_distributions_for_each_sample(None)
-# for i in range(len(probes)):
-#     print('Length of probe: ', len(probes[i]))
-    
-print("Showing the final distributions")
-probe_instance.show_final_distributions()
+root_node = StateSpaceTreeNode(None)
+probe = Probe(root_node, fmc_solver, sudoku_3x3, 850)
+probe.probe()
+probe.scatter_plot_rewards()

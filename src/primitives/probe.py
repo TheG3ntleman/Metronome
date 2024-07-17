@@ -11,7 +11,10 @@ import matplotlib.pyplot as plt # type: ignore
 import warnings
 
 
-"""
+"""# tower_of_hanoi_3x3 = TowerOfHanoi(3, 3)
+
+
+# morpion_solitaire_5d = MorpionSolitaire5D(5)
 
 1. We have no tree but we have a probe_lists problem. And we have a selection mechanism for sampling from that problem. Then the question is, should this be the main object on which the probe acts, i.e, should it act on the problem according to some selection policy.
 
