@@ -101,7 +101,7 @@ class UCB1Solver(Solver):
             problem.play_action(current_node.action)
             moves_played += 1
             print("Playing action number:", moves_played, "whose index is:", selection_index)
-            #problem.pprint()
+            problem.pprint()
         
         return {"success": True, "solution": current_node.get_actions(), "state_space_tree": root}
 

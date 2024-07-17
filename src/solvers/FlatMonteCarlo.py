@@ -55,24 +55,28 @@ class FlatMonteCarloSolver(Solver):
             # STEP 5: Choosing some policy by using methods proposed by Chaslot.
             
             # printing final rewarsd anf visits
+            selection_index = 0
             if selection_policy == "max_q_value_child":
                 print("Length of children: ", len(current_node.children))
                 q_values = [child.properties["reward"] / child.properties["visits"] for child in current_node.children]
                 current_node = current_node.children[q_values.index(max(q_values))]
+                selection_index = q_values.index(max(q_values))
             elif selection_policy == "max_child":
                 rewards = [child.properties["reward"] for child in current_node.children]
                 current_node = current_node.children[rewards.index(max(rewards))]
+                selection_index = rewards.index(max(rewards))
             elif selection_policy == "robust_child":
                 visits = [child.properties["visits"] for child in current_node.children]
                 current_node = current_node.children[visits.index(max(visits))]
+                selection_index = visits.index(max(visits))
             
             # TODO: Add support for max_robust_child
 
             # STEP 6: Applying the action
             problem.play_action(current_node.action)
-            problem.pprint()
             actions_played += 1
-            print("Actions played:", actions_played)
+            print("Playing action number:", actions_played, "whose index is:", selection_index)
+            problem.pprint()
         
         return {"success": True, "solution": current_node.get_actions(), "state_space_tree": root}
 
