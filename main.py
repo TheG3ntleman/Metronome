@@ -1,7 +1,6 @@
 from src.problems.tower_of_hanoi import TowerOfHanoi
 from src.problems.morpian_solitaire import MorpionSolitaire5D
 from src.solvers.FlatMonteCarlo import FlatMonteCarloSolver
-from src.solvers.FlatMonteCarloAgain import FlatMonteCarloAgain
 from src.solvers.MultiArmBanditSolver import UCB1Solver
 
 from src.problems.sudoku import Sudoku

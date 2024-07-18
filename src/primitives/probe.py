@@ -9,6 +9,8 @@ import seaborn as sns # type: ignore
 import copy
 import matplotlib.pyplot as plt # type: ignore
 import warnings
+import pickle
+from sklearn.neighbors import KernelDensity
 
 
 """# tower_of_hanoi_3x3 = TowerOfHanoi(3, 3)
@@ -107,7 +109,7 @@ class Probe:
         self.skewness_history[child_number, sample_number] = skewness
         self.kurtosis_history[child_number, sample_number] = kurtosis
     
-    def scatter_plot_rewards(self, save_path = None):
+    def scatter_plot_rewards(self, save_path = None, show = False):
         # TODO: this. -> Done
         print("Number of children: ", self.node.get_number_of_children())
         print("First Child children: ", self.node.children[0].children)
@@ -117,167 +119,65 @@ class Probe:
             plt.ylabel("Reward")
             plt.title(f"Reward Distribution for Child {i}")
             plt.legend()
-            plt.savefig(f"reward_distribution_{i}.eps", format="eps")
-            plt.show()
+            if save_path is not None:
+                plt.savefig(f"{save_path}reward_distribution_{i}.eps", format="eps")
+            if show:
+                plt.show()
+            plt.clf()
 
-        """
-
-        child_id = 0
-        for _ in tqdm(range(self.number_of_probes), desc="Probing"):
-            temporary_problem_copy = copy.deepcopy(self.problem)
-            child = self.node.children[child_id]
-            self.probe_lists[child_id].append(Solver.rollout(temporary_problem_copy, child))
-            child_id += 1
-            child_id = child_id % len(self.node.children)
-            self.compute_statistics()
-
-        dataframes = []
-        for i in range(len(self.node.children)):
-            dataframes.append(pd.DataFrame({
-                "mean": self.mean_history[i],
-                "skewness": self.skewness_history[i],
-                "kurtosis": self.kurtosis_history[i]
-            }))
-        return dataframes """
-
-"""
-
-class Probe:
-    def __init__(self, problem: Problem, solver: Solver, number_of_probes: int = 1000):
-        self.problem = problem
-        self.number_of_probes = number_of_probes
-        # For node, we will have to get the children of the node
-        # For problem, we will have to get the valid moves
-        root = StateSpaceTreeNode(None)
-        valid_moves = problem.get_valid_moves()
-        for move in valid_moves:
-            child = StateSpaceTreeNode(move, parent=root)
-            root.add_child(child)
-            child.properties["visits"], child.properties["reward"] = (0,0)
-
-        self.node = root
-        self.probe_lists = [[] for _ in range(len(self.node.children))]
-        self.mean_history = [[] for _ in range(len(self.node.children))]
-        self.skewness_history = [[] for _ in range(len(self.node.children))]
-        self.kurtosis_history = [[] for _ in range(len(self.node.children))]
-    
-    def probe(self):
-        if not self.node.children:
-            raise ValueError("The node has no children to probe.")
-
-
-        child_id = 0
-        for _ in tqdm(range(self.number_of_probes), desc="Probing"):
-            temporary_problem_copy = copy.deepcopy(self.problem)
-            child = self.node.children[child_id]
-            self.probe_lists[child_id].append(Solver.rollout(temporary_problem_copy, child))
-            child_id += 1
-            child_id = child_id % len(self.node.children)
-            self.compute_statistics()
-
-        dataframes = []
-        for i in range(len(self.node.children)):
-            dataframes.append(pd.DataFrame({
-                "mean": self.mean_history[i],
-                "skewness": self.skewness_history[i],
-                "kurtosis": self.kurtosis_history[i]
-            }))
-        return dataframes 
-
-        # We need to create an instance of the solver
-        self.solver = solver()
+    def kernel_density_plots(self, save_path = None, show = False):
         
-        # TODO: We need to get the rewards of the children, after the solver has been run -> Need to implement this
-        
-        # Assuming that the solver has been run, we will now probe the children
-        
-        # self.child_rewards = [[] for _ in range(len(self.node.children))], not exactly self.node.children but for time pass
-
-        # self.child_at_every_step = [], same size as above, except it keeps track of the child that was chosen at every step
-        
-        self.child_rewards, self.child_at_every_step = self.solver.solve(self.problem, number_of_probes)
-        
-        
-    def probe(self):
-        if not self.node.children:
-            raise ValueError("The node has no children to probe.")
-
-
-        child_id = 0
-        for _ in tqdm(range(self.number_of_probes), desc="Probing"):
-            temporary_problem_copy = copy.deepcopy(self.problem)
-            child = self.node.children[child_id]
-            self.probe_lists[child_id].append(Solver.rollout(temporary_problem_copy, child))
-            child_id += 1
-            child_id = child_id % len(self.node.children)
-            self.compute_statistics()
-
-        dataframes = []
-        for i in range(len(self.node.children)):
-            dataframes.append(pd.DataFrame({
-                "mean": self.mean_history[i],
-                "skewness": self.skewness_history[i],
-                "kurtosis": self.kurtosis_history[i]
-            }))
-        return dataframes    
-
-
-    def compute_statistics(self):
-        for i in range(len(self.node.children)):
-            if len(self.probe_lists[i]) > 0: 
-                mean = np.mean(self.probe_lists[i])
-                skewness = np.mean((self.probe_lists[i] - mean)**3) / (np.std(self.probe_lists[i])**3)
-                kurtosis = np.mean((self.probe_lists[i] - mean)**4) / (np.var(self.probe_lists[i])**2) - 3
-                
-                self.mean_history[i].append(mean)
-                self.skewness_history[i].append(skewness)
-                self.kurtosis_history[i].append(kurtosis)
+        def plot_kde(important_list, bandwidth=0.75, kernel='gaussian', 
+             title='Kernel Density Estimation', xlabel='Reward', ylabel='Density', color='dodgerblue'):
+            """
+            Plots the kernel density estimation for a given list of integers.
             
+            Parameters:
+                important_list (list): List of integer values to perform KDE on.
+                bandwidth (float): The bandwidth of the kernel. Default is 0.75.
+                kernel (str): The kernel to use for KDE. Default is 'gaussian'.
+                            Options include 'gaussian', 'tophat', 'epanechnikov', 
+                            'exponential', 'linear', 'cosine'.
+                title (str): Title of the plot. Default is 'Kernel Density Estimation'.
+                xlabel PUCT(str): Label for the x-axis. Default is 'Value'.
+                ylabel (str): Label for the y-axis. Default is 'Density'.svg
+                color (str): Color of the KDE plot. Default is 'blue'.
+            """
+            # Convert the list to a numpy array and reshape for scikit-learn
+            data = np.array(important_list).reshape(-1, 1)
 
-    def get_statistics(self):
-        return self.mean_history, self.skewness_history, self.kurtosis_history
+            # Create and fit the KDE model
+            kde = KernelDensity(kernel=kernel, bandwidth=bandwidth).fit(data)
 
-    
-    def get_distributions_for_each_sample(self, i: any):
-        if i is not None:
-            return self.probe_lists[i]
-        return self.probe_lists
+            # Create a range of values for the x-axis
+            x_d = np.linspace(min(important_list) - 1, max(important_list) + 1, 1000).reshape(-1, 1)
 
-        
-    def scatter_plot_rewards(self):
-        for i in range(len(self.node.children)):
-            plt.scatter(range(len(self.probe_lists[i])), self.probe_lists[i], label=f"Child {i}")
-            plt.xlabel("Probe Number")
-            plt.ylabel("Reward")
-            plt.title(f"Reward Distribution for Child {i}")
-            plt.legend()
-            plt.savefig(f"reward_distribution_{i}.eps", format="eps")
-            plt.show()
+            # Evaluate the KDE on the range of values
+            log_dens = kde.score_samples(x_d)
 
-    def show_child_distribution(self):
-        for i in range(len(self.child_rewards)):
-            for j, reward in enumerate(self.child_rewards[i]):
-                if j in self.child_at_every_step:
-                    # Plot in red, if the child was chosen
-                    plt.scatter(j, reward, color='red')
-                else:
-                    # Plot normally
-                    plt.scatter(j, reward, color='blue')
-            
-            plt.xlabel("Probe Number")
-            plt.ylabel("Reward")
-            plt.title(f"Reward Distribution for Child {i}")
-            plt.legend()
-            plt.savefig(f"reward_distribution_{i}.eps", format="eps")
-            plt.show()                    
-    
-    
-    def show_final_distributions(self):
+            # Plot the results
+            plt.fill_between(x_d[:, 0], np.exp(log_dens), color=color, alpha=0.5)
+            plt.plot(data[:, 0], -0.01 - 0.1 * np.random.rand(len(data)), 'ro', label='Data points')
+            plt.title(title)
+            plt.xlabel(xlabel)
+            plt.ylabel(ylabel)
+            #plt.legend()
+            if save_path is not None:
+                plt.savefig(f"{save_path}reward_density_plots{i}.eps", format="eps")
+            if show:
+                plt.show()
+            plt.clf()
 
-        max_length = max(len(lst) for lst in self.probe_lists)
-        probe_lists_padded = [lst + [np.nan]*(max_length - len(lst)) for lst in self.probe_lists]
-        probe_lists_array = np.array(probe_lists_padded)
-        sns.heatmap(probe_lists_array, annot=False, cmap='viridis', yticklabels=[f'probe_list {i+1}' for i in range(len(self.probe_lists))])
-        plt.xlabel('Probe Number')
-        plt.ylabel('Probe List')
-        plt.show()"""
+        for i in range(self.node.get_number_of_children()):
+            plot_kde(self.reward_samples[i, :], title=f"Kernel Density Estimation for Child {i}")
+
+    def save(self, save_path):
+        # Saving the rewardssave_path = None
+        with open(f"{save_path}rewards.pkl", "wb") as f:
+            pickle.dump(self.reward_samples, f)
+
+    def load(self, save_path):
+        with open(f"{save_path}rewards.pkl", "rb") as f:
+            self.reward_samples = pickle.load(f)
+
+        # TODO: Compute means, variances, skewnesses, kurtosis, ...
