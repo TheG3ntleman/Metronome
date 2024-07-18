@@ -6,7 +6,7 @@ from math import sqrt
 
 @njit
 def sudoku_is_valid_move(board, i, j, value):
-    side = np.shape(board)[0]
+    side = len(board)
     base = int(sqrt(side))
     assert base == sqrt(side), "Board size must be a perfect square"
 
@@ -31,7 +31,7 @@ def sudoku_is_valid_move(board, i, j, value):
 
 @njit
 def sudoku_get_valid_moves(board):
-    side = np.shape(board)[0]
+    side = len(board)
     assert int(sqrt(side)) == sqrt(side), "Board size must be a perfect square"
 
     valid_actions = []
@@ -50,7 +50,7 @@ def sudoku_get_valid_split_moves(board):
     # while scanning the board in row major order) and then
     # returning all the valid moves for that cell
 
-    side = np.shape(board)[0]
+    side = len(board)
     assert int(sqrt(side)) == sqrt(side), "Board size must be a perfect square"
 
     for i in range(side):
@@ -64,7 +64,7 @@ def sudoku_get_valid_split_moves(board):
 
 @njit
 def sudoku_get_score(board):
-    side = np.shape(board)[0]
+    side = len(board)
     base = int(sqrt(side))
     assert base == sqrt(side), "Board size must be a perfect square"
 

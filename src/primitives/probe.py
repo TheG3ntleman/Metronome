@@ -79,24 +79,6 @@ class Probe:
 
 
     def probe(self):
-
-        def compute_statistics(self, child_number, sample_number):
-            mean = np.mean(self.reward_samples[child_number, :sample_number])
-
-            if sample_number > 1:
-                std_dev = np.std(self.reward_samples[child_number, :sample_number])
-                skewness = np.mean((self.reward_samples[child_number, :sample_number] - mean)**3) / (std_dev**3)
-                kurtosis = np.mean((self.reward_samples[child_number, :sample_number] - mean)**4) / (std_dev**4) - 3
-            else:
-                std_dev = 0
-                skewness = 0
-                kurtosis = 0
-
-            self.mean_history[child_number, sample_number] = mean
-            self.standard_deviation[child_number, sample_number] = std_dev
-            self.skewness_history[child_number, sample_number] = skewness
-            self.kurtosis_history[child_number, sample_number] = kurtosis
-
         for sample_number in tqdm(range(self.number_of_probes), desc="Probing"):
             for i, child in enumerate(self.node.children):
                 # Loading original problem state into problem
@@ -107,10 +89,29 @@ class Probe:
 
                 # Storing the reward and computing additional statistics
                 self.reward_samples[i, sample_number] = reward
-                compute_statistics(i, sample_number)
+                self.compute_statistics(i, sample_number)
 
+    def compute_statistics(self, child_number, sample_number):
+        mean = np.mean(self.reward_samples[child_number, :sample_number])
+
+        if sample_number > 1:
+            std_dev = np.std(self.reward_samples[child_number, :sample_number])
+            skewness = np.mean((self.reward_samples[child_number, :sample_number] - mean)**3) / (std_dev**3)
+            kurtosis = np.mean((self.reward_samples[child_number, :sample_number] - mean)**4) / (std_dev**4) - 3
+        else:
+            std_dev = 0
+            skewness = 0
+            kurtosis = 0
+
+        self.mean_history[child_number, sample_number] = mean
+        self.standard_deviation[child_number, sample_number] = std_dev
+        self.skewness_history[child_number, sample_number] = skewness
+        self.kurtosis_history[child_number, sample_number] = kurtosis
+    
     def scatter_plot_rewards(self, save_path = None):
         # TODO: this. -> Done
+        print("Number of children: ", self.node.get_number_of_children())
+        print("First Child children: ", self.node.children[0].children)
         for i in range(self.node.get_number_of_children()):
             plt.scatter(range(self.number_of_probes), self.reward_samples[i, :], label=f"Child {i}")
             plt.xlabel("Probe Number")

@@ -8,7 +8,7 @@ from src.solvers.MultiArmBanditSolver import UCB1Solver
 from src.primitives.state_space_tree import StateSpaceTreeNode
 from src.primitives.probe import Probe
 
-import numpy as np
+import numpy as np # type: ignore
 import random
 
 # Setting the seed for reproducibility
