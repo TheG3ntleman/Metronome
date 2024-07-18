@@ -70,7 +70,7 @@ class Probe:
 
         # We now declare our data storage variables
 
-        self.reward_samples = np.zeros((self.node.get_number_of_children(), self.number_of_probes), dtype = np.uint)
+        self.reward_samples = np.zeros((self.node.get_number_of_children(), self.number_of_probes), dtype = np.float64)
         
         self.mean_history = np.zeros((self.node.get_number_of_children(), self.number_of_probes))
         self.standard_deviation = np.zeros((self.node.get_number_of_children(), self.number_of_probes))
@@ -86,7 +86,6 @@ class Probe:
 
                 # Performing rollout to obtain reward
                 reward = self.solver.rollout(self.problem, child)
-
                 # Storing the reward and computing additional statistics
                 self.reward_samples[i, sample_number] = reward
                 self.compute_statistics(i, sample_number)

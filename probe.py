@@ -14,7 +14,7 @@ import random
 # Setting the seed for reproducibility
 random.seed(10)
 
-sudoku_3x3 = Sudoku(3, use_split_moves=True)
+sudoku_3x3 = Sudoku(3, use_split_moves=False)
 # tower_of_hanoi_3x3 = TowerOfHanoi(3, 3)
 # morpion_solitaire_5d = MorpionSolitaire5D(5)
 
