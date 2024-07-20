@@ -10,7 +10,8 @@ import copy
 import matplotlib.pyplot as plt # type: ignore
 import warnings
 import pickle
-from sklearn.neighbors import KernelDensity
+from sklearn.neighbors import KernelDensity # type: ignore
+from scipy.stats import skew, kurtosis # type: ignore
 
 
 """# tower_of_hanoi_3x3 = TowerOfHanoi(3, 3)
@@ -145,6 +146,10 @@ class Probe:
             """
             # Convert the list to a numpy array and reshape for scikit-learn
             data = np.array(important_list).reshape(-1, 1)
+            
+            # Calculate skewness and kurtosis
+            data_skewness = skew(important_list)
+            data_kurtosis = kurtosis(important_list)
 
             # Create and fit the KDE model
             kde = KernelDensity(kernel=kernel, bandwidth=bandwidth).fit(data)
@@ -162,8 +167,15 @@ class Probe:
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
             #plt.legend()
+            
+            # Annotate skewness and kurtosis
+            plt.text(x_d[0, 0], np.max(np.exp(log_dens)) * 0.8, f'Skewness: {data_skewness:.2f}', color='black')
+            plt.text(x_d[0, 0], np.max(np.exp(log_dens)) * 0.7, f'Kurtosis: {data_kurtosis:.2f}', color='black')
+
+            plt.axvline(np.mean(important_list), color='r', linestyle='dashed', linewidth=1)
+            
             if save_path is not None:
-                plt.savefig(f"{save_path}reward_density_plots{i}.eps", format="eps")
+                plt.savefig(f"{save_path}reward_density_plots{i}.png", format="png")
             if show:
                 plt.show()
             plt.clf()
@@ -180,4 +192,5 @@ class Probe:
         with open(f"{save_path}rewards.pkl", "rb") as f:
             self.reward_samples = pickle.load(f)
 
-        # TODO: Compute means, variances, skewnesses, kurtosis, ...
+    # TODO: Compute means, variances, skewnesses, kurtosis, ...
+    
