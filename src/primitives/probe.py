@@ -186,7 +186,7 @@ class Probe:
 
 
     def kernel_density_plots(self, save_path = None, show = False):
-        Probe.kernel_density_plots_from_rewards(self, self.reward_samples, save_path, show)
+        Probe.kernel_density_plots_from_rewards(self.reward_samples, save_path, show)
         
     def save(self, save_path):
         # Saving the rewardssave_path = None
