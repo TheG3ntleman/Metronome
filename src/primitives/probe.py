@@ -126,8 +126,9 @@ class Probe:
                 plt.show()
             plt.clf()
 
-    def kernel_density_plots(self, save_path = None, show = False):
-        
+    @staticmethod
+    def kernel_density_plots_from_rewards(reward_samples, save_path = None, show = False):
+
         def plot_kde(important_list, bandwidth=0.75, kernel='gaussian', 
              title='Kernel Density Estimation', xlabel='Reward', ylabel='Density', color='dodgerblue'):
             """
@@ -180,9 +181,13 @@ class Probe:
                 plt.show()
             plt.clf()
 
-        for i in range(self.node.get_number_of_children()):
-            plot_kde(self.reward_samples[i, :], title=f"Kernel Density Estimation for Child {i}")
+        for i in range(len(reward_samples)):
+            plot_kde(reward_samples[i, :], title=f"Kernel Density Estimation for Child {i}")
 
+
+    def kernel_density_plots(self, save_path = None, show = False):
+        Probe.kernel_density_plots_from_rewards(self, self.reward_samples, save_path, show)
+        
     def save(self, save_path):
         # Saving the rewardssave_path = None
         with open(f"{save_path}rewards.pkl", "wb") as f:
@@ -191,6 +196,12 @@ class Probe:
     def load(self, save_path):
         with open(f"{save_path}rewards.pkl", "rb") as f:
             self.reward_samples = pickle.load(f)
+
+    @staticmethod
+    def load_reward_samples(save_path):
+        with open(f"{save_path}rewards.pkl", "rb") as f:
+            return pickle.load(f)
+
 
     # TODO: Compute means, variances, skewnesses, kurtosis, ...
     
