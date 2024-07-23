@@ -22,7 +22,7 @@ fmc_solver = FlatMonteCarloSolver()
 mab_solver = UCB1Solver(exploration_parameter=100)
 
 root_node = StateSpaceTreeNode(None)
-probe = Probe(root_node, fmc_solver, morpion_solitaire_5d, 3)#2000)
+probe = Probe(root_node, fmc_solver, morpion_solitaire_5d, 2000)
 
 probe.probe()
 # probe.scatter_plot_rewards()
