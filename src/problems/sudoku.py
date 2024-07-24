@@ -133,7 +133,7 @@ def sudoku_generate_NxN(base, fraction_of_empties=0.5):
 
 class Sudoku(Problem):
     
-    def __init__(self, base, board = None, fraction_of_empty_cells = 0.3, use_split_moves = False):
+    def __init__(self, base, board = None, fraction_of_empty_cells = 0.25, use_split_moves = False):
         self.board = board if board is not None else sudoku_generate_NxN(base, fraction_of_empties = fraction_of_empty_cells)
         self.base = base
         self.side = base**2
@@ -153,8 +153,8 @@ class Sudoku(Problem):
         return sudoku_get_score(self.board)
 
     def get_penalty(self):
-        # if self.is_game_finished():
-        #     return 10000
+        if self.is_game_finished():
+            return 10000
         return -100  # Penalty if the game is not finished but no moves are possible
     
     def is_game_finished(self):
