@@ -5,7 +5,6 @@ import random
 import math
 from copy import deepcopy
 
-
 class NMCTSSolver(Solver):
     def __init__(self, exploration_parameter=1 / math.sqrt(2), depth=2):
         super().__init__()
@@ -56,24 +55,16 @@ class NMCTSSolver(Solver):
                 current_node.add_child(child)
 
             # STEP 4: Performing rollouts to make decisions
-            for _ in tqdm(range(number_of_rollouts_per_decision)):
-                # Choosing a random child
-                # child = current_node.children[random.randint(0, len(current_node.children) - 1)]
+            bestChild = None
+            bestScore = -float('inf')
 
-                # Checking if there is a child that has not been visited
-                unvisited_children = [
-                    child for child in current_node.children if child.properties["visits"] == 0]
-                if len(unvisited_children) > 0:
-                    child = unvisited_children[0]
-                else:
-                    # Choosing the child with the highest UCB1 value
-                    ucb_values = [self.ucb_formula(child.properties["reward"], child.properties["visits"],
-                                                   current_node.properties["visits"]) for child in current_node.children]
-                    child = current_node.children[ucb_values.index(
-                        max(ucb_values))]
-
+            for child in current_node.children:
                 # Performing nested rollout
                 reward = self.nested_rollout(problem, child, self.depth)
+                
+                if reward > bestScore:
+                    bestChild = child
+                    bestScore = reward
 
                 child.properties["reward"] += reward
                 child.properties["visits"] += 1
@@ -82,104 +73,40 @@ class NMCTSSolver(Solver):
                 current_node.properties["reward"] += reward
                 current_node.properties["visits"] += 1
 
-            # STEP 5: Choosing some policy by using methods proposed by Chaslot.
-
-            for i, child in enumerate(current_node.children):
-                print(f"{i}. Action: {child.action} Reward: {child.properties['reward']} Visits: {child.properties['visits']}")
-
-            selection_index = 0
-            if selection_policy == "max_q_value_child":
-                q_values = [child.properties["reward"] / child.properties["visits"] if child.properties["visits"] != 0 else 0
-                            for child in current_node.children]
-                selection_index = q_values.index(max(q_values))
-            elif selection_policy == "max_child":
-                rewards = [child.properties["reward"]
-                           for child in current_node.children]
-                selection_index = rewards.index(max(rewards))
-            elif selection_policy == "robust_child":
-                visits = [child.properties["visits"]
-                          for child in current_node.children]
-                selection_index = visits.index(max(visits))
-            current_node = current_node.children[selection_index]
-
-            # STEP 6: Applying the action
-            current_node.properties["visits"] = 0
-            problem.play_action(current_node.action)
-            moves_played += 1
-            print("Playing action number:", moves_played,
-                  "whose index is:", selection_index)
-            problem.pprint()
+            # STEP 5: Applying the best action
+            if bestChild:
+                current_node = bestChild
+                problem.play_action(current_node.action)
+                moves_played += 1
+                print("Playing action number:", moves_played)
+                problem.pprint()
 
         return {"success": True, "solution": current_node.get_actions(), "state_space_tree": root}
 
-    def nested_rollout(self, problem, node, depth, current_depth=0):
+    def nested_rollout(self, problem, node, depth):
         """
         Perform a nested rollout at the specified depth level.
         """
-        if current_depth > depth:
-            # Perform random rollouts
-            while not problem.is_game_finished():
-                valid_moves = problem.get_valid_moves()
-                if len(valid_moves) == 0:
-                    return problem.get_penalty() + problem.get_score()
-                move = random.choice(valid_moves)
-                problem.play_action(move)
+        if depth == 0 or problem.is_game_finished():
+            return self.evaluate(problem)
 
-            return problem.get_score()
-        else:
-            # Perform nested rollouts
-            if problem.is_game_finished():
-                return self.evaluate(problem)
+        # Perform a rollout from the given node and move
+        copy_problem = deepcopy(problem)
+        copy_problem.play_action(node.action)
+        valid_moves = copy_problem.get_valid_moves()
 
-            # Copy the current state to simulate rollouts
-            problem_copy = deepcopy(problem)
+        if len(valid_moves) == 0:
+            return self.evaluate(copy_problem)
 
-            # Get valid moves
-            valid_moves = problem_copy.get_valid_moves()
-            if not valid_moves:
-                return self.evaluate(problem_copy)
+        # Perform rollouts for each valid move at the next depth level
+        bestScore = -float('inf')
+        for nextMove in valid_moves:
+            copy_copy_problem = deepcopy(copy_problem)
+            copy_copy_problem.play_action(nextMove)
+            score = self.nested_rollout(copy_copy_problem, node, depth - 1)
+            bestScore = max(bestScore, score)
 
-            move = random.choice(valid_moves)
-            # Evaluate each child node by performing rollouts
-            best_reward = float('-inf')
-            """
-            for move in valid_moves:
-                # Copy the state for each move
-                state_copy = deepcopy(problem_copy)
-                state_copy.play_action(move)
-
-                # Create a child node
-                child_node = StateSpaceTreeNode(move, node)
-                child_node.properties["visits"] = 0
-                child_node.properties["reward"] = 0
-                node.add_child(child_node)
-
-                # Perform recursive nested rollouts
-                reward = self.nested_rollout(
-                    state_copy, child_node, depth, current_depth + 1)
-
-                # Track the best reward from the child nodes
-                if reward > best_reward:
-                    best_reward = reward
-            """
-                # Copy the state for each move
-            state_copy = deepcopy(problem_copy)
-            state_copy.play_action(move)
-
-            # Create a child node
-            child_node = StateSpaceTreeNode(move, node)
-            child_node.properties["visits"] = 0
-            child_node.properties["reward"] = 0
-            node.add_child(child_node)
-
-            # Perform recursive nested rollouts
-            reward = self.nested_rollout(
-                state_copy, child_node, depth, current_depth + 1)
-
-            # Track the best reward from the child nodes
-            if reward > best_reward:
-                best_reward = reward
-            return best_reward
+        return bestScore
 
     def evaluate(self, problem):
         """
