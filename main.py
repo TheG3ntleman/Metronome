@@ -24,7 +24,7 @@ mab_solver = UCB1Solver(exploration_parameter=100)
 nm_solver = NMCTSSolver()
 
 output = nm_solver.solve(
-        morpion_solitaire_5d,
+        sudoku_3x3,
         selection_policy="max_q_value_child",
         number_of_rollouts_per_decision=1000,
 )

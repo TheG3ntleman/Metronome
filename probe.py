@@ -22,7 +22,7 @@ morpion_solitaire_5d = MorpionSolitaire5D(20)
 
 fmc_solver = FlatMonteCarloSolver()
 mab_solver = UCB1Solver(exploration_parameter=100)
-nmc_solver = NMCTSSolver()
+nmc_solver = NMCTSSolver(depth=10)
 
 root_node = StateSpaceTreeNode(None)
 probe = Probe(root_node, nmc_solver, morpion_solitaire_5d, 100)

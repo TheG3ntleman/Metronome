@@ -88,7 +88,11 @@ class NMCTSSolver(Solver):
         Perform a nested rollout at the specified depth level.
         """
         if depth == 0 or problem.is_game_finished():
-            return self.evaluate(problem)
+            """
+            Here, we have to perform a flat rollout as we have reached the end
+            """
+            return self.rollout(problem, node)
+            # return self.evaluate(problem)
 
         # Perform a rollout from the given node and move
         copy_problem = deepcopy(problem)
