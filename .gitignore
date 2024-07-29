@@ -4,4 +4,3 @@ __pycache__/
 
 # Ignore all the eps files
 *.eps
-*png
