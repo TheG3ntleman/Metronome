@@ -5,6 +5,7 @@ from src.problems.sudoku import Sudoku
 from src.solvers.FlatMonteCarlo import FlatMonteCarloSolver
 from src.solvers.MultiArmBanditSolver import UCB1Solver
 from src.solvers.NestedMonteCarlo import NMCTSSolver
+from src.solvers.SinglePlayerMAB import SPMultiArmBanditSolver
 
 from src.primitives.state_space_tree import StateSpaceTreeNode
 from src.primitives.probe import Probe
@@ -24,6 +25,7 @@ morpion_solitaire_5d = MorpionSolitaire5D(20)
 
 fmc_solver = FlatMonteCarloSolver()
 mab_solver = UCB1Solver(exploration_parameter=100)
+spmab_solver = SPMultiArmBanditSolver(exploration_parameter=100)
 nmc_solver = NMCTSSolver(depth=20)
 
 root_node = StateSpaceTreeNode(None)
@@ -35,7 +37,7 @@ root_node = StateSpaceTreeNode(None)
 # probe.save("results/morpion_solitaire_5d_kde/nmc")
 
 # analysis = SolverAnalysis([fmc_solver, mab_solver, nmc_solver], sudoku_3x3, 10000)
-analysis = SolverAnalysis([fmc_solver, mab_solver, nmc_solver], morpion_solitaire_5d, 5)
+analysis = SolverAnalysis([spmab_solver, mab_solver], morpion_solitaire_5d, 100)
 
 
 analysis.perform_analysis()
