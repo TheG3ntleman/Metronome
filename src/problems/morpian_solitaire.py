@@ -26,6 +26,7 @@ from src.primitives.problem import Problem
 from src.problems.morpian_solitaire_logic import Board, Line, Move
 from matplotlib import pyplot as plt
 import numpy as np
+import copy
 
 class MorpionSolitaire5D(Problem):
     
@@ -85,10 +86,10 @@ class MorpionSolitaire5D(Problem):
             return True
         return False
     
-    def get_game_state(self):
-        return self.board
+    def save_state(self):
+        return copy.deepcopy(self.board)
     
-    def load_game_from_state(self, state):
+    def load_state(self, state):
         self.board = state
 
     def pprint(self):

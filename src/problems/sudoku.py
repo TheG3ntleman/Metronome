@@ -158,13 +158,16 @@ class Sudoku(Problem):
         return -100  # Penalty if the game is not finished but no moves are possible
     
     def is_game_finished(self):
-        # Check if the board is filled
-        for i in range(self.side):
-            for j in range(self.side):
-                if self.board[i][j] == 0:
-                    return False
+        # Checking if there are any valid moves left
+        return len(self.get_valid_moves()) == 0
 
-        return True
+        # Check if the board is filled
+        # for i in range(self.side):
+        #     for j in range(self.side):
+        #         if self.board[i][j] == 0:
+        #             return False
+
+        # return True
 
     def save_state(self):
         return [row[:] for row in self.board]  # Return a copy of the board
