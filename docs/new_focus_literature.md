@@ -7,6 +7,7 @@ July 27th 2024 - Finish Idea, List of Experiments, Motivation behind Idea, Appro
                - Begin Writing Paper
 
 # Policy Adaptation Papers
+0. NCMS: https://www.lamsade.dauphine.fr/~cazenave/papers/nested.pdf
 1. 2011, NRPA: https://cs.uwaterloo.ca/~jhoey/rgwiki/uploads/11IJCAI-NRPA-Rosin.pdf
 2. 2020, Original GNRPA: https://arxiv.org/pdf/2003.10024
 3. 2023, Warm-Starting Nested Rollout Policy Adaptation with Optimal Stopping: https://ojs.aaai.org/index.php/AAAI/article/view/26459
