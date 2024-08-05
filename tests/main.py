@@ -3,6 +3,7 @@ from src.problems.morpian_solitaire import MorpionSolitaire5D
 from src.solvers.FlatMonteCarlo import FlatMonteCarloSolver
 from src.solvers.MultiArmBanditSolver import UCB1Solver
 from src.solvers.NestedMonteCarlo import NMCTSSolver
+from src.solvers.NRPAUCB1 import NRPAUCB
 from src.problems.sudoku import Sudoku
 
 import numpy as np # type: ignore
@@ -22,13 +23,15 @@ morpion_solitaire_5d = MorpionSolitaire5D(20)
 fmc_solver = FlatMonteCarloSolver()
 mab_solver = UCB1Solver(exploration_parameter=100)
 nm_solver = NMCTSSolver()
+nrpaucb_solver = NRPAUCB()
 
-output = nm_solver.solve(
-        sudoku_3x3,
-        selection_policy="max_q_value_child",
-        number_of_rollouts_per_decision=1000,
+output = nrpaucb_solver.solve(
+        morpion_solitaire_5d,
+        # selection_policy="max_q_value_child",
+        # number_of_rollouts_per_decision=1000,
 )
 print(output)
+nrpaucb_solver.plot_scores()
 # morpion_solitaire.plot()
 # print(morpion_solitaire.get_score())
 # output["state_space_tree"].plot()

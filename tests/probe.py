@@ -6,6 +6,7 @@ from src.solvers.FlatMonteCarlo import FlatMonteCarloSolver
 from src.solvers.MultiArmBanditSolver import UCB1Solver
 from src.solvers.NestedMonteCarlo import NMCTSSolver
 from src.solvers.SinglePlayerMAB import SPMultiArmBanditSolver
+from src.solvers.NRPAUCB1 import NRPAUCB
 
 from src.primitives.state_space_tree import StateSpaceTreeNode
 from src.primitives.probe import Probe
@@ -27,6 +28,7 @@ fmc_solver = FlatMonteCarloSolver()
 mab_solver = UCB1Solver(exploration_parameter=100)
 spmab_solver = SPMultiArmBanditSolver(exploration_parameter=100)
 nmc_solver = NMCTSSolver(depth=20)
+nrpaucb_solver = NRPAUCB()
 
 root_node = StateSpaceTreeNode(None)
 # probe = Probe(root_node, nmc_solver, morpion_solitaire_5d, 100)
@@ -37,13 +39,13 @@ root_node = StateSpaceTreeNode(None)
 # probe.save("results/morpion_solitaire_5d_kde/nmc")
 
 # analysis = SolverAnalysis([fmc_solver, mab_solver, nmc_solver], sudoku_3x3, 10000)
-analysis = SolverAnalysis([spmab_solver, mab_solver], morpion_solitaire_5d, 100)
+analysis = SolverAnalysis([nrpaucb_solver, mab_solver], sudoku_3x3, 100)
 
 
 analysis.perform_analysis()
 
 
 # analysis.kernel_density_plots(save_path = "analysis/sudoku_3x3_kde", show=True)
-analysis.kernel_density_plots(save_path = "analysis/morpion_solitaire_5d/", show=True)
+analysis.kernel_density_plots(save_path = "analysis/sudoku_3x3/", show=True)
 
 analysis.compare_statistics()
